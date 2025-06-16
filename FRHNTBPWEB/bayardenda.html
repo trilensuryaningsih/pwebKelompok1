@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pembayaran Denda</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #ECDFCC;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 180px;
+      height: 100%;
+      background-color: #697565;
+      padding: 20px 10px;
+      box-sizing: border-box;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sidebar img {
+      width: 50px;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 12px;
+      color: white;
+      text-decoration: none;
+      margin-bottom: 8px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover, .sidebar .active {
+      background-color: #4f564d;
+      border-radius: 10px;
+    }
+
+    .content {
+      margin-left: 200px;
+      padding: 20px;
+      padding-bottom: 120px;
+    }
+    .navbar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 20px;
+    }
+    .navbar div {
+      margin-left: 25px;
+      cursor: pointer;
+    }
+
+    .navbar i, .navbar button {
+      margin-left: 20px;
+      font-size: 18px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .main-content {
+      margin-left: 150px;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #5f5b58;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 400px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .buttons {
+      text-align: right;
+    }
+
+    .buttons button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .btn-back {
+      background-color: #e0ddd6;
+    }
+
+    .btn-pay {
+      background-color: #b0afa9;
+      color: white;
+    }
+
+    .btn-pay:hover {
+      background-color: #8f8e89;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 150px;
+      right: 0;
+      background-color: #3f3c37;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    footer .left p {
+      margin: 4px 0;
+      font-size: 13px;
+    }
+
+    footer .right i {
+      margin-right: 15px;
+      font-size: 18px;
+      color: #fff;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <img src="logo umc.png" alt="Logo" style="width: 50%; margin-bottom: 25px;">
+    <a href="#">Dashboard</a>
+    <a href="#">Pemesanan</a>
+    <a href="#">Status Peminjaman</a>
+    <a class="active" href="#">Pembayaran</a>
+    <a href="#">Feedback</a>
+  </div>
+
+  <div class="content">
+    <div class="navbar">
+      <div><img src="cart icon.png" alt="Keranjang" width="30"></div>
+      <div><img src="bell icon.png" alt="Notifikasi" width="30"></div>
+      <div><img src="profile icon.png" alt="Profile" width="30"></div>
+    </div>
+
+  <div class="main-content">
+    <h2>PEMBAYARAN DENDA</h2>
+    <div class="form-container">
+      <div class="form-group">
+        <label>Kode Pesanan</label>
+        <input type="text" value="ORD991" disabled>
+      </div>
+      <div class="form-group">
+        <label>Total Denda</label>
+        <input type="text" value="Rp30.000" disabled>
+      </div>
+      <div class="form-group">
+        <label>Metode Pembayaran</label>
+        <select>
+          <option>Pilih Metode</option>
+          <option>Transfer Bank</option>
+          <option>QRIS</option>
+          <option>E-Wallet</option>
+        </select>
+      </div>
+      <div class="buttons">
+        <button class="btn-back">Kembali</button>
+        <button class="btn-pay">Bayar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="left">
+      <strong>Universal Multimedia Creative</strong>
+      <p>PKM L1</p>
+      <p>Universitas Andalas</p>
+      <p>rajaf@unand.ac.id</p>
+      <p>238157982</p>
+    </div>
+    <div class="right">
+      <i class="fab fa-youtube"></i>
+      <i class="fab fa-facebook"></i>
+      <i class="fab fa-twitter"></i>
+      <i class="fab fa-instagram"></i>
+    </div>
+  </footer>
+</body>
+</html>
