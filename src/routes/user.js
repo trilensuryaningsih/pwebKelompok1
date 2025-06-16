@@ -2,29 +2,21 @@ const express = require('express');
 
 const router = express.Router();
 
-// GET all users
-router.get('/', (req, res) => {
-    res.send('Get all users');
+
+router.get('/login', (req, res) => {
+    res.render('login', { errorMessage: null });
 });
 
-// // GET user by ID
-// router.get('/:id', (req, res) => {
-//     res.send(`Get user with ID ${req.params.id}`);
-// });
 
-// // POST create new user
-// router.post('/', (req, res) => {
-//     res.send('Create new user');
-// });
+router.get('/home', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/user');
+    }
+    res.render('home',  { user: req.session.user });
+});
 
-// // PUT update user
-// router.put('/:id', (req, res) => {
-//     res.send(`Update user with ID ${req.params.id}`);
-// });
-
-// // DELETE user
-// router.delete('/:id', (req, res) => {
-//     res.send(`Delete user with ID ${req.params.id}`);
-// });
+router.get('/register', (req, res) => {
+    res.render('register', { errorMessage: null });
+});
 
 module.exports = router;
