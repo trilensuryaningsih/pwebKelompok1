@@ -1,0 +1,294 @@
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>- Pemesanan -</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .bg-custom-dark {
+            background-color: #181C14;
+        }
+
+        .bg-custom-green {
+            background-color: #697565;
+        }
+
+        .bg-custom-green-dark {
+            background-color: #5a6356;
+        }
+
+        .focus\:ring-custom-green:focus {
+            --tw-ring-color: rgba(105, 117, 101, 0.5);
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen bg-[#f5f0e9] ">
+
+    <%- include('../partials/sidebar') %>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <%- include('../partials/header') %>
+
+                <!-- Content -->
+                <section class="grid grid-cols-2 gap-6 flex-1 p-6 flex flex-col ">
+                    <!-- Left column: Items (scrollable) -->
+                    <div class="flex flex-col space-y-6 max-h-[300] overflow-y-auto pr-2">
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input aria-label="Select Kamera Canon" checked="" class="accent-[#7F6D6D] w-5 h-5"
+                                name="item" type="radio" />
+                            <img alt="Black Canon DSLR camera front view" class="w-20 h-15 object-contain" height="60"
+                                src="https://storage.googleapis.com/a1aa/image/cea7916f-c519-49e1-b230-2c247b642f18.jpg"
+                                width="80" />
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7F6D6D]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    Kamera Canon
+                                </span>
+                                <span>
+                                    Kategori :
+                                </span>
+                                <span class="text-right">
+                                    Alat
+                                </span>
+                                <span>
+                                    Harga :
+                                </span>
+                                <span class="text-right">
+                                    Rp 0,-
+                                </span>
+                                <span>
+                                    Jumlah :
+                                </span>
+                                <span class="text-right">
+                                    <select aria-label="Jumlah Kamera Canon"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-12">
+                                        <option>
+                                            1
+                                        </option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input aria-label="Select Jasa Videographer" class="accent-[#7F6D6D] w-5 h-5" name="item"
+                                type="radio" />
+                            <img alt="Silhouette of videographer filming with camera on tripod"
+                                class="w-20 h-15 object-contain" height="60"
+                                src="https://storage.googleapis.com/a1aa/image/0a6ba018-facd-4589-abca-ed036be5f849.jpg"
+                                width="80" />
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7F6D6D]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    Jasa Videographer
+                                </span>
+                                <span>
+                                    Kategori :
+                                </span>
+                                <span class="text-right">
+                                    Jasa
+                                </span>
+                                <span>
+                                    Harga :
+                                </span>
+                                <span class="text-right">
+                                    Rp 30.000,-
+                                </span>
+                                <span>
+                                    Jumlah :
+                                </span>
+                                <span class="text-right">
+                                    <select aria-label="Jumlah Jasa Videographer"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-12">
+                                        <option>
+                                        </option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input aria-label="Select Mic Lavalier" class="accent-[#7F6D6D] w-5 h-5" name="item"
+                                type="radio" />
+                            <img alt="Black Lavalier microphone with clip and cable" class="w-20 h-15 object-contain"
+                                height="60"
+                                src="https://storage.googleapis.com/a1aa/image/f9eb6ec2-586b-4026-1792-4215ad6bef04.jpg"
+                                width="80" />
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7F6D6D]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    Mic Lavalier
+                                </span>
+                                <span>
+                                    Kategori :
+                                </span>
+                                <span class="text-right">
+                                    Barang
+                                </span>
+                                <span>
+                                    Harga :
+                                </span>
+                                <span class="text-right">
+                                    Rp 0,-
+                                </span>
+                                <span>
+                                    Jumlah :
+                                </span>
+                                <span class="text-right">
+                                    <select aria-label="Jumlah Mic Lavalier"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-12">
+                                        <option>
+                                        </option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Additional repeated items to enable scrolling -->
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input aria-label="Select Kamera Canon" class="accent-[#7F6D6D] w-5 h-5" name="item"
+                                type="radio" />
+                            <img alt="Black Canon DSLR camera front view" class="w-20 h-15 object-contain" height="60"
+                                src="https://storage.googleapis.com/a1aa/image/cea7916f-c519-49e1-b230-2c247b642f18.jpg"
+                                width="80" />
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7F6D6D]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    Kamera Canon
+                                </span>
+                                <span>
+                                    Kategori :
+                                </span>
+                                <span class="text-right">
+                                    Alat
+                                </span>
+                                <span>
+                                    Harga :
+                                </span>
+                                <span class="text-right">
+                                    Rp 0,-
+                                </span>
+                                <span>
+                                    Jumlah :
+                                </span>
+                                <span class="text-right">
+                                    <select aria-label="Jumlah Kamera Canon"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-12">
+                                        <option>
+                                            1
+                                        </option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input aria-label="Select Jasa Videographer" class="accent-[#7F6D6D] w-5 h-5" name="item"
+                                type="radio" />
+                            <img alt="Silhouette of videographer filming with camera on tripod"
+                                class="w-20 h-15 object-contain" height="60"
+                                src="https://storage.googleapis.com/a1aa/image/0a6ba018-facd-4589-abca-ed036be5f849.jpg"
+                                width="80" />
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7F6D6D]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    Jasa Videographer
+                                </span>
+                                <span>
+                                    Kategori :
+                                </span>
+                                <span class="text-right">
+                                    Jasa
+                                </span>
+                                <span>
+                                    Harga :
+                                </span>
+                                <span class="text-right">
+                                    Rp 30.000,-
+                                </span>
+                                <span>
+                                    Jumlah :
+                                </span>
+                                <span class="text-right">
+                                    <select aria-label="Jumlah Jasa Videographer"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-12">
+                                        <option>
+                                        </option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input aria-label="Select Mic Lavalier" class="accent-[#7F6D6D] w-5 h-5" name="item"
+                                type="radio" />
+                            <img alt="Black Lavalier microphone with clip and cable" class="w-20 h-15 object-contain"
+                                height="60"
+                                src="https://storage.googleapis.com/a1aa/image/f9eb6ec2-586b-4026-1792-4215ad6bef04.jpg"
+                                width="80" />
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7F6D6D]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    Mic Lavalier
+                                </span>
+                                <span>
+                                    Kategori :
+                                </span>
+                                <span class="text-right">
+                                    Barang
+                                </span>
+                                <span>
+                                    Harga :
+                                </span>
+                                <span class="text-right">
+                                    Rp 0,-
+                                </span>
+                                <span>
+                                    Jumlah :
+                                </span>
+                                <span class="text-right">
+                                    <select aria-label="Jumlah Mic Lavalier"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-12">
+                                        <option>
+                                        </option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right column: Dates and total with Tanggal Peminjaman on right, stacked top and bottom -->
+                    <div class="bg-white rounded-xl p-6 flex flex-col space-y-6 max-w-lg">
+                        <div class="flex flex-col space-y-6">
+                            <div>
+                                <h2 class="text-[#7F6D6D] font-semibold mb-2">
+                                    Tanggal Pengembalian
+                                </h2>
+                                <div class="flex items-center bg-[#D9D0C7] rounded px-3 py-1 text-xs text-[#7F6D6D]">
+                                    <span class="flex-1">
+                                        13/06/2025
+                                    </span>
+                                    <i class="far fa-calendar-alt">
+                                    </i>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="text-[#7F6D6D] font-semibold mb-2">
+                                    Tanggal Peminjaman
+                                </h2>
+                                <div class="flex items-center bg-[#D9D0C7] rounded px-3 py-1 text-xs text-[#7F6D6D]">
+                                    <span class="flex-1">
+                                        08/06/2025
+                                    </span>
+                                    <i class="far fa-calendar-alt">
+                                    </i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-[#7F6D6D] font-extrabold text-lg">
+                            TOTAL Rp 30.000
+                        </div>
+                        <button
+                            class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]"
+                            type="button">
+                            Pesan
+                        </button>
+                    </div>
+                </section>
+                <%- include('../partials/footer') %>
+        </div>
+</body>
+
+</html>
