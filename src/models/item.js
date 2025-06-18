@@ -18,11 +18,13 @@ module.exports = (sequelize, DataTypes) => {
     kategori: DataTypes.STRING,
     deskripsi: DataTypes.STRING,
     status: DataTypes.STRING,
+    harga: DataTypes.INTEGER,
     jumlah: DataTypes.INTEGER,
     foto: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'item',
+    tableName: 'items'
   });
   return item;
 };

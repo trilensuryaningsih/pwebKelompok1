@@ -1,56 +1,58 @@
-
 // controllers/admin/edit.js
 
-const { item } = require('../../models'); // Sesuaikan path jika perlu
+// PERBAIKAN: Impor modul 'fs' dan 'path' untuk menghapus file
+const fs = require('fs');
+const path = require('path');
 
-// 1. FUNGSI UNTUK MENAMPILKAN HALAMAN EDIT
+const { items } = require('../../models');
+
+// 1. FUNGSI UNTUK MENAMPILKAN HALAMAN EDIT (Sudah Benar)
 exports.edit = async (req, res) => {
   try {
-    // Ambil SEMUA item untuk ditampilkan di dropdown "Pilih item"
-    const items = await item.findAll({
-      order: [['nama', 'ASC']] // Urutkan berdasarkan nama agar mudah dicari
+    const allItems = await items.findAll({
+      order: [['nama', 'ASC']]
     });
-    
-    // Render halaman edit dan kirim data 'items' ke sana
-    res.render('admin/edit', { items: items });
+
+    // Kirim juga req.query agar notifikasi bisa tampil di halaman edit
+    // jika Anda tetap memilih redirect ke halaman ini
+    res.render('admin/edit', { items: allItems, query: req.query });
+
   } catch (error) {
-    console.error(error);
+    console.error("Gagal memuat halaman edit:", error);
     res.status(500).send('Gagal memuat halaman edit.');
   }
 };
 
-// 2. FUNGSI API UNTUK MENGAMBIL DETAIL SATU ITEM
+// 2. FUNGSI API (Sudah Benar)
 exports.getitemDetails = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const selecteditem = await item.findByPk(itemId);
-    
+    const selecteditem = await items.findByPk(itemId);
     if (!selecteditem) {
       return res.status(404).json({ message: 'Item tidak ditemukan' });
     }
-    
-    // Kirim detail item sebagai response JSON
     res.json(selecteditem);
   } catch (error) {
-    console.error(error);
+    console.error("Gagal mengambil detail item:", error);
     res.status(500).json({ message: 'Gagal mengambil detail item' });
   }
 };
 
-
-// 3. FUNGSI UNTUK MENYIMPAN PERUBAHAN (UPDATE)
+// 3. FUNGSI UNTUK MENYIMPAN PERUBAHAN (UPDATE) - DENGAN PERBAIKAN
 exports.updateitem = async (req, res) => {
   try {
     const itemId = req.params.id;
     const { nama, kategori, deskripsi, status, jumlah } = req.body;
 
-    // Cari item yang akan diupdate
-    const itemToUpdate = await item.findByPk(itemId);
+    const itemToUpdate = await items.findByPk(itemId);
     if (!itemToUpdate) {
       return res.status(404).send('Item yang akan diupdate tidak ditemukan.');
     }
 
-    // Update field-fieldnya dengan data baru dari form
+    // Simpan nama file foto lama sebelum di-update
+    const oldFoto = itemToUpdate.foto;
+
+    // Update field-fieldnya
     itemToUpdate.nama = nama;
     itemToUpdate.kategori = kategori;
     itemToUpdate.deskripsi = deskripsi;
@@ -60,15 +62,24 @@ exports.updateitem = async (req, res) => {
     // Cek jika ada file foto baru yang di-upload
     if (req.file) {
       itemToUpdate.foto = req.file.filename;
-      
-      // Optional: tambahkan logika untuk menghapus foto lama dari server
+
+      // PERBAIKAN: Hapus file foto lama jika ada
+      if (oldFoto) {
+        const oldFotoPath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', oldFoto);
+        // Gunakan fs.unlink untuk menghapus file. Pakai try-catch untuk jaga-jaga jika file tidak ada
+        try {
+          fs.unlinkSync(oldFotoPath);
+          console.log(`Successfully deleted old image: ${oldFotoPath}`);
+        } catch (unlinkErr) {
+          console.error(`Error deleting old image: ${unlinkErr.message}`);
+        }
+      }
     }
 
-    // Simpan perubahan ke database
     await itemToUpdate.save();
 
-    // Redirect ke halaman daftar untuk melihat hasilnya
-    res.redirect('/admin/daftar');
+    // PERBAIKAN: Redirect ke halaman daftar agar pengguna bisa melihat perubahannya
+    res.redirect('/admin/edit?update=success');
 
   } catch (error) {
     console.error('Gagal mengupdate item:', error);

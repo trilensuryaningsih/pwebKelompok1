@@ -44,7 +44,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/', require('./src/routes/admin'));
+app.use('/', require('./src/routes/auth.routes.js'));
 app.use('/admin', require('./src/routes/admin'));
 app.use('/daftar', require('./src/routes/admin'));
 app.use('/tambah', require('./src/routes/admin'));
