@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manajemen Alat dan Jasa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#eee7dc] text-[#695f59] min-h-screen flex flex-col">
+  <div class="flex flex-1 w-full max-w-[1440px] mx-auto">
+    <aside class="w-[220px] bg-[#7e8678] flex flex-col p-6 text-[#cdc8c0] select-none">
+      <a href="#" class="w-10 h-10 mb-9" aria-label="Logo Universal Multimedia Creative">
+          <svg viewBox="0 0 32 32" class="w-full h-full fill-[#363d37]">
+            <path d="M5 4 L25 4 L17 13 L25 22 L5 22 Z" />
+          </svg>
+        </a>
+        <nav class="flex flex-col gap-4 flex-grow">
+          <a href="#" class="px-4 py-2 rounded-xl font-medium text-center hover:bg-[#565f54] hover:text-[#e7e0d9]">Dashboard</a>
+          <a href="/admin/daftar" class="px-4 py-2 rounded-xl font-medium text-center bg-[#565f54] text-[#e7e0d9]">Manajeman Alat dan jasa</a>
+          <a href="#" class="px-4 py-2 rounded-xl font-medium text-center hover:bg-[#565f54] hover:text-[#e7e0d9]">Verifikasi peminjaman</a>
+          <a href="#" class="px-4 py-2 rounded-xl font-medium text-center hover:bg-[#565f54] hover:text-[#e7e0d9]">Pesanan</a>
+          <a href="#" class="px-4 py-2 rounded-xl font-medium text-center hover:bg-[#565f54] hover:text-[#e7e0d9]">Feedback</a>
+        </nav>
+    </aside>
+
+    <main class="flex-grow flex flex-col justify-between bg-[#eee7dc] min-h-screen px-12 py-10">
+      <header class="flex justify-end items-center gap-6 pb-2 border-b border-[#9c978b]">
+        <button class="bg-[#cfc6b8] rounded-full w-9 h-9 flex items-center justify-center text-[#554e45] text-[20px] hover:bg-[#a69d87] hover:text-[#3e3a2e]">
+            <span class="material-icons">notifications</span>
+          </button>
+          <button class="bg-[#d2c6b4] text-[#5f564a] font-semibold text-base py-2 px-5 rounded-xl hover:bg-[#b7a994] hover:text-[#413c31]">Admin</button>
+          <button class="bg-[#cfc6b8] rounded-full w-9 h-9 flex items-center justify-center text-[#554e45] text-[20px] hover:bg-[#a69d87] hover:text-[#3e3a2e]">
+            <span class="material-icons">account_circle</span>
+          </button>
+      </header>
+
+      <section>
+        <div class="bg-white rounded-2xl px-12 py-9 mt-10 shadow-[0_4px_12px_rgba(119,109,94,0.12)] max-w-[900px] w-full self-center">
+          <div class="mb-6 flex flex-wrap items-center gap-3 font-semibold text-[#72675e]">
+            <label for="item-selector">Pilih item untuk diedit</label>
+            <select id="item-selector" name="itemSelect" class="bg-[#e1d6c4] rounded-lg px-3 py-2 min-w-[220px] font-semibold text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="">-- Pilih alat atau jasa --</option>
+              <% items.forEach(item => { %>
+                <option value="<%= item.id %>"><%= item.nama %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <form id="edit-form" method="POST" enctype="multipart/form-data" class="grid grid-cols-2 gap-y-5 gap-x-16 font-semibold text-[#72675e] text-sm">
+            <label for="nama">Nama alat atau jasa</label>
+            <input type="text" id="nama" name="nama" required class="col-span-1 bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]" />
+
+            <label for="status">Status</label>
+            <select id="status" name="status" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="" disabled>Pilih status</option>
+              <option value="Tersedia">Tersedia</option>
+              <option value="Dipinjam">Dipinjam</option>
+              <option value="Perbaikan">Dalam Perbaikan</option>
+            </select>
+
+            <label for="kategori">Kategori</label>
+            <select id="kategori" name="kategori" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="" disabled>Pilih kategori</option>
+              <option value="Alat">Alat</option>
+              <option value="Jasa">Jasa</option>
+            </select>
+
+            <label for="jumlah">Jumlah</label>
+            <input type="number" id="jumlah" name="jumlah" min="0" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]" />
+
+            <label for="deskripsi">Deskripsi</label>
+            <input type="text" id="deskripsi" name="deskripsi" class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c]" />
+
+            <label for="foto">Foto</label>
+            <input type="file" id="foto" name="foto" class="bg-[#e1d6c4] rounded-lg px-2 py-1 text-[#6e5e4b]" />
+
+            <button type="submit" id="simpan-button" class="col-span-2 mt-8 border-2 border-[#554e45] rounded-full px-12 py-2 font-bold text-[#554e45] hover:bg-[#554e45] hover:text-[#eee7dc]" disabled>Simpan</button>
+          </form>
+        </div>
+      </section>
+
+      <footer class="bg-[#46473e] text-[#e1d6c4] p-5 mt-auto">
+        </footer>
+    </main>
+  </div>
+
+  <script>
+    // 1. Ambil semua elemen penting dari halaman
+    const itemSelector = document.getElementById('item-selector');
+    const editForm = document.getElementById('edit-form');
+    const simpanButton = document.getElementById('simpan-button');
+
+    // Ambil semua input di dalam form
+    const namaInput = document.getElementById('nama');
+    const statusInput = document.getElementById('status');
+    const kategoriInput = document.getElementById('kategori');
+    const jumlahInput = document.getElementById('jumlah');
+    const deskripsiInput = document.getElementById('deskripsi');
+    const fotoInput = document.getElementById('foto');
+
+    // 2. Tambahkan event listener ke dropdown utama
+    itemSelector.addEventListener('change', async (event) => {
+      const selectedId = event.target.value;
+
+      // Jika user memilih opsi default, reset dan disable form
+      if (!selectedId) {
+        editForm.action = '';
+        editForm.reset(); // Mengosongkan form
+        simpanButton.disabled = true;
+        return;
+      }
+
+      try {
+        // 3. Panggil API untuk dapat detail item
+        const response = await fetch(`/admin/api/item/${selectedId}`);
+        if (!response.ok) throw new Error('Gagal mengambil data item.');
+        const itemData = await response.json();
+
+        // 4. Isi semua field form dengan data yang didapat
+        namaInput.value = itemData.nama || '';
+        statusInput.value = itemData.status || '';
+        kategoriInput.value = itemData.kategori || '';
+        jumlahInput.value = itemData.jumlah || 0;
+        deskripsiInput.value = itemData.deskripsi || '';
+        
+        // 5. Update 'action' pada form agar mengirim ke ID yang benar
+        editForm.action = `/admin/edit/${selectedId}`;
+
+        // 6. Aktifkan tombol simpan
+        simpanButton.disabled = false;
+
+      } catch (error) {
+        console.error(error);
+        alert('Tidak dapat memuat data item. Coba lagi.');
+        simpanButton.disabled = true;
+      }
+    });
+  </script>
+
+</body>
+</html>
