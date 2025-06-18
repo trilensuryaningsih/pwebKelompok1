@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -20,7 +20,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       itemType: {
-        type: Sequelize.ENUM('tool', 'service'),
+        type: Sequelize.ENUM('item', 'service'),
         allowNull: false
       },
       itemId: {

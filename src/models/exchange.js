@@ -11,14 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Exchange Relations
-      Exchange.belongsTo(models.User, { foreignKey: 'userId' });
-      Exchange.belongsTo(models.Tool, { foreignKey: 'toolId' });
+      Exchange.belongsTo(models.User, { foreignKey: 'user_id' });
+      Exchange.belongsTo(models.Item, { foreignKey: 'itemId' });
       Exchange.belongsTo(models.User, { foreignKey: 'verifiedBy', as: 'Verifier' });
     }
   }
   Exchange.init({
-    userId: DataTypes.INTEGER,
-    toolId: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER,
+    itemId: DataTypes.INTEGER,
     reason: DataTypes.TEXT,
     photoProof: DataTypes.STRING,
     status: DataTypes.ENUM('pending', 'approved', 'rejected', 'completed'),

@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Notification Relations
-      Notification.belongsTo(models.User, { foreignKey: 'userId' });
+      Notification.belongsTo(models.User, { foreignKey: 'user_id' });
       Notification.belongsTo(models.User, { foreignKey: 'sentBy', as: 'Sender' });
     }
   }
   Notification.init({
-    userId: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER,
     title: DataTypes.STRING,
     message: DataTypes.TEXT,
     type: DataTypes.ENUM('order', 'payment', 'fine', 'system', 'reminder'),

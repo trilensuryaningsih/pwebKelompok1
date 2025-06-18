@@ -11,15 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Order Relations
-      Order.belongsTo(models.User, { foreignKey: 'userId' });
+      Order.belongsTo(models.User, { foreignKey: 'user_id' });
+      Order.belongsTo(models.Item, { foreignKey: 'itemId', constraints: false });
+      Order.belongsTo(models.Service, { foreignKey: 'itemId', constraints: false });
       Order.hasMany(models.Payment, { foreignKey: 'orderId' });
       Order.hasMany(models.Fine, { foreignKey: 'orderId' });
       Order.hasMany(models.Feedback, { foreignKey: 'orderId' });
     }
   }
   Order.init({
-    userId: DataTypes.INTEGER,
-    itemType: DataTypes.ENUM('tool', 'service'),
+    user_id: DataTypes.INTEGER,
+    itemType: DataTypes.ENUM('item', 'service'),
     itemId: DataTypes.INTEGER,
     quantity: DataTypes.INTEGER,
     startDate: DataTypes.DATE,

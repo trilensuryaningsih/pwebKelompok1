@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Feedback Relations
-      Feedback.belongsTo(models.User, { foreignKey: 'userId' });
+      Feedback.belongsTo(models.User, { foreignKey: 'user_id' });
       Feedback.belongsTo(models.Order, { foreignKey: 'orderId' });
     }
   }
   Feedback.init({
-    userId: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER,
     orderId: DataTypes.INTEGER,
     rating: DataTypes.INTEGER,
     comment: DataTypes.TEXT,

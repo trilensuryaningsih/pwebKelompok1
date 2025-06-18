@@ -11,23 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // User Relations
-      User.hasMany(models.Order, { foreignKey: 'userId' });
-      User.hasMany(models.Notification, { foreignKey: 'userId' });
-      User.hasMany(models.Feedback, { foreignKey: 'userId' });
+      User.hasMany(models.Order, { foreignKey: 'user_id' });
+      User.hasMany(models.Notification, { foreignKey: 'user_id' });
+      User.hasMany(models.Feedback, { foreignKey: 'user_id' });
       User.hasMany(models.Repair, { foreignKey: 'requestedBy' });
       User.hasMany(models.Repair, { foreignKey: 'verifiedBy' });
-      User.hasMany(models.Exchange, { foreignKey: 'userId' });
+      User.hasMany(models.Exchange, { foreignKey: 'user_id' });
       User.hasMany(models.Exchange, { foreignKey: 'verifiedBy' });
     }
   }
   User.init({
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
+    name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     role: DataTypes.ENUM('admin', 'user', 'pj'),
-    phone: DataTypes.STRING,
-    isActive: DataTypes.BOOLEAN
+    phone_number: DataTypes.STRING,
+    is_active: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'User',

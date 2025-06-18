@@ -34,8 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const routerUser = require ("./src/routes/user.js");
 app.use('/user', routerUser);
-app.use('/', require('./src/routes/auth.routes.js'));
-
+app.use('/auth', authRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.use(logger('dev'));

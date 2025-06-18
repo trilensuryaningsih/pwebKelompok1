@@ -9,11 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      lastName: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -30,10 +26,10 @@ module.exports = {
         type: Sequelize.ENUM('admin', 'user', 'pj'),
         defaultValue: 'user'
       },
-      phone: {
+      phone_number: {
         type: Sequelize.STRING
       },
-      isActive: {
+      is_active: {
         type: Sequelize.BOOLEAN,
         defaultValue: true
       },
