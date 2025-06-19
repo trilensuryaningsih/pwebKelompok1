@@ -31,6 +31,6 @@ router.post('/register', authController.register);
 router.post('/logout', authController.logout);
 
 router.get('/', (req, res) => {
-    res.render('login', { errorMessage: null });
+    res.render('auth/login', { errorMessage: null });
 });
 module.exports = router;

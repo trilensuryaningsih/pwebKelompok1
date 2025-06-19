@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     requestedBy: DataTypes.INTEGER,
     verifiedBy: DataTypes.INTEGER,
     reason: DataTypes.TEXT,
+    notes: DataTypes.TEXT,
     status: DataTypes.ENUM('pending', 'approved', 'rejected', 'in_progress', 'completed'),
     requestDate: DataTypes.DATE,
     verificationDate: DataTypes.DATE

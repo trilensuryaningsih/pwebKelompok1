@@ -9,17 +9,11 @@ const { items } = require('../../models');
 // 1. FUNGSI UNTUK MENAMPILKAN HALAMAN EDIT (Sudah Benar)
 exports.edit = async (req, res) => {
   try {
-    const allItems = await items.findAll({
-      order: [['nama', 'ASC']]
-    });
-
-    // Kirim juga req.query agar notifikasi bisa tampil di halaman edit
-    // jika Anda tetap memilih redirect ke halaman ini
-    res.render('admin/edit', { items: allItems, query: req.query });
-
+    const items = await items.findAll();
+    res.render('admin/items/edit', { items });
   } catch (error) {
-    console.error("Gagal memuat halaman edit:", error);
-    res.status(500).send('Gagal memuat halaman edit.');
+    console.error('Error fetching items:', error);
+    res.status(500).send('Error fetching items');
   }
 };
 

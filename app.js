@@ -50,6 +50,7 @@ app.use('/daftar', require('./src/routes/admin'));
 app.use('/tambah', require('./src/routes/admin'));
 app.use('/hapus', require('./src/routes/admin'));
 app.use('/edit', require('./src/routes/admin'));
+app.use('/pj', require('./src/routes/pj'));
 
 
 // app setting

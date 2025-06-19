@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Jasa - PJ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="flex">
+    <%- include('../../partials/pj/sidebar') %>
+    
+    <div class="flex-1 p-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="mb-6">
+          <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Detail Jasa</h1>
+            <a href="/pj/services" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              ← Kembali ke Daftar Jasa
+            </a>
+          </div>
+        </div>
+
+        <% if (typeof service !== 'undefined') { %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Service Information -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <div class="flex items-center mb-4">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                  <span class="material-icons text-2xl">miscellaneous_services</span>
+                </div>
+                <div>
+                  <h2 class="text-xl font-semibold text-gray-900"><%= service.name %></h2>
+                  <p class="text-sm text-gray-500">ID: <%= service.id %></p>
+                </div>
+              </div>
+              
+              <div class="space-y-4">
+                <div>
+                  <label class="text-sm font-medium text-gray-600">Kategori:</label>
+                  <p class="text-gray-900 font-medium"><%= service.category %></p>
+                </div>
+                
+                <div>
+                  <label class="text-sm font-medium text-gray-600">Deskripsi:</label>
+                  <p class="text-gray-700 leading-relaxed mt-1">
+                    <%= service.description %>
+                  </p>
+                </div>
+                
+                <% if (service.price) { %>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Harga:</label>
+                    <p class="text-gray-900 font-medium">Rp <%= service.price.toLocaleString('id-ID') %></p>
+                  </div>
+                <% } %>
+                
+                <% if (service.duration) { %>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Durasi:</label>
+                    <p class="text-gray-900"><%= service.duration %></p>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4">Informasi Tambahan</h3>
+              
+              <div class="space-y-4">
+                <% if (service.requirements) { %>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Persyaratan:</label>
+                    <p class="text-gray-700 mt-1"><%= service.requirements %></p>
+                  </div>
+                <% } %>
+                
+                <% if (service.notes) { %>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Catatan:</label>
+                    <p class="text-gray-700 mt-1"><%= service.notes %></p>
+                  </div>
+                <% } %>
+                
+                <div>
+                  <label class="text-sm font-medium text-gray-600">Status:</label>
+                  <p class="text-gray-900">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Tersedia
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="text-center py-8">
+            <span class="material-icons text-gray-400 text-4xl mb-2">error</span>
+            <p class="text-gray-500">Jasa tidak ditemukan</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

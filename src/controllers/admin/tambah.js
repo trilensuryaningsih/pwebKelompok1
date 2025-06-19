@@ -5,7 +5,7 @@ const { items } = require('../../models');
 
 // Fungsi render halaman tambah (ini sudah benar)
 exports.tambah = (req, res) => {
-  res.render('admin/tambah');
+  res.render('admin/items/create');
 };
 
 // Fungsi untuk handle post data
