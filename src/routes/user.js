@@ -64,11 +64,11 @@ router.post('/pemesanan', async (req, res) => {
         if (pinjamDate < today) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Tanggal peminjaman tidak boleh kurang dari hari ini' 
+                message: 'Tanggal peminjaman tidak valid' 
             });
         }
 
-        if (kembaliDate <= pinjamDate) {
+        if (kembaliDate <= pinjamDate ) {
             return res.status(400).json({ 
                 success: false, 
                 message: 'Tanggal pengembalian harus setelah tanggal peminjaman' 
