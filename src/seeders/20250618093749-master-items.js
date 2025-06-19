@@ -13,6 +13,8 @@ module.exports = {
         price: 50000.00,
         quantity: 5,
         photo: 'laptop-dell.jpg',
+        location: 'Gudang A',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -24,6 +26,8 @@ module.exports = {
         price: 75000.00,
         quantity: 3,
         photo: 'proyektor-epson.jpg',
+        location: 'Gudang A',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -35,6 +39,8 @@ module.exports = {
         price: 25000.00,
         quantity: 8,
         photo: 'speaker-jbl.jpg',
+        location: 'Gudang B',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -46,6 +52,8 @@ module.exports = {
         price: 100000.00,
         quantity: 2,
         photo: 'kamera-canon.jpg',
+        location: 'Gudang A',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -59,6 +67,8 @@ module.exports = {
         price: 15000.00,
         quantity: 10,
         photo: 'papan-tulis.jpg',
+        location: 'Gudang C',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -70,6 +80,8 @@ module.exports = {
         price: 20000.00,
         quantity: 6,
         photo: 'flipchart.jpg',
+        location: 'Gudang C',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -81,6 +93,8 @@ module.exports = {
         price: 35000.00,
         quantity: 4,
         photo: 'printer-hp.jpg',
+        location: 'Gudang A',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -94,6 +108,8 @@ module.exports = {
         price: 5000.00,
         quantity: 15,
         photo: 'bola-basket.jpg',
+        location: 'Gudang D',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -105,6 +121,8 @@ module.exports = {
         price: 4000.00,
         quantity: 12,
         photo: 'bola-voli.jpg',
+        location: 'Gudang D',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -116,6 +134,8 @@ module.exports = {
         price: 8000.00,
         quantity: 8,
         photo: 'net-badminton.jpg',
+        location: 'Gudang D',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -129,6 +149,8 @@ module.exports = {
         price: 120000.00,
         quantity: 3,
         photo: 'mikroskop.jpg',
+        location: 'Lab Biologi',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -140,6 +162,8 @@ module.exports = {
         price: 15000.00,
         quantity: 10,
         photo: 'multimeter.jpg',
+        location: 'Lab Fisika',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -153,6 +177,8 @@ module.exports = {
         price: 30000.00,
         quantity: 6,
         photo: 'microphone.jpg',
+        location: 'Gudang B',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -164,6 +190,8 @@ module.exports = {
         price: 12000.00,
         quantity: 5,
         photo: 'tripod.jpg',
+        location: 'Gudang B',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -177,6 +205,8 @@ module.exports = {
         price: 45000.00,
         quantity: 1,
         photo: 'laptop-hp.jpg',
+        location: 'Bengkel',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -188,6 +218,8 @@ module.exports = {
         price: 25000.00,
         quantity: 1,
         photo: 'scanner-canon.jpg',
+        location: 'Bengkel',
+        type: 'tool',
         createdAt: new Date(),
         updatedAt: new Date()
       }

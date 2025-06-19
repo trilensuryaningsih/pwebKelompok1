@@ -5,6 +5,7 @@ const repairControllers = require('../controllers/pj/repair');
 const indexControllers = require('../controllers/pj/index');
 const itemsControllers = require('../controllers/pj/items');
 const servicesControllers = require('../controllers/pj/services');
+const reportsControllers = require('../controllers/pj/reports');
 
 // Apply authentication middleware to all PJ routes
 router.use(requireAuth);
@@ -28,5 +29,8 @@ router.get('/items/:id', itemsControllers.showItemDetail);
 // Routes untuk melihat jasa oleh PJ
 router.get('/services', servicesControllers.showServices);
 router.get('/services/:id', servicesControllers.showServiceDetail);
+
+// Routes untuk generate laporan
+router.get('/reports/generate', reportsControllers.generateReport);
 
 module.exports = router; 

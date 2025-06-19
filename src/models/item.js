@@ -24,10 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     category: DataTypes.STRING,
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    status: DataTypes.ENUM('available', 'maintenance', 'damaged', 'lost'),
+    status: DataTypes.ENUM('available', 'maintenance', 'damaged', 'lost', 'borrowed'),
     price: DataTypes.DECIMAL,
     quantity: DataTypes.INTEGER,
     photo: DataTypes.STRING,
+    location: DataTypes.STRING,
+    type: DataTypes.ENUM('tool', 'service'),
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

@@ -39,7 +39,7 @@
                 <span class="material-icons text-2xl">pending</span>
               </div>
               <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600">Menunggu Verifikasi</p>
+                <p class="text-sm font-medium text-gray-600">Pengajuan Perbaikan </p>
                 <p class="text-2xl font-semibold text-gray-900"><%= stats ? stats.pending : 0 %></p>
               </div>
             </div>
@@ -67,7 +67,7 @@
                 <span class="material-icons">build</span>
               </div>
               <div>
-                <h3 class="font-medium text-gray-900">Verifikasi Perbaikan</h3>
+                <h3 class="font-medium text-gray-900">Verifikasi Pengajuan Perbaikan</h3>
                 <p class="text-sm text-gray-600">Kelola dan verifikasi pengajuan perbaikan alat</p>
               </div>
             </a>
@@ -81,6 +81,57 @@
                 <p class="text-sm text-gray-600">Lihat dan kelola data alat</p>
               </div>
             </a>
+          </div>
+        </div>
+
+        <!-- Generate Report Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-xl font-semibold text-gray-900">Generate Laporan</h2>
+              <p class="text-gray-600 mt-1">Download laporan lengkap data alat, jasa, dan perbaikan</p>
+            </div>
+            <a 
+              href="/pj/reports/generate" 
+              class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center transition-colors"
+            >
+              <span class="material-icons mr-2">download</span>
+              Generate & Download PDF
+            </a>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <div class="flex items-center">
+                <span class="material-icons text-blue-600 mr-2">inventory</span>
+                <span class="font-medium">Data Alat</span>
+              </div>
+              <p class="text-gray-600 mt-1">Daftar lengkap alat dengan status</p>
+            </div>
+            
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <div class="flex items-center">
+                <span class="material-icons text-green-600 mr-2">miscellaneous_services</span>
+                <span class="font-medium">Data Jasa</span>
+              </div>
+              <p class="text-gray-600 mt-1">Daftar jasa yang tersedia di UMC</p>
+            </div>
+            
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <div class="flex items-center">
+                <span class="material-icons text-orange-600 mr-2">pending</span>
+                <span class="font-medium">Pengajuan Perbaikan</span>
+              </div>
+              <p class="text-gray-600 mt-1">Daftar pengajuan yang menunggu verifikasi</p>
+            </div>
+            
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <div class="flex items-center">
+                <span class="material-icons text-green-600 mr-2">check_circle</span>
+                <span class="font-medium">Perbaikan Selesai</span>
+              </div>
+              <p class="text-gray-600 mt-1">Riwayat perbaikan yang telah selesai</p>
+            </div>
           </div>
         </div>
 

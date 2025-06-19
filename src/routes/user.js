@@ -2,16 +2,23 @@ const express = require('express');
 const barangController = require('../controllers/user/barang');
 const ordersController = require('../controllers/user/orders');
 const { requireAuth } = require('../middleware/auth');
+const { Item, Service } = require('../models');
 
 const router = express.Router();
 
 
 
-router.get('/home', (req, res) => {
+router.get('/home', async (req, res) => {
     if (!req.session.user) {
         return res.redirect('/user');
     }
-    res.render('home', { user: req.session.user });
+    try {
+        const items = await Item.findAll({ where: { status: 'available' }, order: [['name', 'ASC']] });
+        const services = await Service.findAll({ order: [['name', 'ASC']] });
+        res.render('user/home', { items, services, user: req.session.user });
+    } catch (err) {
+        res.status(500).send('Gagal memuat data.');
+    }
 });
 
 
@@ -139,7 +146,6 @@ router.get('/api/orders/stats', ordersController.getOrderStats);
 // API Routes for Items and Services
 router.get('/api/items', async (req, res) => {
     try {
-        const { Item } = require('../models');
         const items = await Item.findAll({
             order: [['id', 'ASC']]
         });
@@ -152,7 +158,6 @@ router.get('/api/items', async (req, res) => {
 
 router.get('/api/services', async (req, res) => {
     try {
-        const { Service } = require('../models');
         const services = await Service.findAll({
             order: [['id', 'ASC']]
         });
