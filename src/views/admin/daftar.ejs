@@ -95,33 +95,45 @@
                   <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Nama</th>
                   <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Kategori</th>
                   <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Deskripsi</th>
+                  <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Harga</th>
                   <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Aksi</th>
                 </tr>
               </thead>
               <tbody class="bg-brand-beige text-brand-brown">
-                <% if (typeof items !== 'undefined' && items.length > 0) { %>
-                  <% items.forEach((item, index) => { %>
-                    <tr id="item-row-<%= item.id %>" class="border-b border-brand-brown-light">
-                      <td class="row-number p-4 px-3 align-middle font-bold text-sm"><%= index + 1 %></td>
-                      <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.nama %></td>
-                      <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.kategori %></td>
-                      <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.deskripsi %></td>
-                    
-                      
-                      <td class="p-4 px-3 align-middle text-center">
-                        <button type="button" class="delete-button text-red-500 hover:text-red-700 transition-colors cursor-pointer" data-id="<%= item.id %>" data-nama="<%= item.nama %>">
-        <span class="material-icons text-xl">delete</span>
-      </button>
-                        </a>
-                      </td>
-                    </tr>
-                  <% }) %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="7" class="text-center p-5">Tidak ada data untuk ditampilkan.</td>
-                  </tr>
-                <% } %>
-              </tbody>
+  <% if (typeof items !== 'undefined' && items.length > 0) { %>
+    <% items.forEach((item, index) => { %>
+      <tr id="item-row-<%= item.id %>" class="border-b border-brand-brown-light">
+        <td class="p-4 px-3 align-middle font-bold text-sm"><%= index + 1 %></td>
+        <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.nama %></td>
+        <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.kategori %></td>
+        <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.deskripsi %></td>
+
+        <td class="p-4 px-3 align-middle font-bold text-sm">
+          <% if (item.kategori === 'jasa') { %>
+            Rp <%= item.harga.toLocaleString('id-ID') %>
+          <% } else { %>
+            -
+          <% } %>
+        </td>
+
+        <td class="p-4 px-3 align-middle text-center">
+          <button 
+            type="button" 
+            class="delete-button text-red-500 hover:text-red-700 transition-colors cursor-pointer" 
+            data-id="<%= item.id %>" 
+            data-nama="<%= item.nama %>">
+            <span class="material-icons text-xl">delete</span>
+          </button>
+        </td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+    <tr>
+      <td colspan="7" class="text-center p-5">Tidak ada data untuk ditampilkan.</td>
+    </tr>
+  <% } %>
+</tbody>
+
             </table>
         </div>
       </main>
@@ -179,6 +191,9 @@
               timer: 2000,
               showConfirmButton: false,
             });
+            setTimeout(() => {
+      location.reload(); // Perintah untuk refresh halaman
+    }, 2000); 
             
             // 4. Hapus baris dari tabel dengan animasi
             const row = document.getElementById(`item-row-${itemId}`);
@@ -186,6 +201,7 @@
               row.classList.add('row-fade-out');
               setTimeout(() => row.remove(), 500); 
             }
+
           })
           .catch(error => {
             // Tampilkan notifikasi gagal

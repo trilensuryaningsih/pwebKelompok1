@@ -4,12 +4,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const { items } = require('../../models');
+const { item } = require('../../models');
 
 // 1. FUNGSI UNTUK MENAMPILKAN HALAMAN EDIT (Sudah Benar)
 exports.edit = async (req, res) => {
   try {
-    const allItems = await items.findAll({
+    const allItems = await item.findAll({
       order: [['nama', 'ASC']]
     });
 
@@ -27,7 +27,7 @@ exports.edit = async (req, res) => {
 exports.getitemDetails = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const selecteditem = await items.findByPk(itemId);
+    const selecteditem = await item.findByPk(itemId);
     if (!selecteditem) {
       return res.status(404).json({ message: 'Item tidak ditemukan' });
     }
@@ -42,9 +42,9 @@ exports.getitemDetails = async (req, res) => {
 exports.updateitem = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const { nama, kategori, deskripsi, status, jumlah } = req.body;
+    const { nama, kategori, deskripsi, status, harga, jumlah } = req.body;
 
-    const itemToUpdate = await items.findByPk(itemId);
+    const itemToUpdate = await item.findByPk(itemId);
     if (!itemToUpdate) {
       return res.status(404).send('Item yang akan diupdate tidak ditemukan.');
     }
@@ -56,8 +56,10 @@ exports.updateitem = async (req, res) => {
     itemToUpdate.nama = nama;
     itemToUpdate.kategori = kategori;
     itemToUpdate.deskripsi = deskripsi;
-    itemToUpdate.status = status;
+    itemToUpdate.status = status; 
+    itemToUpdate.harga = kategori === 'jasa' ? parseInt(harga) : null;
     itemToUpdate.jumlah = parseInt(jumlah);
+
 
     // Cek jika ada file foto baru yang di-upload
     if (req.file) {

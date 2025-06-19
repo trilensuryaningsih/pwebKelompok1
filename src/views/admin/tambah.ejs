@@ -90,7 +90,7 @@
                         <div>
                             <label class="block text-gray-600 text-sm mb-2">Kategori</label>
                             <div class="relative">
-                                <select name="kategori" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                                <select id="kategori" name="kategori" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
                                     <option value=""></option>
                                     <option value="alat">Alat</option>
                                     <option value="jasa">Jasa</option>
@@ -130,6 +130,10 @@
                             <label class="block text-gray-600 text-sm mb-2">Jumlah</label>
                             <input name="jumlah" type="number" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
                         </div>
+                        <div class="mb-4">
+  <label for="harga" class="block text-sm font-medium text-gray-700">Harga (khusus untuk jasa)</label>
+  <input type="number" name="harga" id="harga" class="mt-1 p-2 w-full border rounded-md" placeholder="Harga hanya untuk jasa" disabled>
+</div>
                         
                         <div>
                             <label class="block text-gray-600 text-sm mb-2">Foto</label>
@@ -220,6 +224,23 @@
     }, 3000);
   }
 </script>
+
+<script>
+  const kategoriSelect = document.getElementById('kategori');
+  const hargaInput = document.getElementById('harga');
+
+  kategoriSelect.addEventListener('change', function () {
+    if (this.value === 'jasa') {
+      hargaInput.disabled = false;
+      hargaInput.placeholder = 'Masukkan harga jasa';
+    } else {
+      hargaInput.disabled = true;
+      hargaInput.placeholder = 'Harga hanya untuk jasa';
+      hargaInput.value = ''; // Kosongkan nilai saat ganti ke 'alat'
+    }
+  });
+</script>
+
 
 </body>
 </html>

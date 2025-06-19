@@ -86,6 +86,9 @@
               <option value="jasa">Jasa</option>
             </select>
 
+            <label for="harga">Harga</label>
+<input type="number" id="harga" name="harga" min="0" class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]" />
+
             <label for="jumlah">Jumlah</label>
             <input type="number" id="jumlah" name="jumlah" min="0" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]" />
 
@@ -112,20 +115,14 @@
   </div>
 
 <script>
+
+
+  // -- KITA BUNGKUS SEMUANYA DI SINI --
+  // Script ini akan menunggu seluruh halaman HTML selesai dimuat sebelum berjalan.
+  // Ini mencegah error "is not defined" karena semua elemen dijamin sudah ada.
   document.addEventListener('DOMContentLoaded', () => {
     
-    // Logika untuk menghilangkan pop-up notifikasi
-    const successPopup = document.getElementById('success-popup');
-    if (successPopup) {
-      setTimeout(() => {
-        successPopup.classList.add('fade-out');
-        setTimeout(() => {
-          successPopup.style.display = 'none';
-        }, 500);
-      }, 3000);
-    }
-
-    // Mengambil semua elemen penting dari halaman
+    // 1. KUMPULKAN SEMUA ELEMEN PENTING DARI HALAMAN
     const itemSelector = document.getElementById('item-selector');
     const editForm = document.getElementById('edit-form');
     const simpanButton = document.getElementById('simpan-button');
@@ -134,8 +131,23 @@
     const kategoriSelect = document.getElementById('kategori');
     const jumlahInput = document.getElementById('jumlah');
     const deskripsiInput = document.getElementById('deskripsi');
+    const hargaInput = document.getElementById('harga');
     const imagePreviewContainer = document.getElementById('image-preview-container');
     const imagePreview = document.getElementById('image-preview');
+
+    // 2. BUAT FUNGSI-FUNGSI YANG DIBUTUHKAN
+    
+    // Fungsi untuk menonaktifkan input harga jika kategori adalah "Jasa"
+    function toggleHargaInput() {
+      if (kategoriSelect.value === 'alat') {
+        hargaInput.disabled = true;
+        hargaInput.value = '';
+        hargaInput.classList.add('bg-gray-200', 'cursor-not-allowed');
+      } else {
+        hargaInput.disabled = false;
+        hargaInput.classList.remove('bg-gray-200', 'cursor-not-allowed');
+      }
+    }
 
     // Fungsi untuk mereset form ke keadaan awal
     function resetForm() {
@@ -143,9 +155,24 @@
       editForm.action = '';
       simpanButton.disabled = true;
       imagePreviewContainer.style.display = 'none';
+      toggleHargaInput(); // Pastikan status input harga juga direset
     }
 
-    // Event listener yang berjalan setiap kali pilihan dropdown berubah
+    // Fungsi untuk menghilangkan notifikasi sukses
+    const successPopup = document.getElementById('success-popup');
+    if (successPopup) {
+      setTimeout(() => {
+        successPopup.classList.add('fade-out');
+        setTimeout(() => successPopup.style.display = 'none', 500);
+      }, 3000);
+    }
+
+    // 3. PASANG EVENT LISTENER (PENDETEKSI AKSI PENGGUNA)
+
+    // Event listener untuk dropdown kategori
+    kategoriSelect.addEventListener('change', toggleHargaInput);
+
+    // Event listener utama untuk dropdown item
     itemSelector.addEventListener('change', async (event) => {
       const selectedId = event.target.value;
 
@@ -168,6 +195,9 @@
         kategoriSelect.value = itemData.kategori || '';
         jumlahInput.value = itemData.jumlah || 0;
         deskripsiInput.value = itemData.deskripsi || '';
+        hargaInput.value = itemData.harga || '';
+        
+        toggleHargaInput(); // Sesuaikan input harga setelah kategori diisi
         
         // Menampilkan foto yang sudah ada
         if (itemData.foto) {
@@ -188,6 +218,7 @@
       }
     });
   });
+
 </script>
 
 </body>
