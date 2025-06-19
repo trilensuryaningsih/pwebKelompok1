@@ -1,22 +1,26 @@
 const express = require('express');
 const barangController = require('../controllers/user/barang');
+const ordersController = require('../controllers/user/orders');
+const { requireAuth } = require('../middleware/auth');
+const { Item, Service } = require('../models');
 
 const router = express.Router();
 
-router.get('/login', (req, res) => {
-    res.render('login', { errorMessage: null });
-});
 
-router.get('/home', (req, res) => {
+
+router.get('/home', async (req, res) => {
     if (!req.session.user) {
         return res.redirect('/user');
     }
-    res.render('home', { user: req.session.user });
+    try {
+        const items = await Item.findAll({ where: { status: 'available' }, order: [['name', 'ASC']] });
+        const services = await Service.findAll({ order: [['name', 'ASC']] });
+        res.render('user/home', { items, services, user: req.session.user });
+    } catch (err) {
+        res.status(500).send('Gagal memuat data.');
+    }
 });
 
-router.get('/register', (req, res) => {
-    res.render('register', { errorMessage: null });
-});
 
 router.get('/dashboard', (req, res, next) => {
     res.render('user/dashboard', {
@@ -24,26 +28,18 @@ router.get('/dashboard', (req, res, next) => {
     });
 });
 
-router.get('/pemesanan', async (req, res, next) => {
-    try {
-        // Fetch all available items from database
-        const availableItems = await barangController.getAvailableItems();
-        
-        console.log('Available items:', availableItems); // Debug log
-        
-        res.render('user/pemesanan', {
-            items: availableItems,
-            errorMessage: null,
-            user: req.session.user
-        });
-    } catch (error) {
-        console.error('Error loading pemesanan page:', error);
-        res.render('user/pemesanan', {
-            items: [],
-            errorMessage: 'Gagal memuat data barang. Silakan coba lagi.',
-            user: req.session.user
-        });
-    }
+router.get('/orders', requireAuth, (req, res, next) => {
+    // Render the orders page - the JavaScript will load the data via API
+    res.render('user/orders', {
+        user: req.session.user
+    });
+});
+
+// Order detail route
+router.get('/orders/:id', requireAuth, (req, res, next) => {
+    res.render('user/order-detail', {
+        user: req.session.user
+    });
 });
 
 // POST route for creating orders
@@ -138,14 +134,37 @@ router.get('/api/items/availability/:id/:quantity', async (req, res) => {
     }
 });
 
-// API endpoint to get all items
+// API Routes for Orders
+router.get('/api/orders', ordersController.getUserOrders);
+router.get('/api/orders/:id', ordersController.getOrderById);
+router.get('/api/orders/status/:status', ordersController.getOrdersByStatus);
+router.post('/api/orders', ordersController.createOrder);
+router.put('/api/orders/:id/status', ordersController.updateOrderStatus);
+router.delete('/api/orders/:id', ordersController.cancelOrder);
+router.get('/api/orders/stats', ordersController.getOrderStats);
+
+// API Routes for Items and Services
 router.get('/api/items', async (req, res) => {
     try {
-        const allItems = await barangController.getAllItems();
-        res.json({ success: true, data: allItems });
+        const items = await Item.findAll({
+            order: [['id', 'ASC']]
+        });
+        res.json({ success: true, data: items });
     } catch (error) {
-        console.error('Error fetching all items:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('Error fetching items:', error);
+        res.status(500).json({ success: false, message: 'Error fetching items' });
+    }
+});
+
+router.get('/api/services', async (req, res) => {
+    try {
+        const services = await Service.findAll({
+            order: [['id', 'ASC']]
+        });
+        res.json({ success: true, data: services });
+    } catch (error) {
+        console.error('Error fetching services:', error);
+        res.status(500).json({ success: false, message: 'Error fetching services' });
     }
 });
 

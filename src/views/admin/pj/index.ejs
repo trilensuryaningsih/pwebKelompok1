@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Penanggung Jawab - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen overflow-hidden font-sans">
+        <%- include('../../partials/admin/sidebar') %>
+
+
+    <div class="ml-64 p-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Kelola Penanggung Jawab</h1>
+                <a href="/admin/pj/create" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                    Tambah PJ Baru
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Telepon</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Aktif</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="pjTableBody">
+                        <% if (typeof pjUsers !== 'undefined' && pjUsers.length > 0) { %>
+                            <% pjUsers.forEach(pj => { %>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= pj.id %></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= pj.name %></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= pj.email %></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= pj.phone_number %></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= pj.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                            <%= pj.is_active ? 'Aktif' : 'Tidak Aktif' %>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="editPJ(<%= pj.id %>)" class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</button>
+                                        <button onclick="deletePJ(<%= pj.id %>)" class="text-red-600 hover:text-red-900">Hapus</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada data PJ</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

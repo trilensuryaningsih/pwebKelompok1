@@ -1,4 +1,4 @@
- const express = require('express');
+const express = require('express');
 const app = express();
 const port = 3000;   
 const dotenv = require('dotenv');
@@ -34,8 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const routerUser = require ("./src/routes/user.js");
 app.use('/user', routerUser);
-app.use('/', require('./src/routes/auth.routes.js'));
-
+app.use('/auth', authRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.use(logger('dev'));
@@ -51,6 +50,7 @@ app.use('/daftar', require('./src/routes/admin'));
 app.use('/tambah', require('./src/routes/admin'));
 app.use('/hapus', require('./src/routes/admin'));
 app.use('/edit', require('./src/routes/admin'));
+app.use('/pj', require('./src/routes/pj'));
 
 
 // app setting

@@ -37,8 +37,6 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-db.item = require('./item')(sequelize, Sequelize.DataTypes); 
-
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

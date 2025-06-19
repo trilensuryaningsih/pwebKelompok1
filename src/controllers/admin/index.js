@@ -1,3 +1,3 @@
 exports.index = (req, res) => {
-    return res.render('admin/dashboard');
+    res.render('admin/dashboard/index');
 }
