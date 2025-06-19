@@ -54,19 +54,28 @@ const barangController = {
                         [Op.gt]: 0
                     }
                 },
-                order: [['id_item', 'ASC']]
+                order: [['id', 'ASC']]
             });
 
-            if (availableItems.length > 0) {
-                return res.json({ success: true, data: availableItems });
-            } else {
-                return res.status(404).json({ success: false, message: 'No available items found' });
+           if (res) {
+                if (availableItems.length > 0) {
+                    return res.json({ success: true, data: availableItems });
+                } else {
+                    return res.status(404).json({ success: false, message: 'No available items found' });
+                }
             }
+
+            // Jika dipanggil secara internal (tanpa res)
+            return availableItems;
         } catch (error) {
             console.error('Error fetching available items:', error);
-            return res.status(500).json({ success: false, message: 'Error fetching available items' });
+            if (res) {
+                return res.status(500).json({ success: false, message: 'Error fetching available items' });
+            }
+            throw error;
         }
     },
+
 
     // Get single item by ID
     getItemById: async (req, res) => {

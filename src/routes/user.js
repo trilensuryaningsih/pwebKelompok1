@@ -26,11 +26,7 @@ router.get('/dashboard', (req, res, next) => {
 
 router.get('/pemesanan', async (req, res, next) => {
     try {
-        // Fetch all available items from database
-        const availableItems = await barangController.getAvailableItems();
-        
-        console.log('Available items:', availableItems); // Debug log
-        
+        const availableItems = await barangController.getAvailableItems(); // ✅ akan return array
         res.render('user/pemesanan', {
             items: availableItems,
             errorMessage: null,
@@ -134,6 +130,15 @@ router.get('/api/items/availability/:id/:quantity', async (req, res) => {
         res.json(availability);
     } catch (error) {
         console.error('Error checking availability:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+router.get('/api/items/available', async (req, res) => {
+    try {
+        await barangController.getAvailableItems(null, res);
+    } catch (error) {
+        console.error('Error fetching available items:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
