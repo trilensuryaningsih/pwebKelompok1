@@ -1,4 +1,3 @@
-
 const { item } = require('../../models');
 
 exports.stok = (req, res) => {
@@ -7,10 +6,10 @@ exports.stok = (req, res) => {
 
 
 exports.showAllitemsPage = async (req, res) => {
-  try {
-    const items = await item.findAll();
-    res.render('admin/stok', { items }); // pakai view engine (misal ejs)
-  } catch (error) {
-    res.status(500).send('Gagal menampilkan data');
-  }
+    try {
+        const items = await item.findAll();
+        res.render('admin/items/stock', { items });
+    } catch (err) {
+        res.status(500).send('Gagal memuat data item.');
+    }
 };

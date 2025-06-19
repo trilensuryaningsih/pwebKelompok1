@@ -1,0 +1,455 @@
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UMCental - Daftar Pesanan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .bg-custom-dark {
+            background-color: #181C14;
+        }
+
+        .bg-custom-green {
+            background-color: #697565;
+        }
+
+        .bg-custom-green-dark {
+            background-color: #5a6356;
+        }
+
+        .focus\:ring-custom-green:focus {
+            --tw-ring-color: rgba(105, 117, 101, 0.5);
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .status-active {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .status-cancelled {
+            background-color: #f3f4f6;
+            color: #374151;
+            border-color: #9ca3af;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen bg-[#f5f0e9]">
+
+    <%- include('../partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <%- include('../partials/header') %>
+
+        <!-- Content -->
+        <section class="flex-1 p-8 overflow-x-auto">
+            <!-- Header -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-[#181C14] mb-2">Daftar Pesanan</h1>
+                <p class="text-[#7f7a75]">Kelola semua pesanan Anda di sini</p>
+            </div>
+
+            <!-- Filter and Search -->
+            <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex gap-2">
+                    <select id="statusFilter" class="px-4 py-2 border border-[#d1d5db] rounded-lg focus:ring-2 focus:ring-custom-green focus:border-transparent">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Menunggu</option>
+                        <option value="approved">Disetujui</option>
+                        <option value="rejected">Ditolak</option>
+                        <option value="active">Aktif</option>
+                        <option value="completed">Selesai</option>
+                        <option value="cancelled">Dibatalkan</option>
+                    </select>
+                    <button id="refreshBtn" class="px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="searchInput" placeholder="Cari pesanan..." class="px-4 py-2 border border-[#d1d5db] rounded-lg focus:ring-2 focus:ring-custom-green focus:border-transparent">
+                    <button id="newOrderBtn" class="px-4 py-2 bg-[#1f4d2f] text-white rounded-lg hover:bg-[#163d25] transition">
+                        <i class="fas fa-plus mr-2"></i>Pesanan Baru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] overflow-hidden">
+                <table class="min-w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#7f8a7d] text-[#e6e1d9] text-xs font-normal">
+                            <th class="py-3 px-4 text-left rounded-l-lg">No</th>
+                            <th class="py-3 px-4 text-left">Kode Pesanan</th>
+                            <th class="py-3 px-4 text-left">Jenis Item</th>
+                            <th class="py-3 px-4 text-left">Jumlah</th>
+                            <th class="py-3 px-4 text-left">Tanggal Mulai</th>
+                            <th class="py-3 px-4 text-left">Tanggal Selesai</th>
+                            <th class="py-3 px-4 text-left">Total Harga</th>
+                            <th class="py-3 px-4 text-left">Status</th>
+                            <th class="py-3 px-4 text-left rounded-r-lg">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody" class="text-[#7f7a75] text-sm font-normal">
+                        <!-- Orders will be loaded here dynamically -->
+                    </tbody>
+                </table>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden py-8 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#697565]"></div>
+                    <p class="mt-2 text-[#7f7a75]">Memuat pesanan...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden py-8 text-center">
+                    <i class="fas fa-inbox text-4xl text-[#d1d5db] mb-4"></i>
+                    <p class="text-[#7f7a75]">Belum ada pesanan</p>
+                    <button onclick="window.location.href='/user/pemesanan'" class="mt-2 px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
+                        Buat Pesanan Pertama
+                    </button>
+                </div>
+            </div>
+
+            <!-- Order Statistics -->
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <i class="fas fa-clock text-blue-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-[#7f7a75]">Menunggu</p>
+                            <p class="text-lg font-semibold text-[#181C14]" id="pendingCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-[#7f7a75]">Disetujui</p>
+                            <p class="text-lg font-semibold text-[#181C14]" id="approvedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <i class="fas fa-play text-blue-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-[#7f7a75]">Aktif</p>
+                            <p class="text-lg font-semibold text-[#181C14]" id="activeCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                            <i class="fas fa-flag-checkered text-green-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-[#7f7a75]">Selesai</p>
+                            <p class="text-lg font-semibold text-[#181C14]" id="completedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <%- include('../partials/footer') %>
+    </div>
+
+    <!-- Cancel Order Modal -->
+    <div id="cancelModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Batalkan Pesanan</h3>
+            <p class="text-[#7f7a75] mb-6">Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex gap-3 justify-end">
+                <button id="cancelModalClose" class="px-4 py-2 text-[#7f7a75] border border-[#d1d5db] rounded-lg hover:bg-[#f9fafb] transition">
+                    Batal
+                </button>
+                <button id="confirmCancel" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOrders = [];
+        let currentOrderId = null;
+
+        // Load orders on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+            loadOrderStats();
+        });
+
+        // Filter functionality
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            const status = this.value;
+            filterOrders(status);
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            searchOrders(searchTerm);
+        });
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            loadOrders();
+            loadOrderStats();
+        });
+
+        // New order button
+        document.getElementById('newOrderBtn').addEventListener('click', function() {
+            window.location.href = '/user/pemesanan';
+        });
+
+        // Load orders from API
+        async function loadOrders() {
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const tableBody = document.getElementById('ordersTableBody');
+
+            loadingState.classList.remove('hidden');
+            tableBody.innerHTML = '';
+            emptyState.classList.add('hidden');
+
+            try {
+                const response = await fetch('/user/api/orders');
+                const result = await response.json();
+
+                if (result.success) {
+                    currentOrders = result.data;
+                    displayOrders(currentOrders);
+                } else {
+                    console.error('Error loading orders:', result.message);
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                showEmptyState();
+            } finally {
+                loadingState.classList.add('hidden');
+            }
+        }
+
+        // Display orders in table
+        function displayOrders(orders) {
+            const tableBody = document.getElementById('ordersTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (orders.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            tableBody.innerHTML = orders.map((order, index) => `
+                <tr class="border-b border-[#f0ebe0] hover:bg-[#f9fafb]">
+                    <td class="py-6 px-4">${index + 1}</td>
+                    <td class="py-6 px-4 font-medium">#${order.id}</td>
+                    <td class="py-6 px-4">${order.itemType === 'item' ? 'Item' : 'Layanan'}</td>
+                    <td class="py-6 px-4">${order.quantity}</td>
+                    <td class="py-6 px-4">${formatDate(order.startDate)}</td>
+                    <td class="py-6 px-4">${formatDate(order.endDate)}</td>
+                    <td class="py-6 px-4">Rp ${formatNumber(order.totalAmount)}</td>
+                    <td class="py-6 px-4">
+                        <span class="inline-block border rounded-full px-3 py-1 font-semibold text-sm ${getStatusClass(order.status)}">
+                            ${getStatusText(order.status)}
+                        </span>
+                    </td>
+                    <td class="py-6 px-4 flex items-center space-x-2">
+                        <button onclick="viewOrder(${order.id})" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition" title="Lihat Detail">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        ${order.status === 'pending' ? `
+                            <button onclick="cancelOrder(${order.id})" class="bg-red-100 rounded-full p-2 text-red-600 hover:bg-red-200 transition" title="Batalkan">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            emptyState.classList.add('hidden');
+        }
+
+        // Filter orders by status
+        function filterOrders(status) {
+            if (!status) {
+                displayOrders(currentOrders);
+                return;
+            }
+
+            const filteredOrders = currentOrders.filter(order => order.status === status);
+            displayOrders(filteredOrders);
+        }
+
+        // Search orders
+        function searchOrders(searchTerm) {
+            if (!searchTerm) {
+                displayOrders(currentOrders);
+                return;
+            }
+
+            const filteredOrders = currentOrders.filter(order => 
+                order.id.toString().includes(searchTerm) ||
+                order.itemType.toLowerCase().includes(searchTerm) ||
+                order.quantity.toString().includes(searchTerm)
+            );
+            displayOrders(filteredOrders);
+        }
+
+        // Show empty state
+        function showEmptyState() {
+            const tableBody = document.getElementById('ordersTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            tableBody.innerHTML = '';
+            emptyState.classList.remove('hidden');
+        }
+
+        // Load order statistics
+        async function loadOrderStats() {
+            try {
+                const response = await fetch('/user/api/orders/stats');
+                const result = await response.json();
+
+                if (result.success) {
+                    const stats = result.data.stats;
+                    const counts = {
+                        pending: 0,
+                        approved: 0,
+                        active: 0,
+                        completed: 0
+                    };
+
+                    stats.forEach(stat => {
+                        counts[stat.status] = parseInt(stat.count);
+                    });
+
+                    document.getElementById('pendingCount').textContent = counts.pending;
+                    document.getElementById('approvedCount').textContent = counts.approved;
+                    document.getElementById('activeCount').textContent = counts.active;
+                    document.getElementById('completedCount').textContent = counts.completed;
+                }
+            } catch (error) {
+                console.error('Error loading order stats:', error);
+            }
+        }
+
+        // View order details
+        function viewOrder(orderId) {
+            // Navigate to order detail page
+            window.location.href = `/user/orders/${orderId}`;
+        }
+
+        // Cancel order
+        function cancelOrder(orderId) {
+            currentOrderId = orderId;
+            document.getElementById('cancelModal').classList.remove('hidden');
+        }
+
+        // Confirm cancel order
+        document.getElementById('confirmCancel').addEventListener('click', async function() {
+            if (!currentOrderId) return;
+
+            try {
+                const response = await fetch(`/user/api/orders/${currentOrderId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Pesanan berhasil dibatalkan');
+                    loadOrders();
+                    loadOrderStats();
+                } else {
+                    alert('Gagal membatalkan pesanan: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error cancelling order:', error);
+                alert('Terjadi kesalahan saat membatalkan pesanan');
+            } finally {
+                document.getElementById('cancelModal').classList.add('hidden');
+                currentOrderId = null;
+            }
+        });
+
+        // Close cancel modal
+        document.getElementById('cancelModalClose').addEventListener('click', function() {
+            document.getElementById('cancelModal').classList.add('hidden');
+            currentOrderId = null;
+        });
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID');
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('id-ID').format(num);
+        }
+
+        function getStatusClass(status) {
+            const statusClasses = {
+                pending: 'status-pending',
+                approved: 'status-approved',
+                rejected: 'status-rejected',
+                active: 'status-active',
+                completed: 'status-completed',
+                cancelled: 'status-cancelled'
+            };
+            return statusClasses[status] || 'status-pending';
+        }
+
+        function getStatusText(status) {
+            const statusTexts = {
+                pending: 'Menunggu',
+                approved: 'Disetujui',
+                rejected: 'Ditolak',
+                active: 'Aktif',
+                completed: 'Selesai',
+                cancelled: 'Dibatalkan'
+            };
+            return statusTexts[status] || status;
+        }
+    </script>
+</body>
+
+</html> 
