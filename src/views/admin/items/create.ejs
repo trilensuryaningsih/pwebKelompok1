@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Alat dan Jasa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sidebar-green': '#7a8471',
+                        'sidebar-green-hover': '#6b7562',
+                        'beige': '#d4c5b9',
+                        'beige-light': '#e8ddd4',
+                        'form-bg': '#f5f0eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .grid-pattern {
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%),
+                linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-100 h-screen overflow-hidden">
+    <%- include('../../partials/admin/sidebar') %>
+    <div class="ml-64 flex h-screen">
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="bg-form-bg h-16 flex items-center justify-end px-6 border-b">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center cursor-pointer">
+                        🔔
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer">
+                        <span class="text-sm text-gray-700">Admin</span>
+                        <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center">
+                            👤
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Content -->
+<div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto">
+    <div class="max-w-4xl mx-auto">
+        <form action="/admin/items/create" method="POST" enctype="multipart/form-data">
+            <div class="bg-white rounded-lg p-8 shadow-sm">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Nama alat atau jasa</label>
+                            <input name="nama" type="text" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Kategori</label>
+                            <div class="relative">
+                                <select name="kategori" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                                    <option value=""></option>
+                                    <option value="alat">Alat</option>
+                                    <option value="jasa">Jasa</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Deskripsi</label>
+                            <textarea name="deskripsi" rows="4" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Status</label>
+                            <div class="relative">
+                                <select name="status" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                                    <option value=""></option>
+                                    <option value="tersedia">Tersedia</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Jumlah</label>
+                            <input name="jumlah" type="number" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Foto</label>
+                            <div class="relative">
+                                <input name="foto" type="file" id="file-upload" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                <div class="w-full px-4 py-3 bg-beige-light rounded flex items-center justify-between">
+                                    <span class="text-gray-500 text-sm">Choose file</span>
+                                    <button type="button" class="text-xs bg-white px-3 py-1 rounded border">Choose file</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="flex justify-center mt-8">
+                    <button type="submit" class="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-colors">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+            <!-- Notifikasi -->
+<div id="success-popup" class="hidden fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+    Item berhasil ditambahkan!
+</div>
+
+        </form>
+    </div>
+</div>
+
+
+            <!-- Footer -->
+            <div class="bg-[#46473e] text-[#e1d6c4] p-5 flex justify-between items-center text-sm font-normal">
+                <div class="flex flex-col gap-1 select-none">
+                    <div class="font-bold text-base">Universal Multimedia Creative</div>
+                    <div class="text-xs text-gray-300">PKM-LLT</div>
+                    <div class="text-xs text-gray-300">Universitas Airlangga</div>
+                    <div class="text-xs text-gray-300">rapi@gmail321.com</div>
+                    <div class="text-xs text-gray-300">2351557562</div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-9 h-9 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-500 transition-colors">
+                        📱
+                    </div>
+                    <div class="w-9 h-9 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-500 transition-colors">
+                        📘
+                    </div>
+                    <div class="w-9 h-9 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-500 transition-colors">
+                        🐦
+                    </div>
+                    <div class="w-9 h-9 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-500 transition-colors">
+                        📷
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // File upload functionality
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Choose file';
+            const fileNameSpan = this.parentElement.querySelector('span');
+            if (fileName !== 'Choose file') {
+                fileNameSpan.textContent = fileName;
+                fileNameSpan.classList.remove('text-gray-500');
+                fileNameSpan.classList.add('text-gray-700');
+            }
+        });
+    </script>
+
+    <script>
+  // Baca parameter dari URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const isSuccess = urlParams.get('success');
+
+  if (isSuccess === 'true') {
+    const popup = document.getElementById('success-popup');
+    popup.classList.remove('hidden');
+
+    // Sembunyikan popup setelah 3 detik
+    setTimeout(() => {
+      popup.classList.add('hidden');
+
+      // Hapus query dari URL agar tidak muncul lagi saat refresh
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }, 3000);
+  }
+</script>
+
+</body>
+</html>

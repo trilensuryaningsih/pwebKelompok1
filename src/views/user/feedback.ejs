@@ -1,0 +1,51 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>- Feedback -</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <style>
+    .bg-custom-dark { background-color: #181C14; }
+    .bg-custom-green { background-color: #697565; }
+    .bg-custom-green-dark { background-color: #5a6356; }
+    .focus\:ring-custom-green:focus { --tw-ring-color: rgba(105, 117, 101, 0.5); }
+  </style>
+</head>
+<body class="flex min-h-screen bg-[#f5f0e9] ">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-1 flex flex-col">
+    <%- include('../partials/header') %>
+    <main class="flex-1 px-10 py-8 overflow-auto">
+      <h2 class="font-semibold text-lg mb-6 text-[#5a6356] text-center md:text-left">Feedback</h2>
+      <% if (typeof success !== 'undefined') { %>
+        <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center max-w-2xl mx-auto">Feedback berhasil dikirim!</div>
+      <% } %>
+      <form action="/user/feedback" method="POST" class="max-w-2xl mx-auto bg-[#fff] rounded-2xl shadow p-8 border border-[#697565] grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium mb-1 text-[#3C3D37]">E-mail</label>
+            <input type="email" id="email" value="<%= user.email %>" readonly placeholder="email pengguna" class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 text-[#3C3D37]" />
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-medium mb-1 text-[#3C3D37]">No. HP</label>
+            <input type="text" id="phone" name="phone_number" value="<%= user.phone_number %>" placeholder="No. HP Pengguna" class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 text-[#3C3D37]" />
+          </div>
+          <div>
+            <label for="orderId" class="block text-sm font-medium mb-1 text-[#3C3D37]">Nomor Pesanan</label>
+            <input type="text" id="orderId" name="orderId" placeholder="Nomor pesanan (opsional)" class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 text-[#3C3D37]" />
+          </div>
+        </div>
+        <div class="flex flex-col h-full">
+          <label for="comment" class="block text-sm font-medium mb-1 text-[#3C3D37]">Masukan Feedback</label>
+          <textarea name="comment" id="comment" rows="7" class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 flex-1 resize-none text-[#3C3D37]" placeholder="Tuliskan pesan yang akan dikirim ke admin" required></textarea>
+        </div>
+        <div class="md:col-span-2 flex justify-center mt-4">
+          <button type="submit" class="px-8 py-2 rounded-full border border-[#181C14] bg-[#697565] hover:bg-[#3C3D37] text-[#ECDFCC] font-semibold text-lg transition">Kirim</button>
+        </div>
+      </form>
+    </main>
+    <%- include('../partials/footer') %>
+  </div>
+</body>
+</html> 

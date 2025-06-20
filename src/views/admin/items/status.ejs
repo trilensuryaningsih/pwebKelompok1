@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF--8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Alat dan Jasa Dashboard</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            'brand-beige': '#DED9CE', 'brand-brown': { DEFAULT: '#6C6154', 'light': '#A8A288', 'dark': '#403f36' }, 'brand-olive': { light: '#859984', DEFAULT: '#7C8779', medium: '#65745d', dark: '#4a4f3b' }, 'brand-dark-gray': '#2B2B2B',
+          },
+          keyframes: {
+            'fade-in-down': {
+              '0%': { opacity: '0', transform: 'translateY(-10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            'fade-out-up': {
+              '0%': { opacity: '1', transform: 'translateY(0)' },
+              '100%': { opacity: '0', transform: 'translateY(-10px)' },
+            }
+          },
+          animation: {
+            'fade-in-down': 'fade-in-down 0.5s ease-out forwards',
+            'fade-out-up': 'fade-out-up 0.5s ease-out forwards',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    .no-scrollbar { scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+
+<body class="bg-brand-beige text-brand-brown font-sans flex flex-col min-h-screen">
+      <%- include('../../partials/admin/sidebar') %>
+
+  <div id="notification-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+  <div class="ml-64 app flex-grow" role="main">
+    
+    <div class="flex flex-col w-full">
+      <header class="bg-brand-beige px-5 lg:px-10 py-4 flex justify-between items-center gap-4 sticky top-0 lg:relative border-b border-brand-brown/30 lg:border-none">
+          <div class="flex items-center gap-4 ml-auto">
+              <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Notifikasi"><span class="material-icons text-xl">notifications</span></button>
+              <div class="border border-brand-brown text-brand-brown font-semibold py-1.5 px-3 rounded-xl hidden sm:block">Admin</div>
+              <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Profil pengguna"><span class="material-icons text-xl">person</span></button>
+          </div>
+      </header>
+      
+      <main class="content p-5 lg:p-10 flex flex-col gap-6 bg-brand-beige">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <div class="status-filters flex gap-2"></div>
+          
+
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full rounded-xl overflow-hidden bg-brand-olive text-brand-beige">
+              <thead class="bg-brand-olive">
+                <tr>
+                  <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">No</th>
+                  <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Nama</th>
+                  <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Kategori</th>
+                  <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Deskripsi</th>
+                  <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Status</th>
+                </tr>
+              </thead>
+              <tbody class="bg-brand-beige text-brand-brown">
+                <% if (typeof items !== 'undefined' && items.length > 0) { %>
+                  <% items.forEach((item, index) => { %>
+                    <tr id="item-row-<%= item.id %>" class="border-b border-brand-brown-light">
+                      <td class="row-number p-4 px-3 align-middle font-bold text-sm"><%= index + 1 %></td>
+                      <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.nama %></td>
+                      <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.kategori %></td>
+                      <td class="p-4 px-3 align-middle font-bold text-sm"><%= item.deskripsi %></td>
+                      <td class="p-4 px-3 align-middle">
+                        <% if (item.status === 'Tersedia') { %>
+                          <span class="border-2 border-green-800 text-green-800 font-semibold text-sm rounded-full py-1 px-3"><%= item.status %></span>
+                        <% } else if (item.status === 'Dipinjam') { %>
+                          <span class="border-2 border-amber-600 text-amber-600 font-semibold text-sm rounded-full py-1 px-3"><%= item.status %></span>
+                        <% } else { %>
+                          <span class="border-2 border-gray-500 text-gray-500 font-semibold text-sm rounded-full py-1 px-3"><%= item.status %></span>
+                        <% } %>
+                      </td>
+                      
+                      
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="7" class="text-center p-5">Tidak ada data untuk ditampilkan.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+   
+  </script>
+</body>
+</html>

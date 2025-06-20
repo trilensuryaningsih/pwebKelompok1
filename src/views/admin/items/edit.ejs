@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manajemen Alat dan Jasa - Edit Item</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    /* Style untuk transisi fade out notifikasi */
+    .fade-out {
+      transition: opacity 0.5s ease-out;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body class="bg-[#eee7dc] text-[#695f59] min-h-screen flex flex-col">
+      <%- include('../../partials/admin/sidebar') %>
+
+  <div class="ml-64 flex flex-1 w-full max-w-[1440px] mx-auto">
+    <% if (typeof query !== 'undefined' && query.update && query.update === 'success') { %>
+      <div id="success-popup" class="fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg z-50">
+        Item berhasil diubah!
+      </div>
+    <% } %>
+
+    <main class="flex-grow flex flex-col justify-between bg-[#eee7dc] min-h-screen px-12 py-10 relative">
+      <header class="flex justify-end items-center gap-6 pb-2 border-b border-[#9c978b]">
+        <button class="bg-[#cfc6b8] rounded-full w-9 h-9 flex items-center justify-center text-[#554e45] text-[20px] hover:bg-[#a69d87] hover:text-[#3e3a2e]">
+            <span class="material-icons">notifications</span>
+        </button>
+        <button class="bg-[#d2c6b4] text-[#5f564a] font-semibold text-base py-2 px-5 rounded-xl hover:bg-[#b7a994] hover:text-[#413c31]">Admin</button>
+        <button class="bg-[#cfc6b8] rounded-full w-9 h-9 flex items-center justify-center text-[#554e45] text-[20px] hover:bg-[#a69d87] hover:text-[#3e3a2e]">
+            <span class="material-icons">account_circle</span>
+        </button>
+      </header>
+
+      <section>
+        <div class="bg-white rounded-2xl px-12 py-9 mt-10 shadow-[0_4px_12px_rgba(119,109,94,0.12)] max-w-[900px] w-full self-center">
+          <div class="mb-6 flex flex-wrap items-center gap-3 font-semibold text-[#72675e]">
+            <label for="item-selector">Pilih item untuk diedit</label>
+            <select id="item-selector" name="itemSelect" class="bg-[#e1d6c4] rounded-lg px-3 py-2 min-w-[220px] font-semibold text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="">-- Pilih alat atau jasa --</option>
+              <% if (typeof items !== 'undefined' && items.length > 0) { %>
+                <% items.forEach(item => { %>
+                  <option value="<%= item.id %>"><%= item.nama %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+          
+          <form id="edit-form" method="POST" enctype="multipart/form-data" class="grid grid-cols-2 gap-y-5 gap-x-16 font-semibold text-[#72675e] text-sm">
+            <label for="nama">Nama alat atau jasa</label>
+            <input type="text" id="nama" name="nama" required class="col-span-1 bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]" />
+
+            <label for="status">Status</label>
+            <select id="status" name="status" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="" disabled>Pilih status</option>
+              <option value="tersedia">Tersedia</option>
+              <option value="dipinjam">Dipinjam</option>
+              <option value="prbaikan">Perbaikan</option>
+              <option value="tidak_berfungsi">Tidak berfungsi</option>
+               <option value="tidak_aktif">Tidak aktif</option>
+              
+            </select>
+
+            <label for="kategori">Kategori</label>
+            <select id="kategori" name="kategori" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="" disabled>Pilih kategori</option>
+              <option value="alat">Alat</option>
+              <option value="jasa">Jasa</option>
+            </select>
+
+            <label for="jumlah">Jumlah</label>
+            <input type="number" id="jumlah" name="jumlah" min="0" required class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]" />
+
+            <label for="deskripsi">Deskripsi</label>
+            <input type="text" id="deskripsi" name="deskripsi" class="bg-[#e1d6c4] rounded-lg px-3 py-2 text-[#705e4c]" />
+            
+            <div>
+              <label for="foto">Ganti Foto (Opsional)</label>
+              <input type="file" id="foto" name="foto" class="block w-full bg-[#e1d6c4] rounded-lg px-2 py-1 text-[#6e5e4b]" />
+            </div>
+            
+            <div id="image-preview-container" class="col-span-1 mt-2" style="display: none;">
+              <p class="text-xs text-gray-500 mb-1">Foto saat ini:</p>
+              <img id="image-preview" src="" alt="Preview Foto Item" class="max-w-xs max-h-32 rounded-lg border shadow-sm">
+            </div>
+
+            <button type="submit" id="simpan-button" class="col-span-2 mt-8 border-2 border-[#554e45] rounded-full px-12 py-2 font-bold text-[#554e45] hover:bg-[#554e45] hover:text-[#eee7dc] disabled:bg-gray-300 disabled:border-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed" disabled>Simpan</button>
+          </form>
+        </div>
+      </section>
+
+      <footer class="bg-[#46473e] text-[#e1d6c4] p-5 mt-auto"></footer>
+    </main>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    // Logika untuk menghilangkan pop-up notifikasi
+    const successPopup = document.getElementById('success-popup');
+    if (successPopup) {
+      setTimeout(() => {
+        successPopup.classList.add('fade-out');
+        setTimeout(() => {
+          successPopup.style.display = 'none';
+        }, 500);
+      }, 3000);
+    }
+
+    // Mengambil semua elemen penting dari halaman
+    const itemSelector = document.getElementById('item-selector');
+    const editForm = document.getElementById('edit-form');
+    const simpanButton = document.getElementById('simpan-button');
+    const namaInput = document.getElementById('nama');
+    const statusSelect = document.getElementById('status');
+    const kategoriSelect = document.getElementById('kategori');
+    const jumlahInput = document.getElementById('jumlah');
+    const deskripsiInput = document.getElementById('deskripsi');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+
+    // Fungsi untuk mereset form ke keadaan awal
+    function resetForm() {
+      editForm.reset();
+      editForm.action = '';
+      simpanButton.disabled = true;
+      imagePreviewContainer.style.display = 'none';
+    }
+
+    // Event listener yang berjalan setiap kali pilihan dropdown berubah
+    itemSelector.addEventListener('change', async (event) => {
+      const selectedId = event.target.value;
+
+      if (!selectedId) {
+        resetForm();
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/api/items/${selectedId}`);
+        if (!response.ok) {
+          throw new Error(`Gagal mengambil data. Status: ${response.status}`);
+        }
+        
+        const itemData = await response.json();
+
+        // Mengisi semua kolom form dengan data dari API
+        namaInput.value = itemData.nama || '';
+        statusSelect.value = itemData.status || '';
+        kategoriSelect.value = itemData.kategori || '';
+        jumlahInput.value = itemData.jumlah || 0;
+        deskripsiInput.value = itemData.deskripsi || '';
+        
+        // Menampilkan foto yang sudah ada
+        if (itemData.foto) {
+          imagePreview.src = `/uploads/${itemData.foto}`;
+          imagePreviewContainer.style.display = 'block';
+        } else {
+          imagePreviewContainer.style.display = 'none';
+        }
+        
+        // Mengatur action form dan mengaktifkan tombol simpan
+        editForm.action = `/admin/items/edit/${itemData.id}`;
+        simpanButton.disabled = false;
+
+      } catch (error) {
+        console.error('Terjadi kesalahan saat fetch data:', error);
+        alert('Tidak dapat memuat data item. Silakan cek console untuk detail.');
+        resetForm();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,509 @@
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UMCental - Detail Pesanan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .bg-custom-dark {
+            background-color: #181C14;
+        }
+
+        .bg-custom-green {
+            background-color: #697565;
+        }
+
+        .bg-custom-green-dark {
+            background-color: #5a6356;
+        }
+
+        .focus\:ring-custom-green:focus {
+            --tw-ring-color: rgba(105, 117, 101, 0.5);
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .status-active {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .status-cancelled {
+            background-color: #f3f4f6;
+            color: #374151;
+            border-color: #9ca3af;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen bg-[#f5f0e9]">
+
+    <%- include('../partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <%- include('../partials/header') %>
+
+        <!-- Content -->
+        <section class="flex-1 p-8">
+            <!-- Header -->
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-[#181C14] mb-2">Detail Pesanan</h1>
+                    <p class="text-[#7f7a75]">Informasi lengkap pesanan #<span id="orderId"></span></p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="window.location.href='/user/orders'" class="px-4 py-2 text-[#7f7a75] border border-[#d1d5db] rounded-lg hover:bg-[#f9fafb] transition">
+                        <i class="fas fa-arrow-left mr-2"></i>Kembali
+                    </button>
+                    <button id="printBtn" class="px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
+                        <i class="fas fa-print mr-2"></i>Cetak
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#697565]"></div>
+                <p class="mt-2 text-[#7f7a75]">Memuat detail pesanan...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="hidden text-center py-8">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                <p class="text-[#7f7a75] mb-4">Gagal memuat detail pesanan</p>
+                <button onclick="loadOrderDetail()" class="px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
+                    Coba Lagi
+                </button>
+            </div>
+
+            <!-- Order Detail Content -->
+            <div id="orderDetailContent" class="hidden">
+                <!-- Order Status Banner -->
+                <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-semibold text-[#181C14] mb-2">Status Pesanan</h2>
+                            <span id="orderStatus" class="inline-block border rounded-full px-4 py-2 font-semibold text-sm"></span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-[#7f7a75]">Total Pembayaran</p>
+                            <p id="totalAmount" class="text-2xl font-bold text-[#181C14]"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Information -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Basic Information -->
+                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
+                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Informasi Pesanan</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Kode Pesanan:</span>
+                                <span id="orderCode" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Jenis Item:</span>
+                                <span id="itemType" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Jumlah:</span>
+                                <span id="quantity" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Harga per Unit:</span>
+                                <span id="pricePerUnit" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Tanggal Pesanan:</span>
+                                <span id="orderDate" class="font-medium text-[#181C14]"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Information -->
+                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
+                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Jadwal Penggunaan</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Tanggal Mulai:</span>
+                                <span id="startDate" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Tanggal Selesai:</span>
+                                <span id="endDate" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#7f7a75]">Durasi:</span>
+                                <span id="duration" class="font-medium text-[#181C14]"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item/Service Details -->
+                <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-[#181C14] mb-4">Detail Item/Layanan</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 id="itemName" class="text-xl font-semibold text-[#181C14] mb-2"></h4>
+                            <p id="itemDescription" class="text-[#7f7a75] mb-4"></p>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[#7f7a75]">Kategori:</span>
+                                <span id="itemCategory" class="font-medium text-[#181C14]"></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[#7f7a75]">Status:</span>
+                                <span id="itemStatus" class="font-medium text-[#181C14]"></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
+                                <img id="itemPhoto" src="" alt="Item Photo" class="w-full h-full object-cover rounded-lg hidden">
+                                <i class="fas fa-image text-4xl text-gray-400" id="itemPhotoPlaceholder"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes and Files -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <!-- Notes -->
+                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
+                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Catatan</h3>
+                        <div id="notes" class="text-[#7f7a75]">
+                            <!-- Notes will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Files -->
+                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
+                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Dokumen</h3>
+                        <div id="files" class="space-y-2">
+                            <!-- Files will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex gap-3 justify-end">
+                    <button id="cancelOrderBtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition hidden">
+                        <i class="fas fa-times mr-2"></i>Batalkan Pesanan
+                    </button>
+                    <button id="editOrderBtn" class="px-6 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition hidden">
+                        <i class="fas fa-edit mr-2"></i>Edit Pesanan
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <%- include('../partials/footer') %>
+    </div>
+
+    <!-- Cancel Order Modal -->
+    <div id="cancelModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Batalkan Pesanan</h3>
+            <p class="text-[#7f7a75] mb-6">Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex gap-3 justify-end">
+                <button id="cancelModalClose" class="px-4 py-2 text-[#7f7a75] border border-[#d1d5db] rounded-lg hover:bg-[#f9fafb] transition">
+                    Batal
+                </button>
+                <button id="confirmCancel" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOrder = null;
+
+        // Load order detail on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderId = getOrderIdFromUrl();
+            if (orderId) {
+                loadOrderDetail(orderId);
+            } else {
+                showError('ID pesanan tidak valid');
+            }
+        });
+
+        // Get order ID from URL
+        function getOrderIdFromUrl() {
+            const pathParts = window.location.pathname.split('/');
+            return pathParts[pathParts.length - 1];
+        }
+
+        // Load order detail from API
+        async function loadOrderDetail(orderId) {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const orderDetailContent = document.getElementById('orderDetailContent');
+
+            loadingState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            orderDetailContent.classList.add('hidden');
+
+            try {
+                const response = await fetch(`/user/api/orders/${orderId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    currentOrder = result.data;
+                    displayOrderDetail(currentOrder);
+                } else {
+                    showError(result.message || 'Gagal memuat detail pesanan');
+                }
+            } catch (error) {
+                console.error('Error loading order detail:', error);
+                showError('Terjadi kesalahan saat memuat detail pesanan');
+            } finally {
+                loadingState.classList.add('hidden');
+            }
+        }
+
+        // Display order detail
+        function displayOrderDetail(order) {
+            const orderDetailContent = document.getElementById('orderDetailContent');
+            
+            // Set basic information
+            document.getElementById('orderId').textContent = order.id;
+            document.getElementById('orderCode').textContent = `#${order.id}`;
+            document.getElementById('itemType').textContent = order.itemType === 'item' ? 'Item' : 'Layanan';
+            document.getElementById('quantity').textContent = order.quantity;
+            document.getElementById('totalAmount').textContent = `Rp ${formatNumber(order.totalAmount)}`;
+            document.getElementById('orderDate').textContent = formatDate(order.createdAt);
+            document.getElementById('startDate').textContent = formatDate(order.startDate);
+            document.getElementById('endDate').textContent = formatDate(order.endDate);
+            document.getElementById('duration').textContent = calculateDuration(order.startDate, order.endDate);
+
+            // Set status
+            const statusElement = document.getElementById('orderStatus');
+            statusElement.textContent = getStatusText(order.status);
+            statusElement.className = `inline-block border rounded-full px-4 py-2 font-semibold text-sm ${getStatusClass(order.status)}`;
+
+            // Set notes
+            const notesElement = document.getElementById('notes');
+            if (order.notes) {
+                notesElement.textContent = order.notes;
+            } else {
+                notesElement.innerHTML = '<em class="text-gray-400">Tidak ada catatan</em>';
+            }
+
+            // Set files
+            const filesElement = document.getElementById('files');
+            if (order.mouFile) {
+                filesElement.innerHTML = `
+                    <div class="flex items-center gap-2 p-3 border border-[#e5e7eb] rounded-lg">
+                        <i class="fas fa-file-pdf text-red-500"></i>
+                        <span class="flex-1 text-sm">${order.mouFile}</span>
+                        <button onclick="downloadFile('${order.mouFile}')" class="text-[#697565] hover:text-[#5a6356]">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                filesElement.innerHTML = '<em class="text-gray-400">Tidak ada dokumen</em>';
+            }
+
+            // Show/hide action buttons based on status
+            const cancelOrderBtn = document.getElementById('cancelOrderBtn');
+            const editOrderBtn = document.getElementById('editOrderBtn');
+
+            if (order.status === 'pending') {
+                cancelOrderBtn.classList.remove('hidden');
+                editOrderBtn.classList.remove('hidden');
+            } else {
+                cancelOrderBtn.classList.add('hidden');
+                editOrderBtn.classList.add('hidden');
+            }
+
+            // Load item/service details
+            loadItemDetails(order);
+
+            orderDetailContent.classList.remove('hidden');
+        }
+
+        // Load item/service details
+        async function loadItemDetails(order) {
+            try {
+                const endpoint = order.itemType === 'item' ? '/user/api/items' : '/user/api/services';
+                const response = await fetch(endpoint);
+                const result = await response.json();
+
+                if (result.success) {
+                    const items = result.data;
+                    const item = items.find(i => i.id === order.itemId);
+                    
+                    if (item) {
+                        document.getElementById('itemName').textContent = item.name;
+                        document.getElementById('itemDescription').textContent = item.description || 'Tidak ada deskripsi';
+                        document.getElementById('itemCategory').textContent = item.category || 'Tidak ada kategori';
+                        document.getElementById('itemStatus').textContent = getItemStatusText(item.status);
+                        document.getElementById('pricePerUnit').textContent = `Rp ${formatNumber(item.price)}`;
+
+                        // Set item photo
+                        const itemPhoto = document.getElementById('itemPhoto');
+                        const itemPhotoPlaceholder = document.getElementById('itemPhotoPlaceholder');
+                        
+                        if (item.photo) {
+                            itemPhoto.src = `/uploads/${item.photo}`;
+                            itemPhoto.classList.remove('hidden');
+                            itemPhotoPlaceholder.classList.add('hidden');
+                        } else {
+                            itemPhoto.classList.add('hidden');
+                            itemPhotoPlaceholder.classList.remove('hidden');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading item details:', error);
+            }
+        }
+
+        // Show error state
+        function showError(message) {
+            const errorState = document.getElementById('errorState');
+            const errorMessage = errorState.querySelector('p');
+            errorMessage.textContent = message;
+            errorState.classList.remove('hidden');
+        }
+
+        // Calculate duration between dates
+        function calculateDuration(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return `${diffDays} hari`;
+        }
+
+        // Download file
+        function downloadFile(filename) {
+            // This would typically trigger a file download
+            window.open(`/uploads/${filename}`, '_blank');
+        }
+
+        // Print order detail
+        document.getElementById('printBtn').addEventListener('click', function() {
+            window.print();
+        });
+
+        // Cancel order functionality
+        document.getElementById('cancelOrderBtn').addEventListener('click', function() {
+            document.getElementById('cancelModal').classList.remove('hidden');
+        });
+
+        document.getElementById('confirmCancel').addEventListener('click', async function() {
+            if (!currentOrder) return;
+
+            try {
+                const response = await fetch(`/user/api/orders/${currentOrder.id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Pesanan berhasil dibatalkan');
+                    window.location.href = '/user/orders';
+                } else {
+                    alert('Gagal membatalkan pesanan: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error cancelling order:', error);
+                alert('Terjadi kesalahan saat membatalkan pesanan');
+            } finally {
+                document.getElementById('cancelModal').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('cancelModalClose').addEventListener('click', function() {
+            document.getElementById('cancelModal').classList.add('hidden');
+        });
+
+        // Edit order functionality
+        document.getElementById('editOrderBtn').addEventListener('click', function() {
+            if (currentOrder) {
+                window.location.href = `/user/orders/${currentOrder.id}/edit`;
+            }
+        });
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('id-ID').format(num);
+        }
+
+        function getStatusClass(status) {
+            const statusClasses = {
+                pending: 'status-pending',
+                approved: 'status-approved',
+                rejected: 'status-rejected',
+                active: 'status-active',
+                completed: 'status-completed',
+                cancelled: 'status-cancelled'
+            };
+            return statusClasses[status] || 'status-pending';
+        }
+
+        function getStatusText(status) {
+            const statusTexts = {
+                pending: 'Menunggu',
+                approved: 'Disetujui',
+                rejected: 'Ditolak',
+                active: 'Aktif',
+                completed: 'Selesai',
+                cancelled: 'Dibatalkan'
+            };
+            return statusTexts[status] || status;
+        }
+
+        function getItemStatusText(status) {
+            const statusTexts = {
+                available: 'Tersedia',
+                unavailable: 'Tidak Tersedia',
+                maintenance: 'Dalam Perbaikan',
+                damaged: 'Rusak',
+                lost: 'Hilang'
+            };
+            return statusTexts[status] || status;
+        }
+    </script>
+</body>
+
+</html> 
