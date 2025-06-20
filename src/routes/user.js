@@ -1,7 +1,9 @@
 const express = require('express');
 const barangController = require('../controllers/user/barang');
 const ordersController = require('../controllers/user/orders');
+const paymentsController = require('../controllers/user/payments');
 const { requireAuth } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -180,5 +182,18 @@ router.get('/status', (req, res, next) => {
         user: req.session.user
     });
 });
+
+// Payment routes
+router.post('/orders/:id/payment', requireAuth, upload.single('paymentProof'), paymentsController.uploadPaymentProof);
+router.get('/orders/:id/payment', requireAuth, paymentsController.getPaymentByOrder);
+router.get('/payments/history', requireAuth, paymentsController.getUserPaymentHistory);
+
+// Halaman riwayat pembayaran user
+router.get('/payments/history-page', requireAuth, (req, res) => {
+  res.render('user/payments-history', { user: req.session.user });
+});
+
+router.get('/orders/:id/fine', requireAuth, paymentsController.getFineDetail);
+router.post('/orders/:id/fine/payment', requireAuth, upload.single('paymentProof'), paymentsController.uploadFinePayment);
 
 module.exports = router;

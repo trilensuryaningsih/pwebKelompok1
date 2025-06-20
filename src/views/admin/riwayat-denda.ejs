@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwayat Denda - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body class="bg-brand-beige text-brand-brown font-sans flex flex-col min-h-screen">
+  <div class="app grid lg:grid-cols-[240px_1fr] flex-grow" role="main">
+    <aside class="bg-brand-olive text-brand-beige flex flex-col items-center p-3 lg:p-0 lg:pt-12 sticky top-0 h-screen z-10">
+      <div class="logo w-12 h-12 mb-8 hidden lg:block" aria-label="Logo">
+        <!-- Logo SVG here -->
+      </div>
+      <nav class="flex flex-col w-full gap-4 hidden lg:flex">
+        <a href="/admin/status" class="hover:bg-brand-olive-dark text-left py-2.5 px-4 rounded-full transition-colors" role="button">Status</a>
+        <a href="/admin/fines/history-page" class="bg-brand-olive-dark font-bold text-left py-2.5 px-4 rounded-full transition-colors" aria-current="page" role="button">Riwayat Denda</a>
+      </nav>
+    </aside>
+    <div class="flex flex-col w-full">
+      <header class="bg-brand-beige px-5 lg:px-10 py-4 flex justify-between items-center gap-4 sticky top-0 lg:relative border-b border-brand-brown/30 lg:border-none">
+        <div class="flex items-center gap-4 ml-auto">
+          <div class="border border-brand-brown text-brand-brown font-semibold py-1.5 px-3 rounded-xl hidden sm:block">Admin</div>
+        </div>
+      </header>
+      <main class="content p-5 lg:p-10 flex flex-col gap-6 bg-brand-beige">
+        <h1 class="text-2xl font-bold mb-6">Riwayat Denda</h1>
+        <div class="overflow-x-auto">
+          <table class="w-full rounded-xl overflow-hidden bg-brand-olive text-brand-beige">
+            <thead class="bg-brand-olive">
+              <tr>
+                <th class="p-4 px-3 text-left font-semibold align-middle">No</th>
+                <th class="p-4 px-3 text-left font-semibold align-middle">Order ID</th>
+                <th class="p-4 px-3 text-left font-semibold align-middle">User ID</th>
+                <th class="p-4 px-3 text-left font-semibold align-middle">Jumlah Denda</th>
+                <th class="p-4 px-3 text-left font-semibold align-middle">Status</th>
+                <th class="p-4 px-3 text-left font-semibold align-middle">Tanggal Denda</th>
+                <th class="p-4 px-3 text-left font-semibold align-middle">Keterangan</th>
+              </tr>
+            </thead>
+            <tbody class="bg-brand-beige text-brand-brown" id="finesBody">
+              <!-- Data diisi oleh JS -->
+            </tbody>
+          </table>
+          <div id="emptyState" class="text-center text-gray-500 py-8 hidden">Belum ada riwayat denda.</div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script>
+    async function loadFineHistory() {
+      const res = await fetch('/admin/fines/history');
+      const result = await res.json();
+      const body = document.getElementById('finesBody');
+      const empty = document.getElementById('emptyState');
+      body.innerHTML = '';
+      if (result.success && result.data.length > 0) {
+        empty.classList.add('hidden');
+        result.data.forEach((fine, idx) => {
+          body.innerHTML += `
+            <tr>
+              <td class="p-4 px-3 align-middle font-bold text-sm">${idx + 1}</td>
+              <td class="p-4 px-3 align-middle font-bold text-sm">${fine.orderId}</td>
+              <td class="p-4 px-3 align-middle font-bold text-sm">${fine.Order ? fine.Order.user_id : '-'}</td>
+              <td class="p-4 px-3 align-middle font-bold text-sm">Rp ${Number(fine.amount).toLocaleString('id-ID')}</td>
+              <td class="p-4 px-3 align-middle">${fine.status}</td>
+              <td class="p-4 px-3 align-middle">${new Date(fine.createdAt).toLocaleString('id-ID')}</td>
+              <td class="p-4 px-3 align-middle">${fine.reason || '-'}</td>
+            </tr>
+          `;
+        });
+      } else {
+        empty.classList.remove('hidden');
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadFineHistory);
+  </script>
+</body>
+</html> 

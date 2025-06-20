@@ -118,6 +118,12 @@
                     </div>
                 </div>
 
+                <!-- Payment Section -->
+                <div id="paymentSection" class="mt-6"></div>
+
+                <!-- Fine Section -->
+                <div id="fineSection" class="mt-6"></div>
+
                 <!-- Order Information -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Basic Information -->
@@ -348,6 +354,12 @@
             // Load item/service details
             loadItemDetails(order);
 
+            // Load payment
+            loadPayment(order.id);
+
+            // Load fine
+            loadFine(order.id);
+
             orderDetailContent.classList.remove('hidden');
         }
 
@@ -502,6 +514,137 @@
                 lost: 'Hilang'
             };
             return statusTexts[status] || status;
+        }
+
+        // Tambahkan fungsi untuk load payment
+        async function loadPayment(orderId) {
+            const paymentSection = document.getElementById('paymentSection');
+            paymentSection.innerHTML = '';
+            try {
+                const res = await fetch(`/user/orders/${orderId}/payment`);
+                const result = await res.json();
+                if (result.success && result.data) {
+                    // Sudah ada pembayaran
+                    const payment = result.data;
+                    paymentSection.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Pembayaran</h3>
+                            <div class="mb-2">Metode: <span class="font-medium">${payment.paymentMethod}</span></div>
+                            <div class="mb-2">Tanggal: <span class="font-medium">${formatDate(payment.paymentDate)}</span></div>
+                            <div class="mb-2">Tipe: <span class="font-medium">${payment.paymentType}</span></div>
+                            <div class="mb-2">Bukti: <a href="/uploads/${payment.paymentProof}" target="_blank" class="text-blue-600 underline">Lihat Bukti</a></div>
+                        </div>
+                    `;
+                } else if (currentOrder.status === 'approved') {
+                    // Belum ada pembayaran, tampilkan form
+                    paymentSection.innerHTML = `
+                        <form id="paymentForm" class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6" enctype="multipart/form-data">
+                            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Upload Bukti Pembayaran</h3>
+                            <div class="mb-4">
+                                <label class="block mb-1 font-medium">Metode Pembayaran</label>
+                                <select name="paymentMethod" class="w-full border rounded px-3 py-2" required>
+                                    <option value="">Pilih Metode</option>
+                                    <option value="Transfer">Transfer Bank</option>
+                                    <option value="QRIS">QRIS</option>
+                                    <option value="Tunai">Tunai</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block mb-1 font-medium">Bukti Pembayaran</label>
+                                <input type="file" name="paymentProof" accept="image/*,application/pdf" class="w-full border rounded px-3 py-2" required />
+                            </div>
+                            <button type="submit" class="px-6 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">Upload</button>
+                        </form>
+                    `;
+                    document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        const formData = new FormData(this);
+                        const res = await fetch(`/user/orders/${orderId}/payment`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await res.json();
+                        if (result.success) {
+                            alert('Bukti pembayaran berhasil diupload!');
+                            loadPayment(orderId);
+                        } else {
+                            alert(result.message || 'Gagal upload pembayaran');
+                        }
+                    });
+                }
+            } catch (err) {
+                paymentSection.innerHTML = '<div class="text-red-600">Gagal memuat data pembayaran</div>';
+            }
+        }
+
+        // Tambahkan fungsi untuk load fine (denda)
+        async function loadFine(orderId) {
+            const fineSection = document.getElementById('fineSection');
+            fineSection.innerHTML = '';
+            try {
+                const res = await fetch(`/user/orders/${orderId}/fine`);
+                const result = await res.json();
+                if (result.success && result.data) {
+                    const fine = result.data;
+                    if (fine.status === 'paid') {
+                        fineSection.innerHTML = `
+                            <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                                <h3 class="text-lg font-semibold text-red-700 mb-4">Denda Keterlambatan</h3>
+                                <div class="mb-2">Jumlah Denda: <span class="font-medium text-red-700">Rp ${fine.amount.toLocaleString('id-ID')}</span></div>
+                                <div class="mb-2">Tanggal Denda: <span class="font-medium">${new Date(fine.createdAt).toLocaleString('id-ID')}</span></div>
+                                <div class="mb-2">Keterangan: <span class="font-medium">${fine.description || '-'}</span></div>
+                                <div class="mb-2">Status: <span class="font-medium text-green-700">Sudah Dibayar</span></div>
+                                <div class="mb-2">Metode: <span class="font-medium">${fine.paymentMethod}</span></div>
+                                <div class="mb-2">Tanggal Bayar: <span class="font-medium">${fine.paymentDate ? new Date(fine.paymentDate).toLocaleString('id-ID') : '-'}</span></div>
+                                <div class="mb-2">Bukti Bayar: <a href="/uploads/${fine.paymentProof}" target="_blank" class="text-blue-600 underline">Lihat Bukti</a></div>
+                            </div>
+                        `;
+                    } else {
+                        fineSection.innerHTML = `
+                            <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                                <h3 class="text-lg font-semibold text-red-700 mb-4">Denda Keterlambatan</h3>
+                                <div class="mb-2">Jumlah Denda: <span class="font-medium text-red-700">Rp ${fine.amount.toLocaleString('id-ID')}</span></div>
+                                <div class="mb-2">Tanggal Denda: <span class="font-medium">${new Date(fine.createdAt).toLocaleString('id-ID')}</span></div>
+                                <div class="mb-2">Keterangan: <span class="font-medium">${fine.description || '-'}</span></div>
+                                <div class="mb-2">Status: <span class="font-medium text-yellow-700">Belum Dibayar</span></div>
+                                <form id="finePaymentForm" class="mt-4" enctype="multipart/form-data">
+                                    <div class="mb-4">
+                                        <label class="block mb-1 font-medium">Metode Pembayaran Denda</label>
+                                        <select name="paymentMethod" class="w-full border rounded px-3 py-2" required>
+                                            <option value="">Pilih Metode</option>
+                                            <option value="Transfer">Transfer Bank</option>
+                                            <option value="QRIS">QRIS</option>
+                                            <option value="Tunai">Tunai</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block mb-1 font-medium">Bukti Pembayaran Denda</label>
+                                        <input type="file" name="paymentProof" accept="image/*,application/pdf" class="w-full border rounded px-3 py-2" required />
+                                    </div>
+                                    <button type="submit" class="px-6 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">Upload Bukti Pembayaran Denda</button>
+                                </form>
+                            </div>
+                        `;
+                        document.getElementById('finePaymentForm').addEventListener('submit', async function(e) {
+                            e.preventDefault();
+                            const formData = new FormData(this);
+                            const res = await fetch(`/user/orders/${orderId}/fine/payment`, {
+                                method: 'POST',
+                                body: formData
+                            });
+                            const result = await res.json();
+                            if (result.success) {
+                                alert('Bukti pembayaran denda berhasil diupload!');
+                                loadFine(orderId);
+                            } else {
+                                alert(result.message || 'Gagal upload pembayaran denda');
+                            }
+                        });
+                    }
+                }
+            } catch (err) {
+                fineSection.innerHTML = '<div class="text-red-600">Gagal memuat data denda</div>';
+            }
         }
     </script>
 </body>

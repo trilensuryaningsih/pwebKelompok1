@@ -76,8 +76,7 @@
       <main class="content p-5 lg:p-10 flex flex-col gap-6 bg-brand-beige">
         <div class="flex flex-wrap justify-between items-center gap-4">
           <div class="status-filters flex gap-2"></div>
-          
-
+          <a href="/admin/fines/history-page" class="bg-brand-olive text-brand-beige px-4 py-2 rounded hover:bg-brand-olive-dark font-semibold">Riwayat Denda</a>
         </div>
 
         <div class="overflow-x-auto">
@@ -120,12 +119,63 @@
               </tbody>
             </table>
         </div>
+
+        <% if (typeof fines !== 'undefined' && fines.length > 0) { %>
+          <h2 class="text-xl font-bold mt-10 mb-4">Daftar Denda</h2>
+          <div class="overflow-x-auto mb-8">
+            <table class="w-full rounded-xl overflow-hidden bg-brand-olive text-brand-beige">
+              <thead class="bg-brand-olive">
+                <tr>
+                  <th class="p-4 px-3 text-left font-semibold align-middle">No</th>
+                  <th class="p-4 px-3 text-left font-semibold align-middle">Order ID</th>
+                  <th class="p-4 px-3 text-left font-semibold align-middle">User ID</th>
+                  <th class="p-4 px-3 text-left font-semibold align-middle">Jumlah Denda</th>
+                  <th class="p-4 px-3 text-left font-semibold align-middle">Status</th>
+                  <th class="p-4 px-3 text-left font-semibold align-middle">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="bg-brand-beige text-brand-brown">
+                <% fines.forEach((fine, idx) => { %>
+                  <tr>
+                    <td class="p-4 px-3 align-middle font-bold text-sm"><%= idx + 1 %></td>
+                    <td class="p-4 px-3 align-middle font-bold text-sm"><%= fine.orderId %></td>
+                    <td class="p-4 px-3 align-middle font-bold text-sm"><%= fine.userId || '-' %></td>
+                    <td class="p-4 px-3 align-middle font-bold text-sm">Rp <%= Number(fine.amount).toLocaleString('id-ID') %></td>
+                    <td class="p-4 px-3 align-middle">
+                      <select id="status-<%= fine.id %>" class="border rounded px-2 py-1">
+                        <option value="pending" <%= fine.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                        <option value="paid" <%= fine.status === 'paid' ? 'selected' : '' %>>Paid</option>
+                        <option value="waived" <%= fine.status === 'waived' ? 'selected' : '' %>>Waived</option>
+                      </select>
+                    </td>
+                    <td class="p-4 px-3 align-middle">
+                      <button onclick="updateFineStatus(<%= fine.id %>)" class="bg-brand-olive text-brand-beige px-3 py-1 rounded hover:bg-brand-olive-dark">Simpan</button>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
       </main>
     </div>
   </div>
 
   <script>
-   
+    async function updateFineStatus(fineId) {
+      const status = document.getElementById(`status-${fineId}`).value;
+      const res = await fetch(`/admin/fines/${fineId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const result = await res.json();
+      if (result.success) {
+        Swal.fire('Berhasil', 'Status denda diperbarui!', 'success');
+      } else {
+        Swal.fire('Gagal', result.message || 'Gagal update status denda', 'error');
+      }
+    }
   </script>
 </body>
 </html>

@@ -22,9 +22,14 @@ router.get('/edit', editControllers.edit);
 router.get('/status', statusControllers.showAllitemsPage); 
 router.get('/stok', stokControllers.showAllitemsPage);
 
+router.get('/fines/history', statusControllers.getFineHistory);
+router.get('/fines/history-page', (req, res) => {
+  res.render('admin/riwayat-denda');
+});
 
 router.post('/tambah', upload.single('foto'), tambahControllers.createitems);
 router.post('/edit/:id', upload.single('foto'), editControllers.updateitem);
 
+router.patch('/fines/:fineId/status', statusControllers.updateFineStatus);
 
 module.exports = router;

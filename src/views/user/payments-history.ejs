@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UMCental - Riwayat Pembayaran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .bg-custom-dark { background-color: #181C14; }
+        .bg-custom-green { background-color: #697565; }
+        .bg-custom-green-dark { background-color: #5a6356; }
+        .focus\:ring-custom-green:focus { --tw-ring-color: rgba(105, 117, 101, 0.5); }
+    </style>
+</head>
+<body class="flex min-h-screen bg-[#f5f0e9]">
+    <%- include('../partials/sidebar') %>
+    <div class="flex-1 flex flex-col">
+        <%- include('../partials/header') %>
+        <section class="flex-1 p-8 overflow-x-auto">
+            <!-- Header -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-[#181C14] mb-2">Riwayat Pembayaran</h1>
+                <p class="text-[#7f7a75]">Lihat semua pembayaran dan denda Anda di sini</p>
+            </div>
+            <!-- Table -->
+            <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] overflow-hidden">
+                <table class="min-w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#7f8a7d] text-[#e6e1d9] text-xs font-normal">
+                            <th class="py-3 px-4 text-left rounded-l-lg">Tanggal</th>
+                            <th class="py-3 px-4 text-left">Tipe</th>
+                            <th class="py-3 px-4 text-left">Metode</th>
+                            <th class="py-3 px-4 text-left">Jumlah</th>
+                            <th class="py-3 px-4 text-left">Order ID</th>
+                            <th class="py-3 px-4 text-left">Tipe Pembayaran</th>
+                            <th class="py-3 px-4 text-left rounded-r-lg">Bukti</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody" class="text-[#7f7a75] text-sm font-normal">
+                        <!-- Data akan diisi oleh JS -->
+                    </tbody>
+                </table>
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden py-8 text-center">
+                    <i class="fas fa-inbox text-4xl text-[#d1d5db] mb-4"></i>
+                    <p class="text-[#7f7a75]">Belum ada riwayat pembayaran</p>
+                </div>
+            </div>
+        </section>
+        <%- include('../partials/footer') %>
+    </div>
+    <script>
+    async function loadHistory() {
+        const res = await fetch('/user/payments/history');
+        const result = await res.json();
+        const body = document.getElementById('historyBody');
+        const empty = document.getElementById('emptyState');
+        body.innerHTML = '';
+        if (result.success && result.data.length > 0) {
+            empty.classList.add('hidden');
+            result.data.forEach(row => {
+                body.innerHTML += `
+                    <tr>
+                        <td class="px-4 py-2">${new Date(row.date).toLocaleString('id-ID')}</td>
+                        <td class="px-4 py-2">${row.type === 'Denda' ? '<span class=\'text-red-600 font-semibold\'>Denda</span>' : 'Pembayaran'}</td>
+                        <td class="px-4 py-2">${row.method}</td>
+                        <td class="px-4 py-2">Rp ${row.amount ? row.amount.toLocaleString('id-ID') : '-'}</td>
+                        <td class="px-4 py-2">${row.orderId}</td>
+                        <td class="px-4 py-2">${row.paymentType || '-'}</td>
+                        <td class="px-4 py-2">${row.proof && row.proof !== '-' ? `<a href="/uploads/${row.proof}" target="_blank" class="text-blue-600 underline">Lihat</a>` : '-'}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            empty.classList.remove('hidden');
+        }
+    }
+    document.addEventListener('DOMContentLoaded', loadHistory);
+    </script>
+</body>
+</html> 

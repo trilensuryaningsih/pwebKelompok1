@@ -20,7 +20,10 @@ module.exports = (sequelize, DataTypes) => {
     reason: DataTypes.STRING,
     status: DataTypes.ENUM('pending', 'paid', 'waived'),
     dueDate: DataTypes.DATE,
-    paidDate: DataTypes.DATE
+    paidDate: DataTypes.DATE,
+    paymentMethod: DataTypes.STRING,
+    paymentProof: DataTypes.STRING,
+    paymentDate: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Fine',
