@@ -52,17 +52,25 @@
     if(confirm('Verifikasi pesanan ini?')) {
       fetch(`/admin/items/verification/${id}/approve`, {method:'POST',headers:{'Content-Type':'application/json'}})
         .then(r=>r.json()).then(res=>{
-          if(res.success) location.reload();
-          else alert(res.message||'Gagal memverifikasi pesanan');
+          if(res.success) {
+            alert('Pesanan berhasil diverifikasi!');
+            location.reload();
+          } else {
+            alert(res.message||'Gagal memverifikasi pesanan');
+          }
         });
     }
   }
   function tolakOrder(id) {
-    if(confirm('Tolak pesanan ini?')) {
+    if(confirm('Tolak pesanan ini? Stok akan dikembalikan ke database.')) {
       fetch(`/admin/items/verification/${id}/reject`, {method:'POST',headers:{'Content-Type':'application/json'}})
         .then(r=>r.json()).then(res=>{
-          if(res.success) location.reload();
-          else alert(res.message||'Gagal menolak pesanan');
+          if(res.success) {
+            alert(res.message || 'Pesanan berhasil ditolak dan stok telah dikembalikan!');
+            location.reload();
+          } else {
+            alert(res.message||'Gagal menolak pesanan');
+          }
         });
     }
   }

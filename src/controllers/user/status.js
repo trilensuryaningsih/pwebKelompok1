@@ -1,14 +1,36 @@
-const { Order } = require('../../models');
+const { Order, Item, Service } = require('../../models');
 
 exports.getUserOrdersStatus = async (req, res) => {
     try {
         const userId = req.session.user.id;
+        console.log('Fetching orders for user ID:', userId);
+        
         const orders = await Order.findAll({
             where: { user_id: userId },
+            include: [
+                {
+                    model: Item,
+                    as: 'Item',
+                    attributes: ['name', 'description']
+                },
+                {
+                    model: Service,
+                    as: 'Service',
+                    attributes: ['name', 'description']
+                }
+            ],
             order: [['createdAt', 'DESC']]
         });
-        res.render('user/status', { user: req.session.user, orders, currentPage: 'status' });
+        
+        console.log('Found orders:', orders.length);
+        
+        res.render('user/status', { 
+            user: req.session.user, 
+            orders, 
+            currentPage: 'status' 
+        });
     } catch (e) {
+        console.error('Error in getUserOrdersStatus:', e);
         res.status(500).send('Gagal memuat status pesanan');
     }
 };
@@ -39,8 +61,8 @@ exports.requestExchange = async (req, res) => {
         if (!['active', 'completed'].includes(order.status)) {
             return res.status(400).json({ success: false, message: 'Penukaran hanya bisa diajukan jika alat sudah diambil' });
         }
-        // Di sini bisa ditambah logic insert ke tabel Exchange jika ada
-        order.status = 'exchange_requested';
+        // Update status to completed for exchange request
+        order.status = 'completed';
         await order.save();
         res.json({ success: true });
     } catch (e) {
