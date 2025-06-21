@@ -45,21 +45,37 @@
               <option value="">-- Pilih alat atau jasa --</option>
               <% if (typeof items !== 'undefined' && items.length > 0) { %>
                 <% items.forEach(item => { %>
-                  <option value="<%= item.id %>"><%= item.name %></option>
+                  <option value="<%= item.id %>" data-type="<%= item.type %>"><%= item.name %> (<%= item.type %>)</option>
                 <% }) %>
               <% } %>
             </select>
           </div>
           <form id="edit-form" method="POST" enctype="multipart/form-data" class="grid grid-cols-2 gap-8" autocomplete="off">
+            <!-- Hidden field to ensure type is always sent -->
+            <input type="hidden" name="type" id="hidden-type" value="">
+            
             <!-- Left Column -->
             <div class="space-y-6">
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Tipe <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <select id="type" name="type" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                    <option value="">Pilih Tipe</option>
+                    <option value="item">Item</option>
+                    <option value="service">Service</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Kategori <span class="text-red-500">*</span></label>
                 <div class="relative">
                   <select id="category" name="category" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
                     <option value="">Pilih Kategori</option>
-                    <option value="alat">Alat</option>
-                    <option value="jasa">Jasa</option>
                   </select>
                   <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,11 +100,6 @@
                 <div class="relative">
                   <select name="status" id="status" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
                     <option value="">Pilih Status</option>
-                    <option value="available">Tersedia</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="damaged">Rusak</option>
-                    <option value="lost">Hilang</option>
-                    <option value="borrowed">Dipinjam</option>
                   </select>
                   <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,14 +108,13 @@
                   </div>
                 </div>
               </div>
-              <div>
+              <div id="quantity-field">
                 <label class="block text-gray-600 text-sm mb-2">Jumlah <span class="text-red-500">*</span></label>
                 <input name="quantity" id="quantity" type="number" min="1" required placeholder="Masukkan jumlah" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
               </div>
-              <div class="mb-4">
-                <label for="price" class="block text-sm font-medium text-gray-700">Harga <span class="text-xs text-gray-500">(khusus untuk jasa)</span></label>
-                <input type="number" name="price" id="price" min="0" step="any" class="mt-1 p-2 w-full border rounded-md" placeholder="Harga hanya untuk jasa" disabled>
-                <span class="text-xs text-gray-500">Harga hanya diisi jika kategori adalah jasa</span>
+              <div class="mb-4" id="price-field">
+                <label for="price" class="block text-sm font-medium text-gray-700">Harga</label>
+                <input type="number" name="price" id="price" min="0" step="any" class="mt-1 p-2 w-full border rounded-md bg-beige-light" placeholder="Masukkan harga">
               </div>
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Foto</label>
@@ -133,6 +143,9 @@
     </div>
   </div>
   <script>
+    // Make items data available globally
+    const items = JSON.parse('<%- JSON.stringify(items || []) %>');
+    
     document.addEventListener('DOMContentLoaded', () => {
       const itemSelector = document.getElementById('item-selector');
       const editForm = document.getElementById('edit-form');
@@ -140,30 +153,136 @@
       const nameInput = document.getElementById('name');
       const statusSelect = document.getElementById('status');
       const categorySelect = document.getElementById('category');
+      const typeSelect = document.getElementById('type');
       const quantityInput = document.getElementById('quantity');
+      const quantityField = document.getElementById('quantity-field');
       const descriptionInput = document.getElementById('description');
       const priceInput = document.getElementById('price');
+      const priceField = document.getElementById('price-field');
       const imagePreviewContainer = document.getElementById('image-preview-container');
       const imagePreview = document.getElementById('image-preview');
+      const hiddenTypeInput = document.getElementById('hidden-type');
 
-      function togglePriceInput() {
-        if (categorySelect.value === 'alat') {
-          priceInput.disabled = true;
-          priceInput.value = '';
-          priceInput.classList.add('bg-gray-200', 'cursor-not-allowed');
-        } else {
-          priceInput.disabled = false;
-          priceInput.classList.remove('bg-gray-200', 'cursor-not-allowed');
+      // Category options for different types
+      const itemCategories = [
+        'elektronik',
+        'peralatan kantor', 
+        'peralatan olahraga',
+        'laboratorium',
+        'audio visual'
+      ];
+
+      const serviceCategories = [
+        'fotografi',
+        'animasi dan motion grafis',
+        'desain grafis',
+        'multimedia interaktif'
+      ];
+
+      // Status options for different types
+      const itemStatuses = [
+        { value: 'available', label: 'Available' },
+        { value: 'maintenance', label: 'Maintenance' },
+        { value: 'damaged', label: 'Damaged' },
+        { value: 'lost', label: 'Lost' }
+      ];
+
+      const serviceStatuses = [
+        { value: 'available', label: 'Available' },
+        { value: 'unavailable', label: 'Unavailable' },
+        { value: 'maintenance', label: 'Maintenance' }
+      ];
+
+      function normalizeCategory(category) {
+        if (!category) return '';
+        return category.toLowerCase().trim();
+      }
+
+      function findMatchingCategory(categoryValue, availableCategories) {
+        const normalizedValue = normalizeCategory(categoryValue);
+        return availableCategories.find(cat => normalizeCategory(cat) === normalizedValue) || categoryValue;
+      }
+
+      function updateCategoryOptions() {
+        const selectedType = typeSelect.value;
+        categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+        
+        if (selectedType === 'item') {
+          itemCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            categorySelect.appendChild(option);
+          });
+        } else if (selectedType === 'service') {
+          serviceCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            categorySelect.appendChild(option);
+          });
         }
       }
-      categorySelect.addEventListener('change', togglePriceInput);
+
+      function updateStatusOptions() {
+        const selectedType = typeSelect.value;
+        statusSelect.innerHTML = '<option value="">Pilih Status</option>';
+        
+        if (selectedType === 'item') {
+          itemStatuses.forEach(status => {
+            const option = document.createElement('option');
+            option.value = status.value;
+            option.textContent = status.label;
+            statusSelect.appendChild(option);
+          });
+        } else if (selectedType === 'service') {
+          serviceStatuses.forEach(status => {
+            const option = document.createElement('option');
+            option.value = status.value;
+            option.textContent = status.label;
+            statusSelect.appendChild(option);
+          });
+        }
+      }
+
+      function toggleFields() {
+        const selectedType = typeSelect.value;
+        
+        if (selectedType === 'item') {
+          quantityField.style.display = 'block';
+          priceField.style.display = 'none';
+          quantityInput.required = true;
+          priceInput.required = false;
+        } else if (selectedType === 'service') {
+          quantityField.style.display = 'none';
+          priceField.style.display = 'block';
+          quantityInput.required = false;
+          priceInput.required = true;
+        } else {
+          quantityField.style.display = 'block';
+          priceField.style.display = 'block';
+          quantityInput.required = false;
+          priceInput.required = false;
+        }
+      }
+
+      typeSelect.addEventListener('change', () => {
+        updateCategoryOptions();
+        updateStatusOptions();
+        toggleFields();
+        categorySelect.value = '';
+        statusSelect.value = '';
+        hiddenTypeInput.value = typeSelect.value;
+      });
 
       function resetForm() {
         editForm.reset();
         editForm.action = '';
         simpanButton.disabled = true;
         imagePreviewContainer.style.display = 'none';
-        togglePriceInput();
+        updateCategoryOptions();
+        updateStatusOptions();
+        toggleFields();
       }
 
       itemSelector.addEventListener('change', async (event) => {
@@ -173,26 +292,62 @@
           return;
         }
         try {
-          const response = await fetch(`/admin/api/items/${selectedId}`);
+          // Get type from selected option's data-type attribute
+          const selectedOption = itemSelector.options[itemSelector.selectedIndex];
+          const itemType = selectedOption.getAttribute('data-type');
+          
+          if (!itemType) {
+            throw new Error('Tipe item tidak ditemukan');
+          }
+          
+          const response = await fetch(`/admin/api/items/${selectedId}?type=${itemType}`);
           if (!response.ok) throw new Error(`Gagal mengambil data. Status: ${response.status}`);
           const itemData = await response.json();
-          nameInput.value = itemData.name || '';
-          statusSelect.value = itemData.status || '';
-          categorySelect.value = itemData.category || '';
-          quantityInput.value = itemData.quantity || 0;
-          descriptionInput.value = itemData.description || '';
-          priceInput.value = itemData.price || '';
-          togglePriceInput();
-          if (itemData.photo) {
-            imagePreview.src = `/uploads/${itemData.photo}`;
-            imagePreviewContainer.style.display = 'block';
-          } else {
-            imagePreviewContainer.style.display = 'none';
-          }
-          editForm.action = `/admin/items/edit/${itemData.id}`;
-          simpanButton.disabled = false;
+          
+          console.log('Received item data:', itemData); // Debug log
+          console.log('Item type:', itemType); // Debug log
+          console.log('Original category from API:', itemData.category); // Debug log
+          
+          // Set type based on the selected item
+          typeSelect.value = itemType;
+          hiddenTypeInput.value = itemType;
+          
+          // Update dropdowns first
+          updateCategoryOptions();
+          updateStatusOptions();
+          toggleFields();
+          
+          // Wait a bit for DOM to update, then set values
+          setTimeout(() => {
+            nameInput.value = itemData.name || '';
+            statusSelect.value = itemData.status || '';
+            
+            // Handle category with normalization
+            const availableCategories = itemType === 'item' ? itemCategories : serviceCategories;
+            const matchedCategory = findMatchingCategory(itemData.category, availableCategories);
+            categorySelect.value = matchedCategory;
+            
+            quantityInput.value = itemData.quantity || 0;
+            descriptionInput.value = itemData.description || '';
+            priceInput.value = itemData.price || '';
+            
+            console.log('Setting category to:', itemData.category); // Debug log
+            console.log('Matched category:', matchedCategory); // Debug log
+            console.log('Available category options:', Array.from(categorySelect.options).map(opt => opt.value)); // Debug log
+            
+            if (itemData.photo) {
+              imagePreview.src = `/uploads/${itemData.photo}`;
+              imagePreviewContainer.style.display = 'block';
+            } else {
+              imagePreviewContainer.style.display = 'none';
+            }
+            editForm.action = `/admin/items/edit/${itemData.id}`;
+            simpanButton.disabled = false;
+          }, 100);
+          
         } catch (err) {
-          alert('Gagal mengambil data item.');
+          console.error('Error:', err);
+          alert('Gagal mengambil data item: ' + err.message);
           resetForm();
         }
       });
@@ -201,6 +356,15 @@
         if (!itemSelector.value) {
           e.preventDefault();
           alert('Pilih item yang ingin diedit terlebih dahulu!');
+          return;
+        }
+        
+        // Log form data before submit
+        const formData = new FormData(editForm);
+        console.log('Form action:', editForm.action);
+        console.log('Form data being sent:');
+        for (let [key, value] of formData.entries()) {
+          console.log(key + ':', value);
         }
       });
       // Notifikasi sukses setelah update

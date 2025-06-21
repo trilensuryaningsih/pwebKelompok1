@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Alat dan Jasa</title>
+    <title>Tambah Jasa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -51,96 +51,74 @@
             </div>
 
             <!-- Form Content -->
-<div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto">
-    <div class="max-w-4xl mx-auto">
-        <form action="/admin/items/create" method="POST" enctype="multipart/form-data">
-            <div class="bg-white rounded-lg p-8 shadow-sm">
-                <div class="grid grid-cols-2 gap-8">
-                    <!-- Left Column -->
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Kategori <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <select id="kategori" name="kategori" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
-                                    <option value="">Pilih Kategori</option>
-                                    <option value="alat">Alat</option>
-                                    <option value="jasa">Jasa</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
+            <div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-6">Tambah Jasa Baru</h1>
+                    <form action="/admin/items/create" method="POST" enctype="multipart/form-data">
+                        <div class="bg-white rounded-lg p-8 shadow-sm">
+                            <div class="grid grid-cols-2 gap-8">
+                                <!-- Left Column -->
+                                <div class="space-y-6">
+                                    <div>
+                                        <label class="block text-gray-600 text-sm mb-2">Nama Jasa <span class="text-red-500">*</span></label>
+                                        <input name="nama" type="text" required placeholder="Masukkan nama jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-600 text-sm mb-2">Kategori Jasa<span class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <select id="kategori" name="kategori" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                                                <option value="">Pilih Kategori</option>
+                                                <option value="desain grafis">Desain Grafis</option>
+                                                <option value="fotografi">Fotografi</option>
+                                                <option value="animasi dan motion grafis">Animasi dan Motion Grafis</option>
+                                                <option value="multimedia interaktif">Multimedia Interaktif</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-600 text-sm mb-2">Deskripsi</label>
+                                        <textarea name="deskripsi" rows="4" placeholder="Deskripsi singkat jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green resize-none"></textarea>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Nama <span class="text-red-500">*</span></label>
-                            <input name="nama" type="text" required placeholder="Masukkan nama alat atau jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Deskripsi</label>
-                            <textarea name="deskripsi" rows="4" placeholder="Deskripsi singkat" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green resize-none"></textarea>
-                        </div>
-                    </div>
 
-                    <!-- Right Column -->
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Status <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <select name="status" id="status" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
-                                    <option value="">Pilih Status</option>
-                                    <option value="available">Tersedia</option>
-                                    <option value="maintenance">Maintenance</option>
-                                    <option value="damaged">Rusak</option>
-                                    <option value="lost">Hilang</option>
-                                    <option value="borrowed">Dipinjam</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
+                                <!-- Right Column -->
+                                <div class="space-y-6">
+                                    <div class="mb-4">
+                                        <label for="harga" class="block text-sm font-medium text-gray-700">Harga</label>
+                                        <input type="number" name="harga" id="harga" min="0" step="any" class="mt-1 p-2 w-full border rounded-md bg-beige-light" placeholder="Masukkan harga jasa" >
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-600 text-sm mb-2">Foto <span class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <input name="foto" type="file" id="file-upload" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                            <div class="w-full px-4 py-3 bg-beige-light rounded flex items-center justify-between">
+                                                <span class="text-gray-500 text-sm">Pilih file</span>
+                                                <button type="button" class="text-xs bg-white px-3 py-1 rounded border">Pilih file</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Jumlah <span class="text-red-500">*</span></label>
-                            <input name="jumlah" type="number" min="1" required placeholder="Masukkan jumlah" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
-                        </div>
-                        <div class="mb-4">
-                            <label for="harga" class="block text-sm font-medium text-gray-700">Harga <span class="text-xs text-gray-500">(khusus untuk jasa)</span></label>
-                            <input type="number" name="harga" id="harga" min="0" step="any" class="mt-1 p-2 w-full border rounded-md" placeholder="Harga hanya untuk jasa" disabled>
-                            <span class="text-xs text-gray-500">Harga hanya diisi jika kategori adalah jasa</span>
-                        </div>
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Foto <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <input name="foto" type="file" id="file-upload" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                <div class="w-full px-4 py-3 bg-beige-light rounded flex items-center justify-between">
-                                    <span class="text-gray-500 text-sm">Pilih file</span>
-                                    <button type="button" class="text-xs bg-white px-3 py-1 rounded border">Pilih file</button>
-                                </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="flex justify-center mt-8">
+                                <button type="submit" class="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-colors">
+                                    Simpan
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Submit Button -->
-                <div class="flex justify-center mt-8">
-                    <button type="submit" class="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-colors">
-                        Simpan
-                    </button>
+                        <!-- Notifikasi -->
+                        <div id="success-popup" class="hidden fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+                            Jasa berhasil ditambahkan!
+                        </div>
+                    </form>
                 </div>
             </div>
-            <!-- Notifikasi -->
-<div id="success-popup" class="hidden fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
-    Item berhasil ditambahkan!
-</div>
-
-        </form>
-    </div>
-</div>
-
 
             <!-- Footer -->
             <div class="bg-[#46473e] text-[#e1d6c4] p-5 flex justify-between items-center text-sm font-normal">
@@ -183,41 +161,24 @@
     </script>
 
     <script>
-  // Baca parameter dari URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const isSuccess = urlParams.get('success');
+        // Baca parameter dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSuccess = urlParams.get('success');
 
-  if (isSuccess === 'true') {
-    const popup = document.getElementById('success-popup');
-    popup.classList.remove('hidden');
+        if (isSuccess === 'true') {
+            const popup = document.getElementById('success-popup');
+            popup.classList.remove('hidden');
 
-    // Sembunyikan popup setelah 3 detik
-    setTimeout(() => {
-      popup.classList.add('hidden');
+            // Sembunyikan popup setelah 3 detik
+            setTimeout(() => {
+                popup.classList.add('hidden');
 
-      // Hapus query dari URL agar tidak muncul lagi saat refresh
-      const newUrl = window.location.origin + window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-    }, 3000);
-  }
-</script>
-
-<script>
-  const kategoriSelect = document.getElementById('kategori');
-  const hargaInput = document.getElementById('harga');
-
-  kategoriSelect.addEventListener('change', function () {
-    if (this.value === 'jasa') {
-      hargaInput.disabled = false;
-      hargaInput.placeholder = 'Masukkan harga jasa';
-    } else {
-      hargaInput.disabled = true;
-      hargaInput.placeholder = 'Harga hanya untuk jasa';
-      hargaInput.value = ''; // Kosongkan nilai saat ganti ke 'alat'
-    }
-  });
-</script>
-
+                // Hapus query dari URL agar tidak muncul lagi saat refresh
+                const newUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }, 3000);
+        }
+    </script>
 
 </body>
 </html>

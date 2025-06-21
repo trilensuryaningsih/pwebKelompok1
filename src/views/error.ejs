@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error - <%= error.status %></title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            'brand-beige': '#DED9CE', 
+            'brand-brown': { DEFAULT: '#6C6154', 'light': '#A8A288', 'dark': '#403f36' }, 
+            'brand-olive': { light: '#859984', DEFAULT: '#7C8779', medium: '#65745d', dark: '#4a4f3b' }, 
+            'brand-dark-gray': '#2B2B2B',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-brand-beige text-brand-brown font-sans flex flex-col min-h-screen">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div class="mb-8">
+        <span class="material-icons text-8xl text-red-500 mb-4">error</span>
+        <h1 class="text-6xl font-bold text-gray-800 mb-4"><%= error.status %></h1>
+        <h2 class="text-2xl font-semibold text-gray-600 mb-4"><%= message %></h2>
+      </div>
+      
+      <div class="space-y-4">
+        <a href="/admin/items" class="inline-flex items-center gap-2 bg-brand-olive hover:bg-brand-olive-dark text-brand-beige px-6 py-3 rounded-md transition-colors">
+          <span class="material-icons">home</span>
+          Kembali ke Dashboard
+        </a>
+        
+        <div class="text-sm text-gray-500">
+          <p>Jika masalah berlanjut, silakan hubungi administrator.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

@@ -19,7 +19,6 @@ router.delete('/api/hapus/:id', hapusControllers.deleteItemAPI);
 
 // Route untuk daftar, tambah, edit, status, stok, notifikasi (lama)
 router.get('/daftar', daftarControllers.showAllitemsPage); 
-router.get('/api/items/:id', editControllers.getitemDetails); 
 router.get('/edit', editControllers.edit);
 router.get('/status', statusControllers.showAllitemsPage); 
 router.get('/stok', stokControllers.showAllitemsPage);
@@ -36,6 +35,8 @@ router.get('/items/status', statusControllers.showAllitemsPage);
 router.get('/items/stock', stokControllers.showAllitemsPage);
 router.get('/items/detail/:id', itemControllers.showItemDetailPage);
 router.get('/items/delete/:id', itemControllers.showDeleteItemPage);
+// Route untuk konfirmasi hapus
+router.get('/items/delete-confirmation/:id', hapusControllers.showDeleteConfirmation);
 router.post('/items/create', upload.single('foto'), itemControllers.createItem);
 router.post('/items/edit/:id', upload.single('foto'), itemControllers.updateItem);
 router.post('/items/delete/:id', itemControllers.deleteItem);

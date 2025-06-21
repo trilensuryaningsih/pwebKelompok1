@@ -43,6 +43,13 @@
   <style>
     .no-scrollbar { scrollbar-width: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
+    
+    .row-fade-out {
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease-out;
+    }
+    
     @media print {
       body {
         background: #fff !important;
@@ -152,13 +159,24 @@
       </header>
       <main class="content p-8 flex flex-col gap-6 bg-gray-100">
         <div class="flex justify-between items-center mb-6">
-          <h1 class="text-2xl font-bold">Daftar Item</h1>
+          <h1 class="text-2xl font-bold">Daftar Barang dan Jasa</h1>
           <div class="flex gap-2 items-center">
             <!-- Filter kategori -->
             <select id="filterKategori" class="px-3 py-2 border rounded-md text-sm">
               <option value="">Semua Kategori</option>
-              <option value="alat">Alat</option>
-              <option value="jasa">Jasa</option>
+              <optgroup label="Item Categories">
+                <option value="elektronik">Elektronik</option>
+                <option value="peralatan kantor">Peralatan Kantor</option>
+                <option value="peralatan olahraga">Peralatan Olahraga</option>
+                <option value="laboratorium">Laboratorium</option>
+                <option value="audio visual">Audio Visual</option>
+              </optgroup>
+              <optgroup label="Service Categories">
+                <option value="fotografi">Fotografi</option>
+                <option value="animasi dan motion grafis">Animasi dan Motion Grafis</option>
+                <option value="desain grafis">Desain Grafis</option>
+                <option value="multimedia interaktif">Multimedia Interaktif</option>
+              </optgroup>
             </select>
             <!-- Search -->
             <input id="searchInput" type="text" placeholder="Cari nama/deskripsi..." class="px-3 py-2 border rounded-md text-sm" />
@@ -168,10 +186,10 @@
             </button>
             <!-- Tambah & Edit -->
             <a href="/admin/items/create" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-1">
-              <span class="material-icons text-xl">add</span> Tambah Barang
+              <span class="material-icons text-xl">add</span> Tambah Jasa
             </a>
             <a href="/admin/items/edit" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md flex items-center gap-1">
-              <span class="material-icons text-xl">edit</span> Edit Barang
+              <span class="material-icons text-xl">edit</span> Edit 
             </a>
           </div>
         </div>
@@ -205,7 +223,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
               <% if (typeof items !== 'undefined' && items.length > 0) { %>
                 <% items.forEach((item) => { %>
-                  <tr>
+                  <tr id="item-row-<%= item.id %>">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= item.no %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= item.name %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= item.category || (item.type === 'service' ? 'jasa' : '-') %></td>
@@ -225,7 +243,11 @@
                     <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= item.updatedAt ? item.updatedAt.toLocaleDateString('id-ID') : '-' %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <a href="/admin/items/detail/<%= item.id %>" class="text-blue-600 hover:text-blue-900 mr-2">Detail</a>
-                      <a href="/admin/items/delete/<%= item.id %>" class="text-red-600 hover:text-red-900">Hapus</a>
+                      <a 
+                        href="/admin/items/delete-confirmation/<%= item.id %>?type=<%= item.type %>"
+                        class="text-red-600 hover:text-red-900 bg-transparent border-none cursor-pointer">
+                        Hapus
+                      </a>
                     </td>
                   </tr>
                 <% }); %>
@@ -245,69 +267,17 @@
     document.addEventListener('DOMContentLoaded', () => {
   // --- Logika untuk Notifikasi dari URL (Tambah/Edit) ---
   const params = new URLSearchParams(window.location.search);
-  if (params.has('create') || params.has('update')) {
+  if (params.has('create') || params.has('update') || params.has('delete')) {
     Swal.fire({
       toast: true,
       position: 'top-end',
       icon: 'success',
-      title: `Item berhasil ${params.has('create') ? 'ditambahkan' : 'diubah'}`,
+      title: `Item berhasil ${params.has('create') ? 'ditambahkan' : params.has('update') ? 'diubah' : 'dihapus'}`,
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
     });
   }
-
-  // --- Logika BARU untuk Tombol Hapus ---
-  const deleteButtons = document.querySelectorAll('.delete-button');
-
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const itemId = this.dataset.id;
-      const itemName = this.dataset.nama;
-
-      // 1. Munculkan pop-up konfirmasi
-      Swal.fire({
-        title: 'Apakah Anda Yakin?',
-        html: `Anda akan menghapus item:<br><b>"${itemName}"</b><br>Tindakan ini tidak bisa dibatalkan!`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#6e7881',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-      }).then((result) => {
-        // 2. Jika dikonfirmasi, lakukan proses hapus
-        if (result.isConfirmed) {
-          fetch(`/admin/api/hapus/${itemId}`, { method: 'DELETE' })
-          .then(response => response.json().then(data => {
-            if (!response.ok) throw new Error(data.message || 'Gagal menghapus.');
-            return data;
-          }))
-          .then(data => {
-            // 3. Tampilkan notifikasi sukses
-            Swal.fire({
-              title: 'Dihapus!',
-              text: data.message,
-              icon: 'success',
-              timer: 2000,
-              showConfirmButton: false,
-            });
-            
-            // 4. Hapus baris dari tabel dengan animasi
-            const row = document.getElementById(`item-row-${itemId}`);
-            if (row) {
-              row.classList.add('row-fade-out');
-              setTimeout(() => row.remove(), 500); 
-            }
-          })
-          .catch(error => {
-            // Tampilkan notifikasi gagal
-            Swal.fire('Gagal!', error.message, 'error');
-          });
-        }
-      })
-    });
-  });
 
   // FILTER, SEARCH, PDF
   const filterKategori = document.getElementById('filterKategori');
@@ -320,7 +290,7 @@
     tableRows.forEach(row => {
       const kolomKategori = row.children[2]?.textContent.trim().toLowerCase();
       const kolomNama = row.children[1]?.textContent.trim().toLowerCase();
-      const kolomDeskripsi = row.children[3]?.textContent.trim().toLowerCase();
+      const kolomDeskripsi = row.children[4]?.textContent.trim().toLowerCase();
       const cocokKategori = !kategori || kolomKategori === kategori;
       const cocokSearch = !search || kolomNama.includes(search) || kolomDeskripsi.includes(search);
       if (cocokKategori && cocokSearch) {

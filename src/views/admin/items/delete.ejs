@@ -3,59 +3,246 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hapus Item</title>
+  <title>Konfirmasi Hapus Item - Admin Dashboard</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            'brand-beige': '#DED9CE', 
+            'brand-brown': { DEFAULT: '#6C6154', 'light': '#A8A288', 'dark': '#403f36' }, 
+            'brand-olive': { light: '#859984', DEFAULT: '#7C8779', medium: '#65745d', dark: '#4a4f3b' }, 
+            'brand-dark-gray': '#2B2B2B',
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="font-sans bg-gray-100 h-screen overflow-hidden" style="background:#f5f0eb;">
+
+<body class="bg-brand-beige text-brand-brown font-sans flex flex-col min-h-screen">
   <%- include('../../partials/admin/sidebar') %>
-  <div class="ml-64 flex h-screen">
-    <div class="flex-1 flex flex-col">
-      <!-- Header -->
-      <div class="bg-form-bg h-16 flex items-center justify-end px-6 border-b" style="background:#f5f0eb;">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center cursor-pointer">🔔</div>
-          <div class="flex items-center gap-2 cursor-pointer">
-            <span class="text-sm text-gray-700">Admin</span>
-            <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center">👤</div>
-          </div>
+  
+  <div class="ml-64 app flex-grow" role="main">
+    <div class="flex flex-col w-full">
+      <header class="bg-brand-beige px-5 lg:px-10 py-4 flex justify-between items-center gap-4 sticky top-0 lg:relative border-b border-brand-brown/30 lg:border-none">
+        <div class="flex items-center gap-4 ml-auto">
+          <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Notifikasi">
+            <span class="material-icons text-xl">notifications</span>
+          </button>
+          <div class="border border-brand-brown text-brand-brown font-semibold py-1.5 px-3 rounded-xl hidden sm:block">Admin</div>
+          <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Profil pengguna">
+            <span class="material-icons text-xl">person</span>
+          </button>
         </div>
-      </div>
-      <!-- Delete Content -->
-      <div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto" style="background:#f5f0eb;">
-        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8">
-          <h1 class="text-2xl font-bold mb-6 text-red-700">Konfirmasi Hapus Item</h1>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      </header>
+
+      <main class="content p-8 flex flex-col gap-6 bg-gray-100">
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
+          <a href="/admin/items" class="hover:text-brand-brown">Daftar Item</a>
+          <span class="material-icons text-xs">chevron_right</span>
+          <span>Konfirmasi Hapus</span>
+        </div>
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold text-red-600">Konfirmasi Hapus Item</h1>
+          <a href="/admin/items" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center gap-1">
+            <span class="material-icons text-xl">arrow_back</span> Kembali
+          </a>
+        </div>
+
+        <!-- Warning Alert -->
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="material-icons text-red-500 text-2xl">warning</span>
             <div>
-              <div class="mb-4"><span class="font-semibold">Nama:</span> <%= item.name %></div>
-              <div class="mb-4"><span class="font-semibold">Kategori:</span> <%= item.category %></div>
-              <div class="mb-4"><span class="font-semibold">Deskripsi:</span> <%= item.description || '-' %></div>
-              <div class="mb-4"><span class="font-semibold">Status:</span> <%= item.status %></div>
-              <div class="mb-4"><span class="font-semibold">Harga:</span> <%= item.price ? 'Rp ' + Number(item.price).toLocaleString('id-ID') : '-' %></div>
-              <div class="mb-4"><span class="font-semibold">Jumlah:</span> <%= item.quantity %></div>
+              <h3 class="font-semibold text-red-800">Peringatan!</h3>
+              <p class="text-red-700 text-sm">Tindakan ini akan menghapus item secara permanen dan tidak dapat dibatalkan.</p>
             </div>
-            <div class="flex flex-col items-center justify-center">
-              <% if (item.photo) { %>
-                <img src="/uploads/<%= item.photo %>" alt="Foto" class="w-48 h-48 object-cover rounded mb-4" />
-              <% } else { %>
-                <div class="w-48 h-48 bg-gray-200 flex items-center justify-center rounded mb-4">Tidak ada foto</div>
-              <% } %>
-            </div>
-          </div>
-          <div class="flex justify-between mt-8">
-            <a href="/admin/items" class="px-6 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Batal</a>
-            <form id="deleteForm" action="/admin/items/delete/<%= item.id %>" method="POST">
-              <button type="button" id="btnHapus" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">Hapus</button>
-            </form>
           </div>
         </div>
-      </div>
+
+        <!-- Item Details -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">Detail Item yang Akan Dihapus</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Item Photo -->
+            <div class="flex flex-col items-center">
+              <% if (item.photo) { %>
+                <img src="/uploads/<%= item.photo %>" alt="Foto Item" class="w-48 h-48 object-cover rounded-lg shadow-md mb-4" />
+              <% } else { %>
+                <div class="w-48 h-48 bg-gray-200 rounded-lg shadow-md mb-4 flex items-center justify-center">
+                  <span class="material-icons text-gray-400 text-4xl">image</span>
+                </div>
+              <% } %>
+              <span class="text-sm text-gray-500">Foto Item</span>
+            </div>
+
+            <!-- Item Information -->
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nama Item</label>
+                  <p class="text-gray-900 font-semibold"><%= item.name %></p>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= item.type === 'service' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800' %>">
+                    <%= item.type === 'service' ? 'Jasa' : 'Item' %>
+                  </span>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                  <p class="text-gray-900"><%= item.category || '-' %></p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                    <%= item.status === 'available' ? 'bg-green-100 text-green-800' : 
+                        item.status === 'unavailable' ? 'bg-red-100 text-red-800' : 
+                        'bg-yellow-100 text-yellow-800' %>">
+                    <%= item.status === 'available' ? 'Tersedia' : 
+                        item.status === 'unavailable' ? 'Tidak Tersedia' : 
+                        item.status === 'maintenance' ? 'Maintenance' : item.status %>
+                  </span>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Harga</label>
+                  <p class="text-gray-900">
+                    <%= item.price ? 'Rp ' + Number(item.price).toLocaleString('id-ID') : '-' %>
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
+                  <p class="text-gray-900"><%= item.quantity || '-' %></p>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                <p class="text-gray-900 bg-gray-50 p-3 rounded-md"><%= item.description || '-' %></p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Dibuat Pada</label>
+                  <p class="text-gray-900 text-sm">
+                    <%= item.createdAt ? item.createdAt.toLocaleDateString('id-ID') : '-' %>
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Terakhir Diupdate</label>
+                  <p class="text-gray-900 text-sm">
+                    <%= item.updatedAt ? item.updatedAt.toLocaleDateString('id-ID') : '-' %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center gap-4 pt-6 border-t border-gray-200">
+          <a href="/admin/items" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-md flex items-center gap-2 transition-colors">
+            <span class="material-icons">cancel</span>
+            Batal
+          </a>
+          
+          <button 
+            id="confirmDeleteBtn"
+            class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md flex items-center gap-2 transition-colors"
+            data-id="<%= item.id %>"
+            data-type="<%= item.type %>"
+            data-name="<%= item.name %>">
+            <span class="material-icons">delete_forever</span>
+            Konfirmasi Hapus
+          </button>
+        </div>
+      </main>
     </div>
   </div>
+
   <script>
-    document.getElementById('btnHapus').addEventListener('click', function(e) {
-      if (confirm('Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak bisa dibatalkan!')) {
-        document.getElementById('deleteForm').submit();
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      
+      confirmDeleteBtn.addEventListener('click', function() {
+        const itemId = this.dataset.id;
+        const itemType = this.dataset.type;
+        const itemName = this.dataset.name;
+        
+        // Tampilkan konfirmasi final
+        Swal.fire({
+          title: 'Konfirmasi Final',
+          html: `Apakah Anda benar-benar yakin ingin menghapus <b>"${itemName}"</b>?<br><br>Tindakan ini <b>TIDAK DAPAT DIBATALKAN</b>!`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#dc2626',
+          cancelButtonColor: '#6b7280',
+          confirmButtonText: 'Ya, Hapus Sekarang!',
+          cancelButtonText: 'Batal',
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Tampilkan loading
+            Swal.fire({
+              title: 'Menghapus Item...',
+              text: 'Mohon tunggu sebentar',
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+              }
+            });
+            
+            // Lakukan request hapus
+            fetch(`/admin/api/hapus/${itemId}?type=${itemType}`, {
+              method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                Swal.fire({
+                  title: 'Berhasil!',
+                  text: data.message,
+                  icon: 'success',
+                  confirmButtonText: 'OK'
+                }).then(() => {
+                  // Redirect ke halaman daftar item
+                  window.location.href = '/admin/items?delete=success';
+                });
+              } else {
+                throw new Error(data.message || 'Gagal menghapus item');
+              }
+            })
+            .catch(error => {
+              Swal.fire({
+                title: 'Gagal!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            });
+          }
+        });
+      });
     });
   </script>
 </body>
