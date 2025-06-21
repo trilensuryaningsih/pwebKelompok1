@@ -1,11 +1,12 @@
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>UMCental - Daftar Pesanan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMCental - Pesanan Saya</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <style>
         .bg-custom-dark {
             background-color: #181C14;
@@ -15,7 +16,23 @@
             background-color: #697565;
         }
 
-        .bg-custom-green-dark {
+        .text-custom-green {
+            color: #697565;
+        }
+
+        .border-custom-green {
+            border-color: #697565;
+        }
+
+        .bg-custom-light-beige {
+            background-color: #f5f0e9;
+        }
+
+        .text-custom-brown {
+            color: #7f7a75;
+        }
+
+        .hover\:bg-custom-green-dark:hover {
             background-color: #5a6356;
         }
 
@@ -61,7 +78,7 @@
     </style>
 </head>
 
-<body class="flex min-h-screen bg-[#f5f0e9]">
+<body class="flex min-h-screen bg-custom-light-beige">
 
     <%- include('../partials/sidebar') %>
 
@@ -69,18 +86,74 @@
     <div class="flex-1 flex flex-col">
         <%- include('../partials/header') %>
 
-        <!-- Content -->
-        <section class="flex-1 p-8 overflow-x-auto">
+        <main class="flex-1 p-6 md:p-10">
             <!-- Header -->
-            <div class="mb-6">
-                <h1 class="text-2xl font-bold text-[#181C14] mb-2">Daftar Pesanan</h1>
-                <p class="text-[#7f7a75]">Kelola semua pesanan Anda di sini</p>
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-custom-dark mb-2">Pesanan Saya</h1>
+                    <p class="text-custom-brown">Kelola semua pesanan peminjaman Anda di sini.</p>
+                </div>
+                <a href="/user/pemesanan" class="bg-custom-green hover:bg-custom-green-dark text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Buat Pesanan Baru
+                </a>
             </div>
 
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-lg p-4 shadow-sm border">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-500">Menunggu</p>
+                            <p class="text-lg font-semibold" id="pendingCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm border">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-500">Disetujui</p>
+                            <p class="text-lg font-semibold" id="approvedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm border">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-500">Aktif</p>
+                            <p class="text-lg font-semibold" id="activeCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm border">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-green-100 text-green-600">
+                            <i class="fas fa-flag-checkered"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-gray-500">Selesai</p>
+                            <p class="text-lg font-semibold" id="completedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Filter and Search -->
-            <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
+            <div class="mb-6 flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Cari pesanan..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-custom-green focus:border-transparent">
+                </div>
                 <div class="flex gap-2">
-                    <select id="statusFilter" class="px-4 py-2 border border-[#d1d5db] rounded-lg focus:ring-2 focus:ring-custom-green focus:border-transparent">
+                    <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-custom-green focus:border-transparent">
                         <option value="">Semua Status</option>
                         <option value="pending">Menunggu</option>
                         <option value="approved">Disetujui</option>
@@ -89,103 +162,86 @@
                         <option value="completed">Selesai</option>
                         <option value="cancelled">Dibatalkan</option>
                     </select>
-                    <button id="refreshBtn" class="px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
-                        <i class="fas fa-sync-alt mr-2"></i>Refresh
-                    </button>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="searchInput" placeholder="Cari pesanan..." class="px-4 py-2 border border-[#d1d5db] rounded-lg focus:ring-2 focus:ring-custom-green focus:border-transparent">
-                    <button id="newOrderBtn" class="px-4 py-2 bg-[#1f4d2f] text-white rounded-lg hover:bg-[#163d25] transition">
-                        <i class="fas fa-plus mr-2"></i>Pesanan Baru
+                    <button id="refreshBtn" class="px-4 py-2 bg-custom-green text-white rounded-lg hover:bg-custom-green-dark transition-colors">
+                        <i class="fas fa-sync-alt"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Orders Table -->
-            <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] overflow-hidden">
-                <table class="min-w-full border-collapse">
-                    <thead>
-                        <tr class="bg-[#7f8a7d] text-[#e6e1d9] text-xs font-normal">
-                            <th class="py-3 px-4 text-left rounded-l-lg">No</th>
-                            <th class="py-3 px-4 text-left">Kode Pesanan</th>
-                            <th class="py-3 px-4 text-left">Jenis Item</th>
-                            <th class="py-3 px-4 text-left">Jumlah</th>
-                            <th class="py-3 px-4 text-left">Tanggal Mulai</th>
-                            <th class="py-3 px-4 text-left">Tanggal Selesai</th>
-                            <th class="py-3 px-4 text-left">Total Harga</th>
-                            <th class="py-3 px-4 text-left">Status</th>
-                            <th class="py-3 px-4 text-left rounded-r-lg">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody" class="text-[#7f7a75] text-sm font-normal">
-                        <!-- Orders will be loaded here dynamically -->
-                    </tbody>
-                </table>
-                
-                <!-- Loading State -->
-                <div id="loadingState" class="hidden py-8 text-center">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#697565]"></div>
-                    <p class="mt-2 text-[#7f7a75]">Memuat pesanan...</p>
+            <!-- Error Message -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <%= error %>
                 </div>
+            <% } %>
 
-                <!-- Empty State -->
-                <div id="emptyState" class="hidden py-8 text-center">
-                    <i class="fas fa-inbox text-4xl text-[#d1d5db] mb-4"></i>
-                    <p class="text-[#7f7a75]">Belum ada pesanan</p>
-                    <button onclick="window.location.href='/user/pemesanan'" class="mt-2 px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
-                        Buat Pesanan Pertama
-                    </button>
+            <!-- Table Container -->
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Barang/Layanan</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Mulai</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Selesai</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="divide-y divide-gray-200">
+                            <% if (orders && orders.length > 0) { %>
+                                <% orders.forEach((order, index) => { %>
+                                    <tr class="border-b border-[#f0ebe0] hover:bg-[#f9fafb]">
+                                        <td class="py-6 px-4"><%= index + 1 %></td>
+                                        <td class="py-6 px-4 font-medium">#<%= order.id %></td>
+                                        <td class="py-6 px-4">
+                                            <div>
+                                                <div class="font-medium"><%= order.itemDetails ? order.itemDetails.name : 'N/A' %></div>
+                                                <div class="text-sm text-gray-500"><%= order.itemType === 'item' ? 'Barang' : 'Layanan' %></div>
+                                            </div>
+                                        </td>
+                                        <td class="py-6 px-4"><%= order.quantity %></td>
+                                        <td class="py-6 px-4 order-start-date"><%= order.startDate %></td>
+                                        <td class="py-6 px-4 order-end-date"><%= order.endDate %></td>
+                                        <td class="py-6 px-4 order-total">Rp <%= order.totalAmount %></td>
+                                        <td class="py-6 px-4">
+                                            <span class="inline-block border rounded-full px-3 py-1 font-semibold text-sm order-status" data-status="<%= order.status %>">
+                                                <%= order.status %>
+                                            </span>
+                                        </td>
+                                        <td class="py-6 px-4 flex items-center space-x-2">
+                                            <button onclick="viewOrder(<%= order.id %>)" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition" title="Lihat Detail">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <% if (order.status === 'pending') { %>
+                                                <button onclick="cancelOrder(<%= order.id %>)" class="bg-red-100 rounded-full p-2 text-red-600 hover:bg-red-200 transition" title="Batalkan">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="9" class="text-center py-16 px-6">
+                                        <div class="mx-auto h-16 w-16 text-gray-400">
+                                            <i class="fas fa-box-open fa-3x"></i>
+                                        </div>
+                                        <h3 class="mt-4 text-lg font-medium text-custom-dark">Tidak ada pesanan</h3>
+                                        <p class="mt-1 text-sm text-custom-brown">Anda belum membuat pesanan apapun.</p>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
-            <!-- Order Statistics -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-blue-100 rounded-lg">
-                            <i class="fas fa-clock text-blue-600"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-[#7f7a75]">Menunggu</p>
-                            <p class="text-lg font-semibold text-[#181C14]" id="pendingCount">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-green-100 rounded-lg">
-                            <i class="fas fa-check text-green-600"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-[#7f7a75]">Disetujui</p>
-                            <p class="text-lg font-semibold text-[#181C14]" id="approvedCount">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-blue-100 rounded-lg">
-                            <i class="fas fa-play text-blue-600"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-[#7f7a75]">Aktif</p>
-                            <p class="text-lg font-semibold text-[#181C14]" id="activeCount">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-[#e5e7eb]">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-green-100 rounded-lg">
-                            <i class="fas fa-flag-checkered text-green-600"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-[#7f7a75]">Selesai</p>
-                            <p class="text-lg font-semibold text-[#181C14]" id="completedCount">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </main>
 
         <%- include('../partials/footer') %>
     </div>
@@ -207,13 +263,12 @@
     </div>
 
     <script>
-        let currentOrders = [];
         let currentOrderId = null;
 
-        // Load orders on page load
+        // Load order statistics on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadOrders();
             loadOrderStats();
+            formatOrderData();
         });
 
         // Filter functionality
@@ -230,118 +285,8 @@
 
         // Refresh button
         document.getElementById('refreshBtn').addEventListener('click', function() {
-            loadOrders();
-            loadOrderStats();
+            window.location.reload();
         });
-
-        // New order button
-        document.getElementById('newOrderBtn').addEventListener('click', function() {
-            window.location.href = '/user/pemesanan';
-        });
-
-        // Load orders from API
-        async function loadOrders() {
-            const loadingState = document.getElementById('loadingState');
-            const emptyState = document.getElementById('emptyState');
-            const tableBody = document.getElementById('ordersTableBody');
-
-            loadingState.classList.remove('hidden');
-            tableBody.innerHTML = '';
-            emptyState.classList.add('hidden');
-
-            try {
-                const response = await fetch('/user/api/orders');
-                const result = await response.json();
-
-                if (result.success) {
-                    currentOrders = result.data;
-                    displayOrders(currentOrders);
-                } else {
-                    console.error('Error loading orders:', result.message);
-                    showEmptyState();
-                }
-            } catch (error) {
-                console.error('Error loading orders:', error);
-                showEmptyState();
-            } finally {
-                loadingState.classList.add('hidden');
-            }
-        }
-
-        // Display orders in table
-        function displayOrders(orders) {
-            const tableBody = document.getElementById('ordersTableBody');
-            const emptyState = document.getElementById('emptyState');
-
-            if (orders.length === 0) {
-                showEmptyState();
-                return;
-            }
-
-            tableBody.innerHTML = orders.map((order, index) => `
-                <tr class="border-b border-[#f0ebe0] hover:bg-[#f9fafb]">
-                    <td class="py-6 px-4">${index + 1}</td>
-                    <td class="py-6 px-4 font-medium">#${order.id}</td>
-                    <td class="py-6 px-4">${order.itemType === 'item' ? 'Item' : 'Layanan'}</td>
-                    <td class="py-6 px-4">${order.quantity}</td>
-                    <td class="py-6 px-4">${formatDate(order.startDate)}</td>
-                    <td class="py-6 px-4">${formatDate(order.endDate)}</td>
-                    <td class="py-6 px-4">Rp ${formatNumber(order.totalAmount)}</td>
-                    <td class="py-6 px-4">
-                        <span class="inline-block border rounded-full px-3 py-1 font-semibold text-sm ${getStatusClass(order.status)}">
-                            ${getStatusText(order.status)}
-                        </span>
-                    </td>
-                    <td class="py-6 px-4 flex items-center space-x-2">
-                        <button onclick="viewOrder(${order.id})" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition" title="Lihat Detail">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        ${order.status === 'pending' ? `
-                            <button onclick="cancelOrder(${order.id})" class="bg-red-100 rounded-full p-2 text-red-600 hover:bg-red-200 transition" title="Batalkan">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        ` : ''}
-                    </td>
-                </tr>
-            `).join('');
-
-            emptyState.classList.add('hidden');
-        }
-
-        // Filter orders by status
-        function filterOrders(status) {
-            if (!status) {
-                displayOrders(currentOrders);
-                return;
-            }
-
-            const filteredOrders = currentOrders.filter(order => order.status === status);
-            displayOrders(filteredOrders);
-        }
-
-        // Search orders
-        function searchOrders(searchTerm) {
-            if (!searchTerm) {
-                displayOrders(currentOrders);
-                return;
-            }
-
-            const filteredOrders = currentOrders.filter(order => 
-                order.id.toString().includes(searchTerm) ||
-                order.itemType.toLowerCase().includes(searchTerm) ||
-                order.quantity.toString().includes(searchTerm)
-            );
-            displayOrders(filteredOrders);
-        }
-
-        // Show empty state
-        function showEmptyState() {
-            const tableBody = document.getElementById('ordersTableBody');
-            const emptyState = document.getElementById('emptyState');
-            
-            tableBody.innerHTML = '';
-            emptyState.classList.remove('hidden');
-        }
 
         // Load order statistics
         async function loadOrderStats() {
@@ -372,9 +317,42 @@
             }
         }
 
+        // Filter orders by status
+        function filterOrders(status) {
+            const rows = document.querySelectorAll('#ordersTableBody tr');
+            rows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(8) span');
+                if (!statusCell) return;
+                
+                const statusText = getStatusTextFromElement(statusCell);
+                
+                if (!status || statusText === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Search orders
+        function searchOrders(searchTerm) {
+            const rows = document.querySelectorAll('#ordersTableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 0) return;
+                
+                const text = Array.from(cells).map(cell => cell.textContent.trim()).join(' ').toLowerCase();
+                
+                if (!searchTerm || text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
         // View order details
         function viewOrder(orderId) {
-            // Navigate to order detail page
             window.location.href = `/user/orders/${orderId}`;
         }
 
@@ -396,8 +374,7 @@
 
                 if (result.success) {
                     alert('Pesanan berhasil dibatalkan');
-                    loadOrders();
-                    loadOrderStats();
+                    window.location.reload();
                 } else {
                     alert('Gagal membatalkan pesanan: ' + result.message);
                 }
@@ -417,12 +394,27 @@
         });
 
         // Utility functions
+        function getStatusTextFromElement(element) {
+            const statusText = element.textContent.trim();
+            const statusMap = {
+                'Menunggu': 'pending',
+                'Disetujui': 'approved',
+                'Ditolak': 'rejected',
+                'Aktif': 'active',
+                'Selesai': 'completed',
+                'Dibatalkan': 'cancelled'
+            };
+            return statusMap[statusText] || statusText;
+        }
+
         function formatDate(dateString) {
+            if (!dateString) return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('id-ID');
         }
 
         function formatNumber(num) {
+            if (!num) return '0';
             return new Intl.NumberFormat('id-ID').format(num);
         }
 
@@ -449,7 +441,34 @@
             };
             return statusTexts[status] || status;
         }
+
+        // Format order data after page loads
+        function formatOrderData() {
+            // Format dates
+            document.querySelectorAll('.order-start-date').forEach(cell => {
+                const date = new Date(cell.textContent);
+                cell.textContent = date.toLocaleDateString('id-ID');
+            });
+
+            document.querySelectorAll('.order-end-date').forEach(cell => {
+                const date = new Date(cell.textContent);
+                cell.textContent = date.toLocaleDateString('id-ID');
+            });
+
+            // Format numbers
+            document.querySelectorAll('.order-total').forEach(cell => {
+                const amount = parseFloat(cell.textContent.replace('Rp ', ''));
+                cell.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
+            });
+
+            // Format status
+            document.querySelectorAll('.order-status').forEach(span => {
+                const status = span.getAttribute('data-status');
+                span.textContent = getStatusText(status);
+                span.className = `inline-block border rounded-full px-3 py-1 font-semibold text-sm ${getStatusClass(status)}`;
+            });
+        }
     </script>
 </body>
 
-</html> 
+</html>    

@@ -26,17 +26,29 @@ const paymentsController = {
       if (!paymentMethod) {
         return res.status(400).json({ success: false, message: 'Metode pembayaran wajib dipilih' });
       }
+      if (!paymentType) {
+        return res.status(400).json({ success: false, message: 'Tipe pembayaran wajib dipilih' });
+      }
 
       // Simpan payment
       const payment = await Payment.create({
         orderId: id,
+        amount: order.totalAmount,
         paymentMethod,
         paymentProof: file.filename,
         paymentDate: new Date(),
-        paymentType: paymentType || 'full',
+        paymentType: paymentType,
+        status: 'paid'
       });
 
-      return res.json({ success: true, message: 'Pembayaran berhasil diupload', data: payment });
+      // Update order status menjadi active setelah pembayaran berhasil
+      await order.update({ status: 'active' });
+
+      return res.json({ 
+        success: true, 
+        message: 'Pembayaran berhasil diupload dan pesanan telah diaktifkan', 
+        data: payment 
+      });
     } catch (error) {
       console.error('Error upload payment:', error);
       return res.status(500).json({ success: false, message: 'Gagal upload pembayaran' });
@@ -67,19 +79,22 @@ const paymentsController = {
   getUserPaymentHistory: async (req, res) => {
     try {
       const user_id = req.session.user.id;
+      console.log(`[DEBUG] Mengambil riwayat untuk User ID: ${user_id}`);
+      
       const { Payment, Fine, Order } = require('../../models');
 
       // Ambil semua pembayaran pesanan user
       const payments = await Payment.findAll({
-        include: [{ model: Order, where: { user_id }, attributes: ['id', 'itemType', 'itemId', 'totalAmount'] }],
-        order: [['paymentDate', 'DESC']]
+        include: [{ model: Order, where: { user_id } }],
       });
+      console.log(`[DEBUG] Ditemukan ${payments.length} data pembayaran.`);
+
 
       // Ambil semua denda user
       const fines = await Fine.findAll({
-        include: [{ model: Order, where: { user_id }, attributes: ['id', 'itemType', 'itemId', 'totalAmount'] }],
-        order: [['createdAt', 'DESC']]
+        include: [{ model: Order, where: { user_id } }],
       });
+      console.log(`[DEBUG] Ditemukan ${fines.length} data denda.`);
 
       // Gabungkan dan urutkan berdasarkan tanggal
       const history = [
@@ -97,11 +112,13 @@ const paymentsController = {
           date: f.createdAt,
           method: '-',
           amount: f.amount,
-          proof: f.proof || '-',
-          orderId: f.Order.id,
+          proof: f.paymentProof || '-',
+          orderId: f.orderId,
           paymentType: '-',
         }))
       ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      console.log(`[DEBUG] Total riwayat yang dikirim ke frontend: ${history.length}`);
 
       return res.json({ success: true, data: history });
     } catch (error) {

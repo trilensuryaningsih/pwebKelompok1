@@ -1,11 +1,12 @@
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UMCental - Detail Pesanan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <style>
         .bg-custom-dark {
             background-color: #181C14;
@@ -15,12 +16,36 @@
             background-color: #697565;
         }
 
-        .bg-custom-green-dark {
+        .text-custom-green {
+            color: #697565;
+        }
+
+        .border-custom-green {
+            border-color: #697565;
+        }
+
+        .bg-custom-light-beige {
+            background-color: #f5f0e9;
+        }
+
+        .text-custom-brown {
+            color: #7f7a75;
+        }
+
+        .hover\:bg-custom-green-dark:hover {
             background-color: #5a6356;
         }
 
-        .focus\:ring-custom-green:focus {
-            --tw-ring-color: rgba(105, 117, 101, 0.5);
+        .skeleton {
+            background-color: #e5e7eb;
+            border-radius: 0.25rem;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            50% {
+                opacity: .5;
+            }
         }
 
         .status-pending {
@@ -61,7 +86,7 @@
     </style>
 </head>
 
-<body class="flex min-h-screen bg-[#f5f0e9]">
+<body class="flex min-h-screen bg-custom-light-beige">
 
     <%- include('../partials/sidebar') %>
 
@@ -69,165 +94,112 @@
     <div class="flex-1 flex flex-col">
         <%- include('../partials/header') %>
 
-        <!-- Content -->
-        <section class="flex-1 p-8">
-            <!-- Header -->
-            <div class="mb-6 flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-[#181C14] mb-2">Detail Pesanan</h1>
-                    <p class="text-[#7f7a75]">Informasi lengkap pesanan #<span id="orderId"></span></p>
+        <main class="flex-1 p-6 md:p-10">
+            <div class="max-w-4xl mx-auto">
+                <!-- Header -->
+                <div class="mb-8">
+                    <a href="/user/orders" class="text-sm text-custom-green hover:underline mb-4 inline-block">
+                        <i class="fas fa-arrow-left mr-2"></i>Kembali ke Daftar Pesanan
+                    </a>
+                    <h1 class="text-3xl font-bold text-custom-dark">Detail Pesanan <span id="orderIdHeader" class="text-custom-brown"></span></h1>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="window.location.href='/user/orders'" class="px-4 py-2 text-[#7f7a75] border border-[#d1d5db] rounded-lg hover:bg-[#f9fafb] transition">
-                        <i class="fas fa-arrow-left mr-2"></i>Kembali
-                    </button>
-                    <button id="printBtn" class="px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
-                        <i class="fas fa-print mr-2"></i>Cetak
-                    </button>
+
+                <!-- Skeleton Loader -->
+                <div id="skeletonLoader">
+                    <div class="h-24 w-full skeleton mb-6"></div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="h-64 w-full skeleton"></div>
+                        <div class="h-64 w-full skeleton"></div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Loading State -->
-            <div id="loadingState" class="text-center py-8">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#697565]"></div>
-                <p class="mt-2 text-[#7f7a75]">Memuat detail pesanan...</p>
-            </div>
+                <!-- Order Detail Content -->
+                <div id="orderDetailContent" class="hidden">
+                    <!-- Order Status Banner -->
+                    <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h2 class="text-xl font-semibold text-custom-dark mb-2">Status Pesanan</h2>
+                                <span id="orderStatus" class="inline-block rounded-full px-4 py-2 font-semibold text-sm"></span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-custom-brown">Total Pembayaran</p>
+                                <p id="totalAmount" class="text-2xl font-bold text-custom-dark"></p>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Error State -->
-            <div id="errorState" class="hidden text-center py-8">
-                <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
-                <p class="text-[#7f7a75] mb-4">Gagal memuat detail pesanan</p>
-                <button onclick="loadOrderDetail()" class="px-4 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
-                    Coba Lagi
-                </button>
-            </div>
-
-            <!-- Order Detail Content -->
-            <div id="orderDetailContent" class="hidden">
-                <!-- Order Status Banner -->
-                <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
-                    <div class="flex items-center justify-between">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Left Column: Item Details & Dates -->
                         <div>
-                            <h2 class="text-xl font-semibold text-[#181C14] mb-2">Status Pesanan</h2>
-                            <span id="orderStatus" class="inline-block border rounded-full px-4 py-2 font-semibold text-sm"></span>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-[#7f7a75]">Total Pembayaran</p>
-                            <p id="totalAmount" class="text-2xl font-bold text-[#181C14]"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment Section -->
-                <div id="paymentSection" class="mt-6"></div>
-
-                <!-- Fine Section -->
-                <div id="fineSection" class="mt-6"></div>
-
-                <!-- Order Information -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Basic Information -->
-                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
-                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Informasi Pesanan</h3>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Kode Pesanan:</span>
-                                <span id="orderCode" class="font-medium text-[#181C14]"></span>
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-6">
+                                <h3 class="text-lg font-semibold text-custom-dark mb-4 border-b pb-3">Rincian Barang/Jasa</h3>
+                                <dl class="space-y-3">
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Nama:</dt><dd id="itemName" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Kategori:</dt><dd id="itemCategory" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Harga Satuan:</dt><dd id="pricePerUnit" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Jumlah:</dt><dd id="quantity" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="pt-3 border-t"><dt class="text-sm text-custom-brown">Deskripsi:</dt><dd id="itemDescription" class="mt-1 text-sm text-gray-600"></dd></div>
+                                </dl>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Jenis Item:</span>
-                                <span id="itemType" class="font-medium text-[#181C14]"></span>
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-custom-dark mb-4 border-b pb-3">Jadwal Peminjaman</h3>
+                                <dl class="space-y-3">
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Tanggal Pinjam:</dt><dd id="startDate" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Tanggal Kembali:</dt><dd id="endDate" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Durasi:</dt><dd id="duration" class="text-sm font-medium text-right"></dd></div>
+                                </dl>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Jumlah:</span>
-                                <span id="quantity" class="font-medium text-[#181C14]"></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Harga per Unit:</span>
-                                <span id="pricePerUnit" class="font-medium text-[#181C14]"></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Tanggal Pesanan:</span>
-                                <span id="orderDate" class="font-medium text-[#181C14]"></span>
+                            
+                            <!-- Order Information -->
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-custom-dark mb-4 border-b pb-3">Informasi Pesanan</h3>
+                                <dl class="space-y-3">
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Order ID:</dt><dd id="orderId" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Tanggal Pesanan:</dt><dd id="orderDate" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="flex justify-between"><dt class="text-sm text-custom-brown">Tipe:</dt><dd id="itemType" class="text-sm font-medium text-right"></dd></div>
+                                    <div class="pt-3 border-t"><dt class="text-sm text-custom-brown">Catatan:</dt><dd id="notes" class="mt-1 text-sm text-gray-600"></dd></div>
+                                </dl>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Schedule Information -->
-                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
-                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Jadwal Penggunaan</h3>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Tanggal Mulai:</span>
-                                <span id="startDate" class="font-medium text-[#181C14]"></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Tanggal Selesai:</span>
-                                <span id="endDate" class="font-medium text-[#181C14]"></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-[#7f7a75]">Durasi:</span>
-                                <span id="duration" class="font-medium text-[#181C14]"></span>
+                        <!-- Right Column: Payment & Fine -->
+                        <div class="space-y-6">
+                            <!-- Payment Section -->
+                            <div id="paymentSection"></div>
+                            
+                            <!-- Fine Section -->
+                            <div id="fineSection"></div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                                <h3 class="text-lg font-semibold text-custom-dark mb-4 border-b pb-3">Aksi</h3>
+                                <div class="flex flex-wrap gap-3">
+                                    <button id="printBtn" class="px-4 py-2 bg-custom-green text-white rounded-lg hover:bg-custom-green-dark transition-colors">
+                                        <i class="fas fa-print mr-2"></i>Cetak
+                                    </button>
+                                    <button id="editOrderBtn" class="hidden px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                        <i class="fas fa-edit mr-2"></i>Edit
+                                    </button>
+                                    <button id="cancelOrderBtn" class="hidden px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                        <i class="fas fa-times mr-2"></i>Batalkan
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Item/Service Details -->
-                <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mt-6">
-                    <h3 class="text-lg font-semibold text-[#181C14] mb-4">Detail Item/Layanan</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 id="itemName" class="text-xl font-semibold text-[#181C14] mb-2"></h4>
-                            <p id="itemDescription" class="text-[#7f7a75] mb-4"></p>
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[#7f7a75]">Kategori:</span>
-                                <span id="itemCategory" class="font-medium text-[#181C14]"></span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[#7f7a75]">Status:</span>
-                                <span id="itemStatus" class="font-medium text-[#181C14]"></span>
-                            </div>
-                        </div>
-                        <div class="flex justify-center">
-                            <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
-                                <img id="itemPhoto" src="" alt="Item Photo" class="w-full h-full object-cover rounded-lg hidden">
-                                <i class="fas fa-image text-4xl text-gray-400" id="itemPhotoPlaceholder"></i>
-                            </div>
-                        </div>
+                
+                <!-- Error State -->
+                <div id="errorState" class="hidden text-center py-16 px-6">
+                    <div class="mx-auto h-16 w-16 text-red-400">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
                     </div>
-                </div>
-
-                <!-- Notes and Files -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    <!-- Notes -->
-                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
-                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Catatan</h3>
-                        <div id="notes" class="text-[#7f7a75]">
-                            <!-- Notes will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- Files -->
-                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6">
-                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Dokumen</h3>
-                        <div id="files" class="space-y-2">
-                            <!-- Files will be populated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="mt-6 flex gap-3 justify-end">
-                    <button id="cancelOrderBtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition hidden">
-                        <i class="fas fa-times mr-2"></i>Batalkan Pesanan
-                    </button>
-                    <button id="editOrderBtn" class="px-6 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition hidden">
-                        <i class="fas fa-edit mr-2"></i>Edit Pesanan
-                    </button>
+                    <h3 class="mt-4 text-lg font-medium text-custom-dark">Terjadi Kesalahan</h3>
+                    <p class="mt-1 text-sm text-custom-brown">Gagal memuat detail pesanan.</p>
                 </div>
             </div>
-        </section>
+        </main>
 
         <%- include('../partials/footer') %>
     </div>
@@ -269,7 +241,7 @@
 
         // Load order detail from API
         async function loadOrderDetail(orderId) {
-            const loadingState = document.getElementById('loadingState');
+            const loadingState = document.getElementById('skeletonLoader');
             const errorState = document.getElementById('errorState');
             const orderDetailContent = document.getElementById('orderDetailContent');
 
@@ -300,9 +272,9 @@
             const orderDetailContent = document.getElementById('orderDetailContent');
             
             // Set basic information
+            document.getElementById('orderIdHeader').textContent = `#${order.id}`;
             document.getElementById('orderId').textContent = order.id;
-            document.getElementById('orderCode').textContent = `#${order.id}`;
-            document.getElementById('itemType').textContent = order.itemType === 'item' ? 'Item' : 'Layanan';
+            document.getElementById('itemType').textContent = order.itemType === 'item' ? 'Barang' : 'Layanan';
             document.getElementById('quantity').textContent = order.quantity;
             document.getElementById('totalAmount').textContent = `Rp ${formatNumber(order.totalAmount)}`;
             document.getElementById('orderDate').textContent = formatDate(order.createdAt);
@@ -313,7 +285,7 @@
             // Set status
             const statusElement = document.getElementById('orderStatus');
             statusElement.textContent = getStatusText(order.status);
-            statusElement.className = `inline-block border rounded-full px-4 py-2 font-semibold text-sm ${getStatusClass(order.status)}`;
+            statusElement.className = `inline-block rounded-full px-4 py-2 font-semibold text-sm ${getStatusClass(order.status)}`;
 
             // Set notes
             const notesElement = document.getElementById('notes');
@@ -323,20 +295,17 @@
                 notesElement.innerHTML = '<em class="text-gray-400">Tidak ada catatan</em>';
             }
 
-            // Set files
-            const filesElement = document.getElementById('files');
-            if (order.mouFile) {
-                filesElement.innerHTML = `
-                    <div class="flex items-center gap-2 p-3 border border-[#e5e7eb] rounded-lg">
-                        <i class="fas fa-file-pdf text-red-500"></i>
-                        <span class="flex-1 text-sm">${order.mouFile}</span>
-                        <button onclick="downloadFile('${order.mouFile}')" class="text-[#697565] hover:text-[#5a6356]">
-                            <i class="fas fa-download"></i>
-                        </button>
-                    </div>
-                `;
+            // Set item details if available
+            if (order.itemDetails) {
+                document.getElementById('itemName').textContent = order.itemDetails.name || 'N/A';
+                document.getElementById('itemDescription').textContent = order.itemDetails.description || 'Tidak ada deskripsi';
+                document.getElementById('itemCategory').textContent = order.itemDetails.category || 'Tidak ada kategori';
+                document.getElementById('pricePerUnit').textContent = `Rp ${formatNumber(order.itemDetails.price)}`;
             } else {
-                filesElement.innerHTML = '<em class="text-gray-400">Tidak ada dokumen</em>';
+                document.getElementById('itemName').textContent = 'N/A';
+                document.getElementById('itemDescription').textContent = 'Tidak ada deskripsi';
+                document.getElementById('itemCategory').textContent = 'Tidak ada kategori';
+                document.getElementById('pricePerUnit').textContent = 'Rp 0';
             }
 
             // Show/hide action buttons based on status
@@ -351,9 +320,6 @@
                 editOrderBtn.classList.add('hidden');
             }
 
-            // Load item/service details
-            loadItemDetails(order);
-
             // Load payment
             loadPayment(order.id);
 
@@ -361,43 +327,6 @@
             loadFine(order.id);
 
             orderDetailContent.classList.remove('hidden');
-        }
-
-        // Load item/service details
-        async function loadItemDetails(order) {
-            try {
-                const endpoint = order.itemType === 'item' ? '/user/api/items' : '/user/api/services';
-                const response = await fetch(endpoint);
-                const result = await response.json();
-
-                if (result.success) {
-                    const items = result.data;
-                    const item = items.find(i => i.id === order.itemId);
-                    
-                    if (item) {
-                        document.getElementById('itemName').textContent = item.name;
-                        document.getElementById('itemDescription').textContent = item.description || 'Tidak ada deskripsi';
-                        document.getElementById('itemCategory').textContent = item.category || 'Tidak ada kategori';
-                        document.getElementById('itemStatus').textContent = getItemStatusText(item.status);
-                        document.getElementById('pricePerUnit').textContent = `Rp ${formatNumber(item.price)}`;
-
-                        // Set item photo
-                        const itemPhoto = document.getElementById('itemPhoto');
-                        const itemPhotoPlaceholder = document.getElementById('itemPhotoPlaceholder');
-                        
-                        if (item.photo) {
-                            itemPhoto.src = `/uploads/${item.photo}`;
-                            itemPhoto.classList.remove('hidden');
-                            itemPhotoPlaceholder.classList.add('hidden');
-                        } else {
-                            itemPhoto.classList.add('hidden');
-                            itemPhotoPlaceholder.classList.remove('hidden');
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading item details:', error);
-            }
         }
 
         // Show error state
@@ -410,6 +339,7 @@
 
         // Calculate duration between dates
         function calculateDuration(startDate, endDate) {
+            if (!startDate || !endDate) return '-';
             const start = new Date(startDate);
             const end = new Date(endDate);
             const diffTime = Math.abs(end - start);
@@ -469,6 +399,7 @@
 
         // Utility functions
         function formatDate(dateString) {
+            if (!dateString) return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('id-ID', {
                 year: 'numeric',
@@ -478,6 +409,7 @@
         }
 
         function formatNumber(num) {
+            if (!num) return '0';
             return new Intl.NumberFormat('id-ID').format(num);
         }
 
@@ -505,13 +437,23 @@
             return statusTexts[status] || status;
         }
 
-        function getItemStatusText(status) {
+        // Payment status helper functions
+        function getPaymentStatusClass(status) {
+            const statusClasses = {
+                pending: 'text-yellow-600',
+                paid: 'text-green-600',
+                failed: 'text-red-600',
+                refunded: 'text-gray-600'
+            };
+            return statusClasses[status] || 'text-gray-600';
+        }
+
+        function getPaymentStatusText(status) {
             const statusTexts = {
-                available: 'Tersedia',
-                unavailable: 'Tidak Tersedia',
-                maintenance: 'Dalam Perbaikan',
-                damaged: 'Rusak',
-                lost: 'Hilang'
+                pending: 'Menunggu',
+                paid: 'Dibayar',
+                failed: 'Gagal',
+                refunded: 'Dikembalikan'
             };
             return statusTexts[status] || status;
         }
@@ -520,9 +462,11 @@
         async function loadPayment(orderId) {
             const paymentSection = document.getElementById('paymentSection');
             paymentSection.innerHTML = '';
+            
             try {
                 const res = await fetch(`/user/orders/${orderId}/payment`);
                 const result = await res.json();
+                
                 if (result.success && result.data) {
                     // Sudah ada pembayaran
                     const payment = result.data;
@@ -532,48 +476,118 @@
                             <div class="mb-2">Metode: <span class="font-medium">${payment.paymentMethod}</span></div>
                             <div class="mb-2">Tanggal: <span class="font-medium">${formatDate(payment.paymentDate)}</span></div>
                             <div class="mb-2">Tipe: <span class="font-medium">${payment.paymentType}</span></div>
+                            <div class="mb-2">Status: <span class="font-medium ${getPaymentStatusClass(payment.status)}">${getPaymentStatusText(payment.status)}</span></div>
                             <div class="mb-2">Bukti: <a href="/uploads/${payment.paymentProof}" target="_blank" class="text-blue-600 underline">Lihat Bukti</a></div>
                         </div>
                     `;
                 } else if (currentOrder.status === 'approved') {
-                    // Belum ada pembayaran, tampilkan form
+                    // Belum ada pembayaran dan status approved, tampilkan form
                     paymentSection.innerHTML = `
-                        <form id="paymentForm" class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6" enctype="multipart/form-data">
+                        <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
                             <h3 class="text-lg font-semibold text-[#181C14] mb-4">Upload Bukti Pembayaran</h3>
-                            <div class="mb-4">
-                                <label class="block mb-1 font-medium">Metode Pembayaran</label>
-                                <select name="paymentMethod" class="w-full border rounded px-3 py-2" required>
-                                    <option value="">Pilih Metode</option>
-                                    <option value="Transfer">Transfer Bank</option>
-                                    <option value="QRIS">QRIS</option>
-                                    <option value="Tunai">Tunai</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label class="block mb-1 font-medium">Bukti Pembayaran</label>
-                                <input type="file" name="paymentProof" accept="image/*,application/pdf" class="w-full border rounded px-3 py-2" required />
-                            </div>
-                            <button type="submit" class="px-6 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">Upload</button>
-                        </form>
+                            <p class="text-sm text-gray-600 mb-4">Pesanan Anda telah disetujui. Silakan lakukan pembayaran dan upload bukti pembayaran.</p>
+                            <form id="paymentForm" enctype="multipart/form-data">
+                                <div class="mb-4">
+                                    <label class="block mb-1 font-medium">Metode Pembayaran</label>
+                                    <select name="paymentMethod" class="w-full border rounded px-3 py-2" required>
+                                        <option value="">Pilih Metode</option>
+                                        <option value="Transfer">Transfer Bank</option>
+                                        <option value="QRIS">QRIS</option>
+                                        <option value="Tunai">Tunai</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block mb-1 font-medium">Tipe Pembayaran</label>
+                                    <select name="paymentType" class="w-full border rounded px-3 py-2" required>
+                                        <option value="">Pilih Tipe</option>
+                                        <option value="full">Lunas</option>
+                                        <option value="deposit">DP</option>
+                                        <option value="installment">Cicilan</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block mb-1 font-medium">Bukti Pembayaran</label>
+                                    <input type="file" name="paymentProof" accept="image/*,application/pdf" class="w-full border rounded px-3 py-2" required />
+                                    <p class="text-xs text-gray-500 mt-1">Upload bukti pembayaran dalam format JPG, PNG, atau PDF</p>
+                                </div>
+                                <button type="submit" class="px-6 py-2 bg-[#697565] text-white rounded-lg hover:bg-[#5a6356] transition">
+                                    <i class="fas fa-upload mr-2"></i>Upload Bukti Pembayaran
+                                </button>
+                            </form>
+                        </div>
                     `;
+                    
                     document.getElementById('paymentForm').addEventListener('submit', async function(e) {
                         e.preventDefault();
                         const formData = new FormData(this);
-                        const res = await fetch(`/user/orders/${orderId}/payment`, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const result = await res.json();
-                        if (result.success) {
-                            alert('Bukti pembayaran berhasil diupload!');
-                            loadPayment(orderId);
-                        } else {
-                            alert(result.message || 'Gagal upload pembayaran');
+                        
+                        try {
+                            const res = await fetch(`/user/orders/${orderId}/payment`, {
+                                method: 'POST',
+                                body: formData
+                            });
+                            const result = await res.json();
+                            
+                            if (result.success) {
+                                alert('Bukti pembayaran berhasil diupload!');
+                                // Refresh halaman untuk menampilkan status terbaru
+                                window.location.reload();
+                            } else {
+                                alert(result.message || 'Gagal upload pembayaran');
+                            }
+                        } catch (error) {
+                            console.error('Error uploading payment:', error);
+                            alert('Terjadi kesalahan saat upload pembayaran');
                         }
                     });
+                } else if (currentOrder.status === 'pending') {
+                    // Status masih pending
+                    paymentSection.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Pembayaran</h3>
+                            <div class="text-center py-4">
+                                <i class="fas fa-clock text-yellow-500 text-3xl mb-2"></i>
+                                <p class="text-gray-600">Pesanan masih dalam status menunggu persetujuan.</p>
+                                <p class="text-sm text-gray-500 mt-1">Pembayaran dapat dilakukan setelah pesanan disetujui.</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentOrder.status === 'rejected') {
+                    // Status ditolak
+                    paymentSection.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Pembayaran</h3>
+                            <div class="text-center py-4">
+                                <i class="fas fa-times-circle text-red-500 text-3xl mb-2"></i>
+                                <p class="text-gray-600">Pesanan ditolak.</p>
+                                <p class="text-sm text-gray-500 mt-1">Tidak dapat melakukan pembayaran untuk pesanan yang ditolak.</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Status lainnya (active, completed, cancelled)
+                    paymentSection.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-[#181C14] mb-4">Pembayaran</h3>
+                            <div class="text-center py-4">
+                                <i class="fas fa-info-circle text-blue-500 text-3xl mb-2"></i>
+                                <p class="text-gray-600">Status pesanan: ${getStatusText(currentOrder.status)}</p>
+                                <p class="text-sm text-gray-500 mt-1">Pembayaran hanya tersedia untuk pesanan yang disetujui.</p>
+                            </div>
+                        </div>
+                    `;
                 }
             } catch (err) {
-                paymentSection.innerHTML = '<div class="text-red-600">Gagal memuat data pembayaran</div>';
+                console.error('Error loading payment:', err);
+                paymentSection.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-sm border border-[#e5e7eb] p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-[#181C14] mb-4">Pembayaran</h3>
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-2"></i>
+                            <p class="text-red-600">Gagal memuat data pembayaran</p>
+                        </div>
+                    </div>
+                `;
             }
         }
 

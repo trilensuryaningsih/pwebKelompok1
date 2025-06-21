@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Manajemen Pesanan & Denda</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 flex">
+  <%- include('./partials/sidebar') %>
+  <div class="flex-1 flex flex-col">
+    <%- include('./partials/header', { user: user || { name: 'Admin' } }) %>
+    <main class="flex-1 p-6 md:p-10">
+      <!-- Main Header -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Manajemen Pesanan & Denda</h1>
+            <p class="text-gray-600">Kelola semua pesanan dan denda dalam satu halaman.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <!-- Order Statistics -->
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+              <i class="fas fa-shopping-cart text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Pesanan</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.totalOrders %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+              <i class="fas fa-clock text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Menunggu</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.pendingOrders %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-600">
+              <i class="fas fa-check-circle text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Aktif</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.activeOrders %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-red-100 text-red-600">
+              <i class="fas fa-exclamation-triangle text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Denda</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.totalFines %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+              <i class="fas fa-balance-scale text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Nilai Denda</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= formatNumber(stats.totalFineAmount) %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <%= error %>
+        </div>
+      <% } %>
+
+      <!-- Orders Table -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Daftar Pesanan</h2>
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="min-w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">ORDER ID</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">USER</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">TIPE</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">JUMLAH</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">STATUS</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">TANGGAL</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <% if (orders && orders.length > 0) { %>
+                  <% orders.forEach(order => { %>
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="p-4 whitespace-nowrap font-medium text-gray-900">
+                        <a href="/admin/orders/<%= order.id %>" class="text-blue-600 hover:underline">
+                          #<%= order.id %>
+                        </a>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <% if (order.User) { %>
+                          <div>
+                            <div class="font-medium"><%= order.User.name %></div>
+                            <div class="text-xs text-gray-500"><%= order.User.email %></div>
+                          </div>
+                        <% } else { %>
+                          <%= order.user_id || 'N/A' %>
+                        <% } %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                          <%= order.itemType === 'item' ? 'Item' : 'Layanan' %>
+                        </span>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                        <%= formatNumber(order.totalAmount) %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= getStatusClass(order.status) %>">
+                          <%= getStatusText(order.status) %>
+                        </span>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <%= formatDate(order.createdAt) %>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="6" class="text-center py-16 px-6">
+                      <div class="mx-auto h-16 w-16 text-gray-400">
+                        <i class="fas fa-shopping-cart fa-3x"></i>
+                      </div>
+                      <h3 class="mt-4 text-lg font-medium text-gray-900">Belum Ada Pesanan</h3>
+                      <p class="mt-1 text-sm text-gray-500">Semua pesanan akan muncul di sini.</p>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fines Table -->
+      <div class="mb-10">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Daftar Denda</h2>
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="min-w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">ORDER ID</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">USER</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">ITEM/LAYANAN</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">JUMLAH</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">ALASAN</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">STATUS</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">TANGGAL DIBUAT</th>
+                  <th class="p-4 text-left text-sm font-semibold text-gray-600">AKSI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <% if (fines && fines.length > 0) { %>
+                  <% fines.forEach(fine => { %>
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="p-4 whitespace-nowrap font-medium text-gray-900">
+                        <a href="/admin/orders/<%= fine.Order?.id %>" class="text-blue-600 hover:underline">
+                          #<%= fine.orderId %>
+                        </a>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <% if (fine.Order?.User) { %>
+                          <div>
+                            <div class="font-medium"><%= fine.Order.User.name %></div>
+                            <div class="text-xs text-gray-500"><%= fine.Order.User.email %></div>
+                          </div>
+                        <% } else { %>
+                          <%= fine.Order?.user_id || 'N/A' %>
+                        <% } %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <% if (fine.itemDetails) { %>
+                          <div>
+                            <div class="font-medium"><%= fine.itemDetails.name %></div>
+                            <div class="text-xs text-gray-500"><%= fine.Order?.itemType === 'item' ? 'Item' : 'Layanan' %></div>
+                          </div>
+                        <% } else { %>
+                          <span class="text-gray-400">-</span>
+                        <% } %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                        <%= formatNumber(fine.amount) %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <%= fine.reason || '-' %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= getStatusClass(fine.status) %>">
+                          <%= getStatusText(fine.status) %>
+                        </span>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                        <%= formatDate(fine.createdAt) %>
+                      </td>
+                      <td class="p-4 whitespace-nowrap text-sm">
+                        <div class="flex space-x-2">
+                          <select id="status-<%= fine.id %>" class="border rounded px-2 py-1 text-xs">
+                            <option value="pending" <%= fine.status === 'pending' ? 'selected' : '' %>>Menunggu</option>
+                            <option value="paid" <%= fine.status === 'paid' ? 'selected' : '' %>>Dibayar</option>
+                            <option value="waived" <%= fine.status === 'waived' ? 'selected' : '' %>>Dibebaskan</option>
+                          </select>
+                          <button onclick="updateFineStatus('<%= fine.id %>')" class="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition">
+                            Update
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="8" class="text-center py-16 px-6">
+                      <div class="mx-auto h-16 w-16 text-gray-400">
+                        <i class="fas fa-file-invoice-dollar fa-3x"></i>
+                      </div>
+                      <h3 class="mt-4 text-lg font-medium text-gray-900">Belum Ada Denda</h3>
+                      <p class="mt-1 text-sm text-gray-500">Semua denda akan muncul di sini.</p>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    async function updateFineStatus(fineId) {
+      const status = document.getElementById(`status-${fineId}`).value;
+      
+      try {
+        const res = await fetch(`/admin/pesanan/fines/${fineId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        
+        const result = await res.json();
+        
+        if (result.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Status denda berhasil diperbarui',
+            timer: 2000,
+            showConfirmButton: false
+          }).then(() => {
+            // Refresh halaman untuk menampilkan data terbaru
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: result.message || 'Gagal update status denda'
+          });
+        }
+      } catch (error) {
+        console.error('Error updating fine status:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Terjadi kesalahan saat update status'
+        });
+      }
+    }
+  </script>
+</body>
+</html> 

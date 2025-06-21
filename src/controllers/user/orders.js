@@ -1,4 +1,4 @@
-const { Order, User, Item } = require('../../models');
+const { Order, User, Item, Service } = require('../../models');
 const { Op } = require('sequelize');
 
 const ordersController = {
@@ -19,9 +19,39 @@ const ordersController = {
                 order: [['createdAt', 'DESC']]
             });
 
+            // Get item/service details for each order
+            const ordersWithDetails = await Promise.all(orders.map(async (order) => {
+                const orderData = order.toJSON();
+                
+                try {
+                    if (order.itemType === 'item') {
+                        const item = await Item.findByPk(order.itemId);
+                        orderData.itemDetails = item ? {
+                            name: item.name,
+                            description: item.description,
+                            price: item.price,
+                            image: item.image
+                        } : null;
+                    } else {
+                        const service = await Service.findByPk(order.itemId);
+                        orderData.itemDetails = service ? {
+                            name: service.name,
+                            description: service.description,
+                            price: service.price,
+                            image: service.image
+                        } : null;
+                    }
+                } catch (error) {
+                    console.error(`Error fetching ${order.itemType} details for order ${order.id}:`, error);
+                    orderData.itemDetails = null;
+                }
+                
+                return orderData;
+            }));
+
             return res.json({ 
                 success: true, 
-                data: orders 
+                data: ordersWithDetails 
             });
         } catch (error) {
             console.error('Error fetching user orders:', error);

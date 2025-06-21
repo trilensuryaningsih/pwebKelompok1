@@ -55,19 +55,40 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Username atau Password salah" });
     }
 
-    req.session.user = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
-    
-    if (user.role === "admin") {
-      res.redirect("/admin"); // Redirect to admin home
-    } else if (user.role === "pj") {
-      res.redirect("/pj"); // Redirect to pj home
-    } else if (user.role === "user") {
-      res.redirect("/user/home"); // Redirect to user home
-    }
+    // Regenerate session for security
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error('Session regeneration error:', err);
+        return res.status(500).json({ message: 'Session error' });
+      }
+
+      // Set session data
+      req.session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone_number: user.phone_number,
+        loginTime: new Date()
+      };
+
+      // Save session explicitly
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ message: 'Session save error' });
+        }
+
+        // Redirect based on role
+        if (user.role === "admin") {
+          res.redirect("/admin"); // Redirect to admin home
+        } else if (user.role === "pj") {
+          res.redirect("/pj"); // Redirect to pj home
+        } else if (user.role === "user") {
+          res.redirect("/user/orders"); // Redirect to user home
+        }
+      });
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -76,8 +97,15 @@ const login = async (req, res) => {
 
 const logout = (req, res) => {
   try {
-    // res.status(200).json({ message: "Logout berhasil" });
-    req.session.destroy(() => {
+    // Destroy session completely
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ message: 'Logout error' });
+      }
+      
+      // Clear session cookie
+      res.clearCookie('sessionId');
       res.redirect("/user");
     });
   } catch (error) {
@@ -86,8 +114,32 @@ const logout = (req, res) => {
   }
 };
 
+// Middleware to check session validity
+const checkSession = (req, res, next) => {
+  if (req.session && req.session.user) {
+    // Check if session is not too old (optional additional check)
+    const sessionAge = Date.now() - new Date(req.session.user.loginTime).getTime();
+    const maxSessionAge = 24 * 60 * 60 * 1000; // 24 hours
+    
+    if (sessionAge > maxSessionAge) {
+      // Session is too old, destroy it
+      req.session.destroy(() => {
+        res.clearCookie('sessionId');
+        return res.redirect('/auth/login');
+      });
+    } else {
+      // Update login time to extend session
+      req.session.user.loginTime = new Date();
+      next();
+    }
+  } else {
+    next();
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
+  checkSession
 };

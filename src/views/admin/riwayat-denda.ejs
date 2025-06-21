@@ -3,79 +3,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Riwayat Denda - Admin</title>
+  <title>Admin - Riwayat Denda</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    .bg-custom-dark { background-color: #181C14; }
+    .bg-custom-green { background-color: #697565; }
+    .text-custom-green { color: #697565; }
+    .border-custom-green { border-color: #697565; }
+    .bg-custom-light-beige { background-color: #f5f0e9; }
+    .text-custom-brown { color: #7f7a75; }
+    .hover\:bg-custom-green-dark:hover { background-color: #5a6356; }
+  </style>
 </head>
-<body class="bg-brand-beige text-brand-brown font-sans flex flex-col min-h-screen">
-  <div class="app grid lg:grid-cols-[240px_1fr] flex-grow" role="main">
-    <aside class="bg-brand-olive text-brand-beige flex flex-col items-center p-3 lg:p-0 lg:pt-12 sticky top-0 h-screen z-10">
-      <div class="logo w-12 h-12 mb-8 hidden lg:block" aria-label="Logo">
-        <!-- Logo SVG here -->
-      </div>
-      <nav class="flex flex-col w-full gap-4 hidden lg:flex">
-        <a href="/admin/status" class="hover:bg-brand-olive-dark text-left py-2.5 px-4 rounded-full transition-colors" role="button">Status</a>
-        <a href="/admin/fines/history-page" class="bg-brand-olive-dark font-bold text-left py-2.5 px-4 rounded-full transition-colors" aria-current="page" role="button">Riwayat Denda</a>
-      </nav>
-    </aside>
-    <div class="flex flex-col w-full">
-      <header class="bg-brand-beige px-5 lg:px-10 py-4 flex justify-between items-center gap-4 sticky top-0 lg:relative border-b border-brand-brown/30 lg:border-none">
-        <div class="flex items-center gap-4 ml-auto">
-          <div class="border border-brand-brown text-brand-brown font-semibold py-1.5 px-3 rounded-xl hidden sm:block">Admin</div>
+<body class="flex min-h-screen bg-custom-light-beige">
+  <%- include('./partials/sidebar') %>
+  <div class="flex-1 flex flex-col">
+    <%- include('./partials/header', { user: user || { name: 'Admin' } }) %>
+    <main class="flex-1 p-6 md:p-10">
+      <!-- Main Header -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold text-custom-dark mb-2">Riwayat Denda</h1>
+            <p class="text-custom-brown">Semua catatan denda yang pernah ada di sistem.</p>
+          </div>
+          <a href="/admin/status" class="bg-custom-green text-white font-bold py-2 px-4 rounded-lg hover:bg-custom-green-dark transition-colors flex items-center">
+            <i class="fas fa-tasks mr-2"></i>Kelola Status
+          </a>
         </div>
-      </header>
-      <main class="content p-5 lg:p-10 flex flex-col gap-6 bg-brand-beige">
-        <h1 class="text-2xl font-bold mb-6">Riwayat Denda</h1>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-red-100 text-red-600">
+              <i class="fas fa-exclamation-triangle text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Denda</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.totalFines %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+              <i class="fas fa-clock text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Menunggu</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.pendingFines %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-600">
+              <i class="fas fa-check-circle text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Dibayar</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= stats.paidFines %></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+              <i class="fas fa-balance-scale text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Nilai</p>
+              <p class="text-2xl font-semibold text-gray-900"><%= formatNumber(stats.totalAmount) %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <%= error %>
+        </div>
+      <% } %>
+
+      <!-- Fines Table -->
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full rounded-xl overflow-hidden bg-brand-olive text-brand-beige">
-            <thead class="bg-brand-olive">
+          <table class="min-w-full">
+            <thead class="bg-gray-50">
               <tr>
-                <th class="p-4 px-3 text-left font-semibold align-middle">No</th>
-                <th class="p-4 px-3 text-left font-semibold align-middle">Order ID</th>
-                <th class="p-4 px-3 text-left font-semibold align-middle">User ID</th>
-                <th class="p-4 px-3 text-left font-semibold align-middle">Jumlah Denda</th>
-                <th class="p-4 px-3 text-left font-semibold align-middle">Status</th>
-                <th class="p-4 px-3 text-left font-semibold align-middle">Tanggal Denda</th>
-                <th class="p-4 px-3 text-left font-semibold align-middle">Keterangan</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">ORDER ID</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">USER</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">ITEM/LAYANAN</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">JUMLAH</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">ALASAN</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">STATUS</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">TANGGAL DIBUAT</th>
+                <th class="p-4 text-left text-sm font-semibold text-gray-600">AKSI</th>
               </tr>
             </thead>
-            <tbody class="bg-brand-beige text-brand-brown" id="finesBody">
-              <!-- Data diisi oleh JS -->
+            <tbody class="divide-y divide-gray-200">
+              <% if (fines && fines.length > 0) { %>
+                <% fines.forEach(fine => { %>
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 whitespace-nowrap font-medium text-gray-900">
+                      <a href="/admin/orders/<%= fine.Order?.id %>" class="text-custom-green hover:underline">
+                        #<%= fine.orderId %>
+                      </a>
+                    </td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                      <% if (fine.Order?.User) { %>
+                        <div>
+                          <div class="font-medium"><%= fine.Order.User.name %></div>
+                          <div class="text-xs text-gray-500"><%= fine.Order.User.email %></div>
+                        </div>
+                      <% } else { %>
+                        <%= fine.Order?.user_id || 'N/A' %>
+                      <% } %>
+                    </td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                      <% if (fine.itemDetails) { %>
+                        <div>
+                          <div class="font-medium"><%= fine.itemDetails.name %></div>
+                          <div class="text-xs text-gray-500"><%= fine.Order?.itemType === 'item' ? 'Item' : 'Layanan' %></div>
+                        </div>
+                      <% } else { %>
+                        <span class="text-gray-400">-</span>
+                      <% } %>
+                    </td>
+                    <td class="p-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                      <%= formatNumber(fine.amount) %>
+                    </td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                      <%= fine.reason || '-' %>
+                    </td>
+                    <td class="p-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= getStatusClass(fine.status) %>">
+                        <%= getStatusText(fine.status) %>
+                      </span>
+                    </td>
+                    <td class="p-4 whitespace-nowrap text-sm text-gray-600">
+                      <%= formatDate(fine.createdAt) %>
+                    </td>
+                    <td class="p-4 whitespace-nowrap text-sm">
+                      <div class="flex space-x-2">
+                        <select id="status-<%= fine.id %>" class="border rounded px-2 py-1 text-xs">
+                          <option value="pending" <%= fine.status === 'pending' ? 'selected' : '' %>>Menunggu</option>
+                          <option value="paid" <%= fine.status === 'paid' ? 'selected' : '' %>>Dibayar</option>
+                          <option value="waived" <%= fine.status === 'waived' ? 'selected' : '' %>>Dibebaskan</option>
+                        </select>
+                        <button onclick="updateFineStatus('<%= fine.id %>')" class="bg-custom-green text-white px-3 py-1 rounded text-xs hover:bg-custom-green-dark transition">
+                          Update
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="8" class="text-center py-16 px-6">
+                    <div class="mx-auto h-16 w-16 text-gray-400">
+                      <i class="fas fa-file-invoice-dollar fa-3x"></i>
+                    </div>
+                    <h3 class="mt-4 text-lg font-medium text-custom-dark">Belum Ada Riwayat Denda</h3>
+                    <p class="mt-1 text-sm text-custom-brown">Semua denda yang tercatat akan muncul di sini.</p>
+                  </td>
+                </tr>
+              <% } %>
             </tbody>
           </table>
-          <div id="emptyState" class="text-center text-gray-500 py-8 hidden">Belum ada riwayat denda.</div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    async function loadFineHistory() {
-      const res = await fetch('/admin/fines/history');
-      const result = await res.json();
-      const body = document.getElementById('finesBody');
-      const empty = document.getElementById('emptyState');
-      body.innerHTML = '';
-      if (result.success && result.data.length > 0) {
-        empty.classList.add('hidden');
-        result.data.forEach((fine, idx) => {
-          body.innerHTML += `
-            <tr>
-              <td class="p-4 px-3 align-middle font-bold text-sm">${idx + 1}</td>
-              <td class="p-4 px-3 align-middle font-bold text-sm">${fine.orderId}</td>
-              <td class="p-4 px-3 align-middle font-bold text-sm">${fine.Order ? fine.Order.user_id : '-'}</td>
-              <td class="p-4 px-3 align-middle font-bold text-sm">Rp ${Number(fine.amount).toLocaleString('id-ID')}</td>
-              <td class="p-4 px-3 align-middle">${fine.status}</td>
-              <td class="p-4 px-3 align-middle">${new Date(fine.createdAt).toLocaleString('id-ID')}</td>
-              <td class="p-4 px-3 align-middle">${fine.reason || '-'}</td>
-            </tr>
-          `;
+    async function updateFineStatus(fineId) {
+      const status = document.getElementById(`status-${fineId}`).value;
+      
+      try {
+        const res = await fetch(`/admin/fines/${fineId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
         });
-      } else {
-        empty.classList.remove('hidden');
+        
+        const result = await res.json();
+        
+        if (result.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Status denda berhasil diperbarui',
+            timer: 2000,
+            showConfirmButton: false
+          }).then(() => {
+            // Refresh halaman untuk menampilkan data terbaru
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: result.message || 'Gagal update status denda'
+          });
+        }
+      } catch (error) {
+        console.error('Error updating fine status:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Terjadi kesalahan saat update status'
+        });
       }
     }
-    document.addEventListener('DOMContentLoaded', loadFineHistory);
   </script>
 </body>
 </html> 

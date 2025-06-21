@@ -8,19 +8,34 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 
-app.use(session({
-    secret: 'mySuperSecretKey123',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using https
-}));   
-
 // Load environment variables from .env file
 dotenv.config();
+
+// Improved session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'mySuperSecretKey123',
+    resave: true, // Changed to true to ensure session is saved
+    saveUninitialized: false, // Changed to false for security
+    cookie: { 
+        secure: false, // Set to true if using https
+        httpOnly: true, // Prevents XSS attacks
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+        sameSite: 'lax' // Protects against CSRF
+    },
+    name: 'sessionId', // Custom session name
+    rolling: true, // Extends session on each request
+    unset: 'destroy' // Destroys session when unset
+}));   
 
 // Parse incoming request body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Import middleware
+const { refreshSession } = require('./src/middleware/auth');
+
+// Apply session refresh middleware globally
+app.use(refreshSession);
 
 // Import routes
 const authRoutes = require('./src/routes/auth.routes.js');

@@ -11,6 +11,13 @@ const requireAuth = (req, res, next) => {
         // If it's a page request, redirect to login
         return res.redirect('/auth/login');
     }
+
+    // Refresh session on each request to extend its lifetime
+    if (req.session.user && req.session.user.loginTime) {
+        req.session.user.loginTime = new Date();
+        req.session.touch(); // Extends the session
+    }
+
     next();
 };
 
@@ -26,11 +33,35 @@ const requireRole = (roles) => {
                 message: 'Access denied'
             });
         }
+
+        // Refresh session on each request to extend its lifetime
+        if (req.session.user && req.session.user.loginTime) {
+            req.session.user.loginTime = new Date();
+            req.session.touch(); // Extends the session
+        }
+
         next();
     };
 };
 
+// Middleware to refresh session periodically
+const refreshSession = (req, res, next) => {
+    if (req.session && req.session.user) {
+        // Update session timestamp every 5 minutes
+        const now = Date.now();
+        const lastUpdate = req.session.lastUpdate || 0;
+        const fiveMinutes = 5 * 60 * 1000;
+
+        if (now - lastUpdate > fiveMinutes) {
+            req.session.lastUpdate = now;
+            req.session.touch();
+        }
+    }
+    next();
+};
+
 module.exports = {
     requireAuth,
-    requireRole
+    requireRole,
+    refreshSession
 }; 

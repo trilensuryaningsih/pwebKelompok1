@@ -1,0 +1,58 @@
+<!-- Admin Sidebar -->
+<aside class="w-64 bg-gray-800 text-white flex flex-col min-h-screen">
+    <div class="h-20 flex items-center justify-center bg-gray-900">
+        <h1 class="text-2xl font-bold">Admin Panel</h1>
+    </div>
+    <nav class="flex-grow p-4">
+        <ul class="space-y-2">
+            <li>
+                <a href="/admin/dashboard" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-tachometer-alt w-6 mr-3"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/admin/daftar" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-box w-6 mr-3"></i>
+                    Daftar Barang
+                </a>
+            </li>
+            <li>
+                <a href="/admin/status" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-tasks w-6 mr-3"></i>
+                    Status Peminjaman
+                </a>
+            </li>
+            <li>
+                <a href="/admin/pesanan" class="flex items-center px-4 py-2 rounded-lg bg-gray-700"> <!-- Active Page -->
+                    <i class="fas fa-file-invoice w-6 mr-3"></i>
+                    Pesanan & Denda
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-tools w-6 mr-3"></i>
+                    Perbaikan Alat
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-users w-6 mr-3"></i>
+                    Penanggung Jawab
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-check-circle w-6 mr-3"></i>
+                    Verifikasi Pesanan
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="p-4 border-t border-gray-700">
+        <a href="/auth/logout" class="flex items-center px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+            <i class="fas fa-sign-out-alt w-6 mr-3"></i>
+            Logout
+        </a>
+    </div>
+</aside> 
