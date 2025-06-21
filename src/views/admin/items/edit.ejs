@@ -59,7 +59,7 @@
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Tipe <span class="text-red-500">*</span></label>
                 <div class="relative">
-                  <select id="type" name="type" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                  <select id="type" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none" disabled>
                     <option value="">Pilih Tipe</option>
                     <option value="item">Item</option>
                     <option value="service">Service</option>
@@ -74,7 +74,7 @@
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Kategori <span class="text-red-500">*</span></label>
                 <div class="relative">
-                  <select id="category" name="category" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                  <select id="category" name="category" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
                     <option value="">Pilih Kategori</option>
                   </select>
                   <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -86,7 +86,7 @@
               </div>
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Nama <span class="text-red-500">*</span></label>
-                <input name="name" id="name" type="text" required placeholder="Masukkan nama alat atau jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                <input name="name" id="name" type="text" placeholder="Masukkan nama alat atau jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
               </div>
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Deskripsi</label>
@@ -98,7 +98,7 @@
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Status <span class="text-red-500">*</span></label>
                 <div class="relative">
-                  <select name="status" id="status" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                  <select name="status" id="status" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
                     <option value="">Pilih Status</option>
                   </select>
                   <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -110,11 +110,11 @@
               </div>
               <div id="quantity-field">
                 <label class="block text-gray-600 text-sm mb-2">Jumlah <span class="text-red-500">*</span></label>
-                <input name="quantity" id="quantity" type="number" min="1" required placeholder="Masukkan jumlah" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                <input name="quantity" id="quantity" type="number" placeholder="Masukkan jumlah" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
               </div>
               <div class="mb-4" id="price-field">
                 <label for="price" class="block text-sm font-medium text-gray-700">Harga</label>
-                <input type="number" name="price" id="price" min="0" step="any" class="mt-1 p-2 w-full border rounded-md bg-beige-light" placeholder="Masukkan harga">
+                <input type="number" name="price" id="price" step="any" class="mt-1 p-2 w-full border rounded-md bg-beige-light" placeholder="Masukkan harga">
               </div>
               <div>
                 <label class="block text-gray-600 text-sm mb-2">Foto</label>
@@ -128,6 +128,11 @@
                 <div id="image-preview-container" class="mt-2" style="display: none;">
                   <p class="text-xs text-gray-500 mb-1">Foto saat ini:</p>
                   <img id="image-preview" src="" alt="Preview Foto Item" class="max-w-xs max-h-32 rounded-lg border shadow-sm">
+                  <div id="image-placeholder" class="max-w-xs max-h-32 bg-gray-200 rounded-lg border shadow-sm flex items-center justify-center" style="display: none;">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
@@ -161,6 +166,7 @@
       const priceField = document.getElementById('price-field');
       const imagePreviewContainer = document.getElementById('image-preview-container');
       const imagePreview = document.getElementById('image-preview');
+      const imagePlaceholder = document.getElementById('image-placeholder');
       const hiddenTypeInput = document.getElementById('hidden-type');
 
       // Category options for different types
@@ -174,8 +180,11 @@
 
       const serviceCategories = [
         'fotografi',
-        'animasi dan motion grafis',
         'desain grafis',
+        'teknologi',
+        'konsultasi',
+        'maintenance',
+        'animasi dan motion grafis',
         'multimedia interaktif'
       ];
 
@@ -199,8 +208,33 @@
       }
 
       function findMatchingCategory(categoryValue, availableCategories) {
+        if (!categoryValue) return '';
+        
         const normalizedValue = normalizeCategory(categoryValue);
-        return availableCategories.find(cat => normalizeCategory(cat) === normalizedValue) || categoryValue;
+        console.log('Looking for category:', normalizedValue);
+        
+        // Coba exact match dulu
+        let match = availableCategories.find(cat => normalizeCategory(cat) === normalizedValue);
+        
+        if (match) {
+          console.log('Exact match found:', match);
+          return match;
+        }
+        
+        // Jika tidak ada exact match, coba partial match
+        match = availableCategories.find(cat => 
+          normalizeCategory(cat).includes(normalizedValue) || 
+          normalizedValue.includes(normalizeCategory(cat))
+        );
+        
+        if (match) {
+          console.log('Partial match found:', match);
+          return match;
+        }
+        
+        // Jika masih tidak ada, kembalikan nilai asli
+        console.log('No match found, returning original:', categoryValue);
+        return categoryValue;
       }
 
       function updateCategoryOptions() {
@@ -251,18 +285,16 @@
         if (selectedType === 'item') {
           quantityField.style.display = 'block';
           priceField.style.display = 'none';
-          quantityInput.required = true;
-          priceInput.required = false;
+          // Clear price field when hidden to prevent validation issues
+          priceInput.value = '';
         } else if (selectedType === 'service') {
           quantityField.style.display = 'none';
           priceField.style.display = 'block';
-          quantityInput.required = false;
-          priceInput.required = true;
+          // Clear quantity field when hidden to prevent validation issues
+          quantityInput.value = '';
         } else {
           quantityField.style.display = 'block';
           priceField.style.display = 'block';
-          quantityInput.required = false;
-          priceInput.required = false;
         }
       }
 
@@ -280,6 +312,7 @@
         editForm.action = '';
         simpanButton.disabled = true;
         imagePreviewContainer.style.display = 'none';
+        
         updateCategoryOptions();
         updateStatusOptions();
         toggleFields();
@@ -325,18 +358,43 @@
             // Handle category with normalization
             const availableCategories = itemType === 'item' ? itemCategories : serviceCategories;
             const matchedCategory = findMatchingCategory(itemData.category, availableCategories);
-            categorySelect.value = matchedCategory;
+            
+            // Set category value
+            if (matchedCategory) {
+              categorySelect.value = matchedCategory;
+              console.log('Category set to:', matchedCategory);
+            } else {
+              // Jika kategori tidak ada di daftar, tambahkan sebagai opsi baru
+              const newOption = document.createElement('option');
+              newOption.value = itemData.category;
+              newOption.textContent = itemData.category;
+              categorySelect.appendChild(newOption);
+              categorySelect.value = itemData.category;
+              console.log('Added new category option:', itemData.category);
+            }
             
             quantityInput.value = itemData.quantity || 0;
             descriptionInput.value = itemData.description || '';
             priceInput.value = itemData.price || '';
             
+            // Clear hidden fields to prevent validation issues
+            if (itemType === 'service') {
+              quantityInput.value = '';
+            } else {
+              priceInput.value = '';
+            }
+            
             console.log('Setting category to:', itemData.category); // Debug log
             console.log('Matched category:', matchedCategory); // Debug log
             console.log('Available category options:', Array.from(categorySelect.options).map(opt => opt.value)); // Debug log
+            console.log('Final category value:', categorySelect.value); // Debug log
             
             if (itemData.photo) {
               imagePreview.src = `/uploads/${itemData.photo}`;
+              imagePreview.onerror = function() {
+                this.style.display = 'none';
+                imagePlaceholder.style.display = 'flex';
+              };
               imagePreviewContainer.style.display = 'block';
             } else {
               imagePreviewContainer.style.display = 'none';
@@ -353,20 +411,90 @@
       });
       // Disable submit jika belum pilih item
       editForm.addEventListener('submit', function(e) {
+        console.log('=== FORM SUBMIT EVENT TRIGGERED ===');
+        
         if (!itemSelector.value) {
           e.preventDefault();
           alert('Pilih item yang ingin diedit terlebih dahulu!');
           return;
         }
         
+        // Validasi field yang required
+        const name = nameInput.value.trim();
+        const category = categorySelect.value;
+        const status = statusSelect.value;
+        
+        console.log('Validation check:');
+        console.log('- Name:', name);
+        console.log('- Category:', category);
+        console.log('- Status:', status);
+        
+        if (!name) {
+          e.preventDefault();
+          alert('Nama tidak boleh kosong!');
+          nameInput.focus();
+          return;
+        }
+        
+        if (!category) {
+          e.preventDefault();
+          alert('Kategori harus dipilih!');
+          categorySelect.focus();
+          return;
+        }
+        
+        if (!status) {
+          e.preventDefault();
+          alert('Status harus dipilih!');
+          statusSelect.focus();
+          return;
+        }
+        
+        // Validasi berdasarkan tipe
+        const selectedOption = itemSelector.options[itemSelector.selectedIndex];
+        const itemType = selectedOption.getAttribute('data-type');
+        
+        console.log('Item type:', itemType);
+        
+        if (itemType === 'service') {
+          const price = priceInput.value;
+          console.log('Service price:', price);
+          if (!price || parseFloat(price) <= 0) {
+            e.preventDefault();
+            alert('Harga harus diisi dengan nilai yang lebih dari 0!');
+            priceInput.focus();
+            return;
+          }
+        } else {
+          const quantity = quantityInput.value;
+          console.log('Item quantity:', quantity);
+          if (!quantity || parseInt(quantity) <= 0) {
+            e.preventDefault();
+            alert('Jumlah harus diisi dengan nilai yang lebih dari 0!');
+            quantityInput.focus();
+            return;
+          }
+        }
+        
         // Log form data before submit
         const formData = new FormData(editForm);
+        console.log('=== FORM DATA BEING SENT ===');
         console.log('Form action:', editForm.action);
-        console.log('Form data being sent:');
+        console.log('Form method:', editForm.method);
         for (let [key, value] of formData.entries()) {
           console.log(key + ':', value);
         }
+        
+        // Pastikan type tersimpan dengan benar
+        hiddenTypeInput.value = itemType;
+        
+        console.log('Final type value:', hiddenTypeInput.value);
+        console.log('Form will be submitted to:', editForm.action);
+        console.log('=== FORM SUBMISSION ALLOWED ===');
+        
+        // Form akan dikirim secara normal - tidak ada preventDefault()
       });
+
       // Notifikasi sukses setelah update
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('update') === 'success') {

@@ -83,21 +83,33 @@ exports.getItemDetails = async (req, res) => {
 // Create Service (POST)
 exports.createItem = async (req, res) => {
   try {
-    const { nama, kategori, deskripsi, harga } = req.body;
+    console.log('=== CREATE SERVICE DEBUG ===');
+    console.log('Request body:', req.body);
+    console.log('File uploaded:', req.file);
+    
+    const { nama, kategori, deskripsi, harga, name, category, description, price } = req.body;
     const foto = req.file ? req.file.filename : null;
 
-    await Service.create({
-      name: nama,
-      category: kategori,
-      description: deskripsi,
+    // Gunakan field yang tersedia (bisa bahasa Indonesia atau Inggris)
+    const serviceData = {
+      name: name || nama || '',
+      category: category || kategori || '',
+      description: description || deskripsi || '',
       status: 'available',
-      price: harga,
+      price: parseFloat(price || harga || 0),
       photo: foto,
-    });
+    };
+    
+    console.log('Service data to create:', serviceData);
+    
+    const newService = await Service.create(serviceData);
+    console.log('Service created successfully:', newService.id);
+    
     res.redirect('/admin/items/create?success=true');
   } catch (err) {
+    console.error('=== CREATE SERVICE ERROR ===');
     console.error(err);
-    res.status(500).send('Gagal menambah jasa.');
+    res.status(500).send('Gagal menambah jasa: ' + err.message);
   }
 };
 
@@ -107,8 +119,10 @@ exports.updateItem = async (req, res) => {
     const { name, category, description, status, price, quantity, type } = req.body;
     const foto = req.file ? req.file.filename : null;
     
-    console.log('Update request body:', req.body); // Debug log
-    console.log('Update request params:', req.params); // Debug log
+    console.log('=== UPDATE ITEM DEBUG ===');
+    console.log('Request body:', req.body);
+    console.log('Request params:', req.params);
+    console.log('File uploaded:', req.file);
     
     // Determine type if not provided
     let itemType = type;
@@ -126,34 +140,48 @@ exports.updateItem = async (req, res) => {
       }
     }
     
-    console.log('Determined type:', itemType); // Debug log
+    console.log('Determined type:', itemType);
     
     let updateData = {
-      name,
-      category,
-      description,
-      status
+      name: name || '',
+      category: category || '',
+      description: description || '',
+      status: status || 'available'
     };
     
     if (itemType === 'service') {
-      updateData.price = price;
+      updateData.price = parseFloat(price) || 0;
+      console.log('Service price:', updateData.price);
     } else {
-      updateData.quantity = quantity;
+      updateData.quantity = parseInt(quantity) || 0;
       updateData.price = null;
+      console.log('Item quantity:', updateData.quantity);
     }
     
-    if (foto) updateData.photo = foto;
+    if (foto) {
+      updateData.photo = foto;
+      console.log('New photo:', foto);
+    }
     
-    console.log('Update data:', updateData); // Debug log
+    console.log('Final update data:', updateData);
     
+    let result;
     if (itemType === 'service') {
-      await Service.update(updateData, { where: { id: req.params.id } });
+      result = await Service.update(updateData, { where: { id: req.params.id } });
+      console.log('Service update result:', result);
     } else {
-      await Item.update(updateData, { where: { id: req.params.id } });
+      result = await Item.update(updateData, { where: { id: req.params.id } });
+      console.log('Item update result:', result);
     }
     
+    if (result[0] === 0) {
+      throw new Error('Tidak ada data yang diupdate');
+    }
+    
+    console.log('=== UPDATE SUCCESS ===');
     res.redirect('/admin/items?update=success');
   } catch (err) {
+    console.error('=== UPDATE ERROR ===');
     console.error('Error in updateItem:', err);
     res.status(500).send('Gagal mengupdate item: ' + err.message);
   }

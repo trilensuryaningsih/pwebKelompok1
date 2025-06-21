@@ -81,7 +81,10 @@
             <!-- Item Photo -->
             <div class="flex flex-col items-center">
               <% if (item.photo) { %>
-                <img src="/uploads/<%= item.photo %>" alt="Foto Item" class="w-48 h-48 object-cover rounded-lg shadow-md mb-4" />
+                <img src="/uploads/<%= item.photo %>" alt="Foto Item" class="w-48 h-48 object-cover rounded-lg shadow-md mb-4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="w-48 h-48 bg-gray-200 rounded-lg shadow-md mb-4 flex items-center justify-center" style="display: none;">
+                  <span class="material-icons text-gray-400 text-4xl">image</span>
+                </div>
               <% } else { %>
                 <div class="w-48 h-48 bg-gray-200 rounded-lg shadow-md mb-4 flex items-center justify-center">
                   <span class="material-icons text-gray-400 text-4xl">image</span>

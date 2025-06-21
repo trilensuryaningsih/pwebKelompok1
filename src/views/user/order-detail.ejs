@@ -375,6 +375,10 @@
                         
                         if (item.photo) {
                             itemPhoto.src = `/uploads/${item.photo}`;
+                            itemPhoto.onerror = function() {
+                                this.classList.add('hidden');
+                                itemPhotoPlaceholder.classList.remove('hidden');
+                            };
                             itemPhoto.classList.remove('hidden');
                             itemPhotoPlaceholder.classList.add('hidden');
                         } else {
