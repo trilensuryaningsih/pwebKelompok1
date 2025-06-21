@@ -4,22 +4,19 @@
 const fs = require('fs');
 const path = require('path');
 
-const { item } = require('../../models');
+const { Item } = require('../../models');
 
 // 1. FUNGSI UNTUK MENAMPILKAN HALAMAN EDIT (Sudah Benar)
 exports.edit = async (req, res) => {
   try {
-    const allItems = await item.findAll({
-      order: [['nama', 'ASC']]
+    const allItems = await Item.findAll({
+      order: [['name', 'ASC']]
     });
-
     // Kirim juga req.query agar notifikasi bisa tampil di halaman edit
-    // jika Anda tetap memilih redirect ke halaman ini
-    res.render('admin/edit', { items: allItems, query: req.query });
-
+    res.render('admin/items/edit', { items: allItems, query: req.query });
   } catch (error) {
-    console.error("Gagal memuat halaman edit:", error);
-    res.status(500).send('Gagal memuat halaman edit.');
+    console.error('Error fetching items:', error);
+    res.status(500).send('Error fetching items');
   }
 };
 
@@ -27,7 +24,7 @@ exports.edit = async (req, res) => {
 exports.getitemDetails = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const selecteditem = await item.findByPk(itemId);
+    const selecteditem = await Item.findByPk(itemId);
     if (!selecteditem) {
       return res.status(404).json({ message: 'Item tidak ditemukan' });
     }
@@ -42,36 +39,33 @@ exports.getitemDetails = async (req, res) => {
 exports.updateitem = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const { nama, kategori, deskripsi, status, harga, jumlah } = req.body;
+    const { name, category, description, status, price, quantity } = req.body;
 
-    const itemToUpdate = await item.findByPk(itemId);
+    const itemToUpdate = await Item.findByPk(itemId);
     if (!itemToUpdate) {
       return res.status(404).send('Item yang akan diupdate tidak ditemukan.');
     }
 
     // Simpan nama file foto lama sebelum di-update
-    const oldFoto = itemToUpdate.foto;
+    const oldPhoto = itemToUpdate.photo;
 
     // Update field-fieldnya
-    itemToUpdate.nama = nama;
-    itemToUpdate.kategori = kategori;
-    itemToUpdate.deskripsi = deskripsi;
+    itemToUpdate.name = name;
+    itemToUpdate.category = category;
+    itemToUpdate.description = description;
     itemToUpdate.status = status; 
-    itemToUpdate.harga = kategori === 'jasa' ? parseInt(harga) : null;
-    itemToUpdate.jumlah = parseInt(jumlah);
-
+    itemToUpdate.price = category === 'jasa' ? parseFloat(price) : null;
+    itemToUpdate.quantity = parseInt(quantity);
 
     // Cek jika ada file foto baru yang di-upload
     if (req.file) {
-      itemToUpdate.foto = req.file.filename;
-
+      itemToUpdate.photo = req.file.filename;
       // PERBAIKAN: Hapus file foto lama jika ada
-      if (oldFoto) {
-        const oldFotoPath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', oldFoto);
-        // Gunakan fs.unlink untuk menghapus file. Pakai try-catch untuk jaga-jaga jika file tidak ada
+      if (oldPhoto) {
+        const oldPhotoPath = path.join(__dirname, '..', '..', '..', 'public', 'uploads', oldPhoto);
         try {
-          fs.unlinkSync(oldFotoPath);
-          console.log(`Successfully deleted old image: ${oldFotoPath}`);
+          fs.unlinkSync(oldPhotoPath);
+          console.log(`Successfully deleted old image: ${oldPhotoPath}`);
         } catch (unlinkErr) {
           console.error(`Error deleting old image: ${unlinkErr.message}`);
         }
@@ -79,10 +73,8 @@ exports.updateitem = async (req, res) => {
     }
 
     await itemToUpdate.save();
-
-    // PERBAIKAN: Redirect ke halaman daftar agar pengguna bisa melihat perubahannya
-    res.redirect('/admin/edit?update=success');
-
+    // Redirect ke halaman daftar item agar pengguna bisa melihat perubahannya
+    res.redirect('/admin/items?update=success');
   } catch (error) {
     console.error('Gagal mengupdate item:', error);
     res.status(500).send('Terjadi kesalahan saat menyimpan perubahan.');

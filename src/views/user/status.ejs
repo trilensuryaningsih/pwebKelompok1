@@ -1,0 +1,138 @@
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UMCental Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .bg-custom-dark {
+            background-color: #181C14;
+        }
+
+        .bg-custom-green {
+            background-color: #697565;
+        }
+
+        .bg-custom-green-dark {
+            background-color: #5a6356;
+        }
+
+        .focus\:ring-custom-green:focus {
+            --tw-ring-color: rgba(105, 117, 101, 0.5);
+
+            
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen bg-[#f5f0e9] ">
+
+    <%- include('../partials/sidebar') %>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <%- include('../partials/header') %>
+
+                <!-- Content -->
+                <section class="flex-1 p-8 overflow-x-auto">
+     <table class="min-w-full border-collapse">
+      <thead>
+       <tr class="bg-[#7f8a7d] rounded-lg text-[#e6e1d9] text-xs font-normal">
+        <th class="py-3 px-4 text-left rounded-l-lg">
+         No
+        </th>
+        <th class="py-3 px-4 text-left">
+         Kode Pesanan
+        </th>
+        <th class="py-3 px-4 text-left">
+         Tanggal Pemesanan
+        </th>
+        <th class="py-3 px-4 text-left">
+         Tanggal Peminjaman
+        </th>
+        <th class="py-3 px-4 text-left">
+         Tanggal Pengembalian
+        </th>
+        <th class="py-3 px-4 text-left">
+         Status
+        </th>
+        <th class="py-3 px-4 text-left rounded-r-lg">
+         Aksi
+        </th>
+       </tr>
+      </thead>
+      <tbody class="text-[#7f7a75] text-sm font-normal">
+       <tr class="border-b border-[#f0ebe0]">
+        <td class="py-6 px-4">
+         1
+        </td>
+        <td class="py-6 px-4">
+         P001
+        </td>
+        <td class="py-6 px-4">
+         10/05/2025
+        </td>
+        <td class="py-6 px-4">
+         18/05/2025
+        </td>
+        <td class="py-6 px-4">
+         21/05/2025
+        </td>
+        <td class="py-6 px-4">
+         <button class="bg-white border border-[#1f4d2f] text-[#1f4d2f] rounded-full px-4 py-1 font-semibold hover:bg-[#1f4d2f] hover:text-[#f0ebe0] transition">
+          Selesai
+         </button>
+        </td>
+        <td class="py-6 px-4 flex items-center space-x-3">
+         <button aria-label="Delete order 1" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
+          <i class="fas fa-trash">
+          </i>
+         </button>
+         <button aria-label="Return order 1" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
+          <i class="fas fa-undo">
+          </i>
+         </button>
+        </td>
+       </tr>
+       <tr>
+        <td class="py-6 px-4">
+         2
+        </td>
+        <td class="py-6 px-4">
+         P002
+        </td>
+        <td class="py-6 px-4">
+         05/06/2025
+        </td>
+        <td class="py-6 px-4">
+         15/06/2025
+        </td>
+        <td class="py-6 px-4">
+         20/06/2025
+        </td>
+        <td class="py-6 px-4">
+         <span class="inline-block bg-white border border-[#f4a261] text-[#f4a261] rounded-full px-4 py-1 font-semibold select-none">
+          Diajukan
+         </span>
+        </td>
+        <td class="py-6 px-4 flex items-center space-x-3">
+         <button aria-label="Delete order 2" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
+          <i class="fas fa-trash">
+          </i>
+         </button>
+         <button aria-label="Return order 2" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
+          <i class="fas fa-undo">
+          </i>
+         </button>
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </section>
+    <%- include('../partials/footer') %>  
+  </div>            
+</body>
+
+</html>

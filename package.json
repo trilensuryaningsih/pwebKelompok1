@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "migrate": "npx sequelize-cli db:migrate"
+    "migrate": "npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,8 @@
     "multer": "^2.0.1",
     "mysql2": "^3.14.1",
     "nodemon": "^3.1.10",
+    "pdfkit": "^0.17.1",
+    "pdfkit-table": "^0.1.99",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {

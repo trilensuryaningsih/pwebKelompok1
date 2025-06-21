@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Item</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .grid-pattern {
+      background-image: 
+        linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%),
+        linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+    body { background: #f5f0eb; }
+    .bg-beige-light { background: #e8ddd4; }
+    .bg-form-bg { background: #f5f0eb; }
+    input, select, textarea { background: #e8ddd4 !important; }
+    button, .rounded-full { background: #DED9CE; color: #6C6154; }
+    button:hover, .rounded-full:hover { background: #6C6154; color: #DED9CE; }
+  </style>
+</head>
+<body class="font-sans bg-gray-100 h-screen overflow-hidden">
+  <%- include('../../partials/admin/sidebar') %>
+  <div class="ml-64 flex h-screen">
+    <div class="flex-1 flex flex-col">
+      <!-- Header -->
+      <div class="bg-form-bg h-16 flex items-center justify-end px-6 border-b">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center cursor-pointer">🔔</div>
+          <div class="flex items-center gap-2 cursor-pointer">
+            <span class="text-sm text-gray-700">Admin</span>
+            <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center">👤</div>
+          </div>
+        </div>
+      </div>
+      <!-- Edit Content -->
+      <div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-8">
+          <h1 class="text-2xl font-bold mb-6">Edit Item</h1>
+          <div class="mb-6 flex flex-wrap items-center gap-3 font-semibold text-[#72675e]">
+            <label for="item-selector">Pilih item untuk diedit</label>
+            <select id="item-selector" name="itemSelect" class="bg-[#e1d6c4] rounded-lg px-3 py-2 min-w-[220px] font-semibold text-[#705e4c] focus:outline-[#6d5c4a] focus:bg-[#d4c1a9] focus:text-[#4c4231]">
+              <option value="">-- Pilih alat atau jasa --</option>
+              <% if (typeof items !== 'undefined' && items.length > 0) { %>
+                <% items.forEach(item => { %>
+                  <option value="<%= item.id %>"><%= item.name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+          <form id="edit-form" method="POST" enctype="multipart/form-data" class="grid grid-cols-2 gap-8" autocomplete="off">
+            <!-- Left Column -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Kategori <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <select id="category" name="category" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                    <option value="">Pilih Kategori</option>
+                    <option value="alat">Alat</option>
+                    <option value="jasa">Jasa</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Nama <span class="text-red-500">*</span></label>
+                <input name="name" id="name" type="text" required placeholder="Masukkan nama alat atau jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+              </div>
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Deskripsi</label>
+                <textarea name="description" id="description" rows="4" placeholder="Deskripsi singkat" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green resize-none"></textarea>
+              </div>
+            </div>
+            <!-- Right Column -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Status <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <select name="status" id="status" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                    <option value="">Pilih Status</option>
+                    <option value="available">Tersedia</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="damaged">Rusak</option>
+                    <option value="lost">Hilang</option>
+                    <option value="borrowed">Dipinjam</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Jumlah <span class="text-red-500">*</span></label>
+                <input name="quantity" id="quantity" type="number" min="1" required placeholder="Masukkan jumlah" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+              </div>
+              <div class="mb-4">
+                <label for="price" class="block text-sm font-medium text-gray-700">Harga <span class="text-xs text-gray-500">(khusus untuk jasa)</span></label>
+                <input type="number" name="price" id="price" min="0" step="any" class="mt-1 p-2 w-full border rounded-md" placeholder="Harga hanya untuk jasa" disabled>
+                <span class="text-xs text-gray-500">Harga hanya diisi jika kategori adalah jasa</span>
+              </div>
+              <div>
+                <label class="block text-gray-600 text-sm mb-2">Foto</label>
+                <div class="relative">
+                  <input name="photo" type="file" id="file-upload" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                  <div class="w-full px-4 py-3 bg-beige-light rounded flex items-center justify-between">
+                    <span class="text-gray-500 text-sm">Pilih file</span>
+                    <button type="button" class="text-xs bg-white px-3 py-1 rounded border">Pilih file</button>
+                  </div>
+                </div>
+                <div id="image-preview-container" class="mt-2" style="display: none;">
+                  <p class="text-xs text-gray-500 mb-1">Foto saat ini:</p>
+                  <img id="image-preview" src="" alt="Preview Foto Item" class="max-w-xs max-h-32 rounded-lg border shadow-sm">
+                </div>
+              </div>
+            </div>
+            <!-- Submit Button -->
+            <div class="col-span-2 flex justify-center mt-8">
+              <button type="submit" id="simpan-button" class="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-colors" disabled>
+                Simpan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const itemSelector = document.getElementById('item-selector');
+      const editForm = document.getElementById('edit-form');
+      const simpanButton = document.getElementById('simpan-button');
+      const nameInput = document.getElementById('name');
+      const statusSelect = document.getElementById('status');
+      const categorySelect = document.getElementById('category');
+      const quantityInput = document.getElementById('quantity');
+      const descriptionInput = document.getElementById('description');
+      const priceInput = document.getElementById('price');
+      const imagePreviewContainer = document.getElementById('image-preview-container');
+      const imagePreview = document.getElementById('image-preview');
+
+      function togglePriceInput() {
+        if (categorySelect.value === 'alat') {
+          priceInput.disabled = true;
+          priceInput.value = '';
+          priceInput.classList.add('bg-gray-200', 'cursor-not-allowed');
+        } else {
+          priceInput.disabled = false;
+          priceInput.classList.remove('bg-gray-200', 'cursor-not-allowed');
+        }
+      }
+      categorySelect.addEventListener('change', togglePriceInput);
+
+      function resetForm() {
+        editForm.reset();
+        editForm.action = '';
+        simpanButton.disabled = true;
+        imagePreviewContainer.style.display = 'none';
+        togglePriceInput();
+      }
+
+      itemSelector.addEventListener('change', async (event) => {
+        const selectedId = event.target.value;
+        if (!selectedId) {
+          resetForm();
+          return;
+        }
+        try {
+          const response = await fetch(`/admin/api/items/${selectedId}`);
+          if (!response.ok) throw new Error(`Gagal mengambil data. Status: ${response.status}`);
+          const itemData = await response.json();
+          nameInput.value = itemData.name || '';
+          statusSelect.value = itemData.status || '';
+          categorySelect.value = itemData.category || '';
+          quantityInput.value = itemData.quantity || 0;
+          descriptionInput.value = itemData.description || '';
+          priceInput.value = itemData.price || '';
+          togglePriceInput();
+          if (itemData.photo) {
+            imagePreview.src = `/uploads/${itemData.photo}`;
+            imagePreviewContainer.style.display = 'block';
+          } else {
+            imagePreviewContainer.style.display = 'none';
+          }
+          editForm.action = `/admin/items/edit/${itemData.id}`;
+          simpanButton.disabled = false;
+        } catch (err) {
+          alert('Gagal mengambil data item.');
+          resetForm();
+        }
+      });
+      // Disable submit jika belum pilih item
+      editForm.addEventListener('submit', function(e) {
+        if (!itemSelector.value) {
+          e.preventDefault();
+          alert('Pilih item yang ingin diedit terlebih dahulu!');
+        }
+      });
+      // Notifikasi sukses setelah update
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('update') === 'success') {
+        const popup = document.createElement('div');
+        popup.id = 'success-popup';
+        popup.className = 'fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+        popup.textContent = 'Item berhasil diubah!';
+        document.body.appendChild(popup);
+        setTimeout(() => popup.remove(), 3000);
+      }
+    });
+  </script>
+</body>
+</html>

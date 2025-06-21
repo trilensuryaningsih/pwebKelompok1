@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Item</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans bg-gray-100 h-screen overflow-hidden" style="background:#f5f0eb;">
+  <%- include('../../partials/admin/sidebar') %>
+  <div class="ml-64 flex h-screen">
+    <div class="flex-1 flex flex-col">
+      <!-- Header -->
+      <div class="bg-form-bg h-16 flex items-center justify-end px-6 border-b" style="background:#f5f0eb;">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center cursor-pointer">🔔</div>
+          <div class="flex items-center gap-2 cursor-pointer">
+            <span class="text-sm text-gray-700">Admin</span>
+            <div class="w-10 h-10 bg-beige rounded-full flex items-center justify-center">👤</div>
+          </div>
+        </div>
+      </div>
+      <!-- Detail Content -->
+      <div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto" style="background:#f5f0eb;">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8">
+          <h1 class="text-2xl font-bold mb-6">Detail Item</h1>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div class="mb-4"><span class="font-semibold">Nama:</span> <%= item.name %></div>
+              <div class="mb-4"><span class="font-semibold">Kategori:</span> <%= item.category %></div>
+              <div class="mb-4"><span class="font-semibold">Deskripsi:</span> <%= item.description || '-' %></div>
+              <div class="mb-4"><span class="font-semibold">Status:</span> <%= item.status %></div>
+              <div class="mb-4"><span class="font-semibold">Harga:</span> <%= item.price ? 'Rp ' + Number(item.price).toLocaleString('id-ID') : '-' %></div>
+              <div class="mb-4"><span class="font-semibold">Jumlah:</span> <%= item.quantity %></div>
+              <div class="mb-4"><span class="font-semibold">Dibuat:</span> <%= item.createdAt ? item.createdAt.toLocaleDateString('id-ID') : '-' %></div>
+              <div class="mb-4"><span class="font-semibold">Diupdate:</span> <%= item.updatedAt ? item.updatedAt.toLocaleDateString('id-ID') : '-' %></div>
+            </div>
+            <div class="flex flex-col items-center justify-center">
+              <% if (item.photo) { %>
+                <img src="/uploads/<%= item.photo %>" alt="Foto" class="w-48 h-48 object-cover rounded mb-4" />
+              <% } else { %>
+                <div class="w-48 h-48 bg-gray-200 flex items-center justify-center rounded mb-4">Tidak ada foto</div>
+              <% } %>
+            </div>
+          </div>
+          <div class="mt-8 flex justify-end">
+            <a href="/admin/items" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Kembali ke Daftar Item</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

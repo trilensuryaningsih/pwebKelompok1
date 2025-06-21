@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>- Pemesanan -</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .bg-custom-dark {
+            background-color: #181C14;
+        }
+
+        .bg-custom-green {
+            background-color: #697565;
+        }
+
+        .bg-custom-green-dark {
+            background-color: #5a6356;
+        }
+
+        .focus\:ring-custom-green:focus {
+            --tw-ring-color: rgba(105, 117, 101, 0.5);
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen bg-[#f5f0e9]">
+
+    <%- include('../partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <%- include('../partials/header') %>
+
+        <!-- Content -->
+        <section class="grid grid-cols-2 gap-6 flex-1 p-6 flex flex-col">
+            <!-- Left column: Items (scrollable) -->
+            <div class="flex flex-col space-y-6 max-h-[600px] overflow-y-auto pr-2">
+                <!-- Error Message -->
+                <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <%= errorMessage %>
+                    </div>
+                <% } %>
+
+                <!-- Success Message (will be shown via JavaScript) -->
+                <div id="success-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded hidden">
+                </div>
+
+                <!-- Items List -->
+                <% if (items && items.length > 0) { %>
+                    <% items.forEach((item, index) => { %>
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
+                            <input 
+                                aria-label="Select <%= item.nama %>" 
+                                class="accent-[#7B7F75] w-5 h-5 item-checkbox" 
+                                name="item" 
+                                type="radio" 
+                                value="<%= item.id_item %>"
+                                data-price="<%= item.harga %>"
+                                data-name="<%= item.nama %>"
+                                data-stock="<%= item.jumlah %>"
+                                <%= index === 0 ? 'checked' : '' %>
+                            />
+                            
+                            <% if (item.foto && item.foto.trim() !== '') { %>
+                                <img 
+                                    alt="<%= item.nama %>" 
+                                    class="w-20 h-15 object-contain" 
+                                    height="60"
+                                    src="<%= item.foto %>"
+                                    width="80"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                />
+                                <div class="w-20 h-15 bg-gray-200 rounded flex items-center justify-center" style="display: none;">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                            <% } else { %>
+                                <div class="w-20 h-15 bg-gray-200 rounded flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                            <% } %>
+                            
+                            <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7B7F75]">
+                                <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
+                                    <%= item.nama %>
+                                </span>
+                                <span>Kategori :</span>
+                                <span class="text-right"><%= item.kategori %></span>
+                                
+                                <span>Harga :</span>
+                                <span class="text-right">
+                                    Rp <%= typeof item.harga === 'number' ? item.harga.toLocaleString('id-ID') : item.harga %>,-
+                                </span>
+                                
+                                <span>Stok :</span>
+                                <span class="text-right"><%= item.jumlah %></span>
+                                
+                                <span>Jumlah :</span>
+                                <span class="text-right">
+                                    <select 
+                                        aria-label="Jumlah <%= item.nama %>"
+                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-16 quantity-select"
+                                        data-item-id="<%= item.id_item %>"
+                                    >
+                                        <% for (let i = 1; i <= Math.min(item.jumlah, 10); i++) { %>
+                                            <option value="<%= i %>"><%= i %></option>
+                                        <% } %>
+                                    </select>
+                                </span>
+                                
+                                <% if (item.deskripsi && item.deskripsi.trim() !== '') { %>
+                                    <span class="col-span-2 text-xs text-gray-600 mt-2">
+                                        <%= item.deskripsi %>
+                                    </span>
+                                <% } %>
+
+                                <% if (item.status && item.status !== 'available') { %>
+                                    <span class="col-span-2 text-xs text-red-600 mt-1 font-semibold">
+                                        Status: <%= item.status %>
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="bg-white rounded-xl p-6 text-center text-[#7B7F75]">
+                        <i class="fas fa-box-open text-4xl mb-4 text-gray-300"></i>
+                        <p>Tidak ada barang yang tersedia saat ini</p>
+                        <button onclick="location.reload()" class="mt-4 text-sm text-blue-600 hover:underline">
+                            <i class="fas fa-refresh mr-1"></i>
+                            Muat Ulang
+                        </button>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Right column: Dates and total -->
+            <div class="bg-white rounded-xl p-6 flex flex-col space-y-6 max-w-lg">
+                <form id="order-form">
+                    <div class="flex flex-col space-y-6">
+                        <div>
+                            <h2 class="text-[#7F6D6D] font-semibold mb-2">
+                                Tanggal Peminjaman
+                            </h2>
+                            <div class="flex items-center bg-[#D9D0C7] rounded px-3 py-1 text-xs text-[#7B7F75]">
+                                <input 
+                                    type="date" 
+                                    id="tanggal-pinjam"
+                                    name="tanggal_pinjam"
+                                    class="flex-1 bg-transparent outline-none"
+                                    required
+                                />
+                                <i class="far fa-calendar-alt ml-2"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-[#7F6D6D] font-semibold mb-2">
+                                Tanggal Pengembalian
+                            </h2>
+                            <div class="flex items-center bg-[#D9D0C7] rounded px-3 py-1 text-xs text-[#7B7F75]">
+                                <input 
+                                    type="date" 
+                                    id="tanggal-kembali"
+                                    name="tanggal_kembali"
+                                    class="flex-1 bg-transparent outline-none"
+                                    required
+                                />
+                                <i class="far fa-calendar-alt ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-[#7F6D6D] font-extrabold text-lg">
+                        TOTAL <span id="total-harga">Rp 0</span>
+                    </div>
+                    
+                    <div id="selected-items" class="text-xs text-[#7B7F75] space-y-1 mt-4">
+                        <!-- Selected items will be displayed here -->
+                    </div>
+                    
+                    <button
+                        id="btn-pesan"
+                        class="mx-auto mt-6 border border-[#7F6D6D] rounded-full px-6 py-2 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        type="submit"
+                    >
+                        <span id="btn-text">Pesan</span>
+                        <i id="btn-loading" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+            const quantitySelects = document.querySelectorAll('.quantity-select');
+            const totalHargaElement = document.getElementById('total-harga');
+            const selectedItemsElement = document.getElementById('selected-items');
+            const orderForm = document.getElementById('order-form');
+            const btnPesan = document.getElementById('btn-pesan');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const tanggalPinjam = document.getElementById('tanggal-pinjam');
+            const tanggalKembali = document.getElementById('tanggal-kembali');
+            const successMessage = document.getElementById('success-message');
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            tanggalPinjam.min = today;
+            tanggalKembali.min = today;
+
+            // Update minimum return date when borrow date changes
+            tanggalPinjam.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const nextDay = new Date(selectedDate);
+                nextDay.setDate(selectedDate.getDate() + 1);
+                
+                tanggalKembali.min = nextDay.toISOString().split('T')[0];
+                
+                // If return date is before or equal to borrow date, reset it
+                if (tanggalKembali.value <= this.value) {
+                    tanggalKembali.value = nextDay.toISOString().split('T')[0];
+                }
+            });
+
+            function updateTotal() {
+                let total = 0;
+                let selectedItems = [];
+
+                itemCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const price = parseFloat(checkbox.dataset.price);
+                        const itemName = checkbox.dataset.name;
+                        const stock = parseInt(checkbox.dataset.stock);
+                        const quantitySelect = document.querySelector(`select[data-item-id="${checkbox.value}"]`);
+                        const quantity = parseInt(quantitySelect.value);
+                        
+                        // Validate quantity against stock
+                        if (quantity > stock) {
+                            quantitySelect.value = Math.min(stock, 1);
+                            quantity = parseInt(quantitySelect.value);
+                        }
+                        
+                        const itemTotal = price * quantity;
+                        total += itemTotal;
+                        
+                        selectedItems.push({
+                            name: itemName,
+                            quantity: quantity,
+                            price: price,
+                            total: itemTotal,
+                            stock: stock
+                        });
+                    }
+                });
+
+                totalHargaElement.textContent = `Rp ${total.toLocaleString('id-ID')}`;
+                
+                // Display selected items
+                selectedItemsElement.innerHTML = selectedItems.map(item => 
+                    `<div>${item.name} x${item.quantity} = Rp ${item.total.toLocaleString('id-ID')} 
+                     <span class="text-gray-500">(Stok: ${item.stock})</span></div>`
+                ).join('');
+            }
+
+            function showMessage(message, isError = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `px-4 py-3 rounded mb-4 ${isError ? 'bg-red-100 border border-red-400 text-red-700' : 'bg-green-100 border border-green-400 text-green-700'}`;
+                messageDiv.textContent = message;
+                
+                const firstChild = document.querySelector('.flex-col.space-y-6').firstElementChild;
+                document.querySelector('.flex-col.space-y-6').insertBefore(messageDiv, firstChild);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 5000);
+            }
+
+            function setLoading(loading) {
+                if (loading) {
+                    btnText.textContent = 'Memproses...';
+                    btnLoading.classList.remove('hidden');
+                    btnPesan.disabled = true;
+                    document.body.classList.add('loading');
+                } else {
+                    btnText.textContent = 'Pesan';
+                    btnLoading.classList.add('hidden');
+                    btnPesan.disabled = false;
+                    document.body.classList.remove('loading');
+                }
+            }
+
+            // Add event listeners
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateTotal);
+            });
+
+            quantitySelects.forEach(select => {
+                select.addEventListener('change', updateTotal);
+            });
+
+            // Order form submission
+            orderForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const selectedItem = document.querySelector('.item-checkbox:checked');
+                const pinjamDate = tanggalPinjam.value;
+                const kembaliDate = tanggalKembali.value;
+
+                if (!selectedItem) {
+                    showMessage('Pilih barang terlebih dahulu', true);
+                    return;
+                }
+
+                if (!pinjamDate || !kembaliDate) {
+                    showMessage('Pilih tanggal peminjaman dan pengembalian', true);
+                    return;
+                }
+
+                const quantitySelect = document.querySelector(`select[data-item-id="${selectedItem.value}"]`);
+                const quantity = parseInt(quantitySelect.value);
+
+                setLoading(true);
+
+                try {
+                    const response = await fetch('/user/pemesanan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            item_id: selectedItem.value,
+                            quantity: quantity,
+                            tanggal_pinjam: pinjamDate,
+                            tanggal_kembali: kembaliDate
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showMessage(result.message);
+                        
+                        // Reset form
+                        orderForm.reset();
+                        tanggalPinjam.min = today;
+                        tanggalKembali.min = today;
+                        
+                        // Refresh page after 2 seconds to show updated stock
+                        setTimeout(() => {
+                            if (result.redirect) {
+                                window.location.href = result.redirect;
+                            } else {
+                                location.reload();
+                            }
+                        }, 2000);
+                    } else {
+                        showMessage(result.message, true);
+                    }
+                } catch (error) {
+                    console.error('Error submitting order:', error);
+                    showMessage('Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.', true);
+                } finally {
+                    setLoading(false);
+                }
+            });
+
+            // Initial calculation
+            updateTotal();
+
+            // Check for connection to database
+            console.log('Pemesanan page loaded successfully');
+            console.log('Items loaded:', itemCheckboxes.length);
+        });
+    </script>
+</body>
+
+</html>

@@ -31,32 +31,8 @@
     </style>
 </head>
 <body class="font-sans bg-gray-100 h-screen overflow-hidden">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="w-48 bg-sidebar-green text-white flex flex-col">
-            <div class="flex items-center justify-center py-6">
-                <div class="text-3xl font-bold">▷</div>
-            </div>
-            
-            <div class="flex-1">
-                <div class="px-6 py-3 text-sm hover:bg-sidebar-green-hover cursor-pointer">
-                    Dashboard
-                </div>
-                <div class="px-6 py-3 text-sm bg-sidebar-green-hover font-medium cursor-pointer">
-                    Manajemen Alat dan jasa
-                </div>
-                <div class="px-6 py-3 text-sm hover:bg-sidebar-green-hover cursor-pointer">
-                    Verifikasi peminjaman
-                </div>
-                <div class="px-6 py-3 text-sm hover:bg-sidebar-green-hover cursor-pointer">
-                    Pesanan
-                </div>
-                <div class="px-6 py-3 text-sm hover:bg-sidebar-green-hover cursor-pointer">
-                    Feedback
-                </div>
-            </div>
-        </div>
-
+    <%- include('../../partials/admin/sidebar') %>
+    <div class="ml-64 flex h-screen">
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
             <!-- Header -->
@@ -77,21 +53,16 @@
             <!-- Form Content -->
 <div class="flex-1 bg-form-bg grid-pattern p-8 overflow-auto">
     <div class="max-w-4xl mx-auto">
-        <form action="/admin/tambah" method="POST" enctype="multipart/form-data">
+        <form action="/admin/items/create" method="POST" enctype="multipart/form-data">
             <div class="bg-white rounded-lg p-8 shadow-sm">
                 <div class="grid grid-cols-2 gap-8">
                     <!-- Left Column -->
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-gray-600 text-sm mb-2">Nama alat atau jasa</label>
-                            <input name="nama" type="text" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-600 text-sm mb-2">Kategori</label>
+                            <label class="block text-gray-600 text-sm mb-2">Kategori <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <select id="kategori" name="kategori" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
-                                    <option value=""></option>
+                                <select id="kategori" name="kategori" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                                    <option value="">Pilih Kategori</option>
                                     <option value="alat">Alat</option>
                                     <option value="jasa">Jasa</option>
                                 </select>
@@ -102,21 +73,28 @@
                                 </div>
                             </div>
                         </div>
-                        
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-2">Nama <span class="text-red-500">*</span></label>
+                            <input name="nama" type="text" required placeholder="Masukkan nama alat atau jasa" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                        </div>
                         <div>
                             <label class="block text-gray-600 text-sm mb-2">Deskripsi</label>
-                            <textarea name="deskripsi" rows="4" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green resize-none"></textarea>
+                            <textarea name="deskripsi" rows="4" placeholder="Deskripsi singkat" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green resize-none"></textarea>
                         </div>
                     </div>
 
                     <!-- Right Column -->
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-gray-600 text-sm mb-2">Status</label>
+                            <label class="block text-gray-600 text-sm mb-2">Status <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <select name="status" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
-                                    <option value=""></option>
-                                    <option value="tersedia">Tersedia</option>
+                                <select name="status" id="status" required class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green appearance-none">
+                                    <option value="">Pilih Status</option>
+                                    <option value="available">Tersedia</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="damaged">Rusak</option>
+                                    <option value="lost">Hilang</option>
+                                    <option value="borrowed">Dipinjam</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                     <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,23 +103,22 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div>
-                            <label class="block text-gray-600 text-sm mb-2">Jumlah</label>
-                            <input name="jumlah" type="number" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
+                            <label class="block text-gray-600 text-sm mb-2">Jumlah <span class="text-red-500">*</span></label>
+                            <input name="jumlah" type="number" min="1" required placeholder="Masukkan jumlah" class="w-full px-4 py-3 bg-beige-light border-0 rounded focus:outline-none focus:ring-2 focus:ring-sidebar-green">
                         </div>
                         <div class="mb-4">
-  <label for="harga" class="block text-sm font-medium text-gray-700">Harga (khusus untuk jasa)</label>
-  <input type="number" name="harga" id="harga" class="mt-1 p-2 w-full border rounded-md" placeholder="Harga hanya untuk jasa" disabled>
-</div>
-                        
+                            <label for="harga" class="block text-sm font-medium text-gray-700">Harga <span class="text-xs text-gray-500">(khusus untuk jasa)</span></label>
+                            <input type="number" name="harga" id="harga" min="0" step="any" class="mt-1 p-2 w-full border rounded-md" placeholder="Harga hanya untuk jasa" disabled>
+                            <span class="text-xs text-gray-500">Harga hanya diisi jika kategori adalah jasa</span>
+                        </div>
                         <div>
-                            <label class="block text-gray-600 text-sm mb-2">Foto</label>
+                            <label class="block text-gray-600 text-sm mb-2">Foto <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input name="foto" type="file" id="file-upload" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                <input name="foto" type="file" id="file-upload" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                 <div class="w-full px-4 py-3 bg-beige-light rounded flex items-center justify-between">
-                                    <span class="text-gray-500 text-sm">Choose file</span>
-                                    <button type="button" class="text-xs bg-white px-3 py-1 rounded border">Choose file</button>
+                                    <span class="text-gray-500 text-sm">Pilih file</span>
+                                    <button type="button" class="text-xs bg-white px-3 py-1 rounded border">Pilih file</button>
                                 </div>
                             </div>
                         </div>
