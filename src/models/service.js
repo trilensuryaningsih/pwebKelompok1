@@ -19,10 +19,29 @@ module.exports = (sequelize, DataTypes) => {
     photo: DataTypes.STRING,
     status: DataTypes.ENUM('available', 'unavailable', 'maintenance'),
     category: DataTypes.STRING,
-    price: DataTypes.DECIMAL
+    price: DataTypes.DECIMAL,
+    quantity: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Service',
+    hooks: {
+      beforeSave: (service) => {
+        // Update status berdasarkan quantity
+        if (service.quantity === 0) {
+          service.status = 'unavailable';
+        } else if (service.quantity >= 1) {
+          service.status = 'available';
+        }
+      },
+      beforeUpdate: (service) => {
+        // Update status berdasarkan quantity
+        if (service.quantity === 0) {
+          service.status = 'unavailable';
+        } else if (service.quantity >= 1) {
+          service.status = 'available';
+        }
+      }
+    }
   });
   return Service;
 };

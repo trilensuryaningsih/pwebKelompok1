@@ -35,18 +35,48 @@
 
                 <!-- Content -->
                 <section class="flex-1 p-8">
-     <div class="bg-white rounded-xl p-8 max-w-5xl mx-auto relative overflow-auto" style="min-height: 300px; max-height: 300px;">
-      <p class="text-[#7B7B6B] font-semibold text-sm mb-6" style="width: 100px;">
-       Print
-      </p>
-      <div class="flex space-x-8">
-       <div class="bg-[#D9D9D9]" style="width: 200px; height: 250px; border-radius: 0.375rem">
-       </div>
-       <div class="bg-[#D9D9D9]" style="width: 60px; height: 60px; border-radius: 0.375rem">
-       </div>
+     <div class="bg-white rounded-xl p-8 max-w-5xl mx-auto relative overflow-auto" style="min-height: 300px; max-height: 1000px;">
+      <h2 class="text-[#7F6D6D] font-semibold text-lg mb-6 text-center">
+        SURAT PERJANJIAN KERJASAMA<br/>
+        <span class="font-normal text-base">Memorandum of Understanding</span>
+      </h2>
+      <div class="text-[#7F6D6D] text-sm font-light max-w-4xl mx-auto">
+        <p>
+          Pada tanggal <b><%= mouData.tanggal || '-' %></b> bulan <b><%= mouData.bulan || '-' %></b> tahun <b><%= mouData.tahun || '-' %></b>, kami yang bertanda tangan di bawah ini:
+        </p>
+        <div class="mt-2">
+          <b>Pihak I</b><br/>
+          Nama: Toni Windra<br/>
+          Instansi: Universal Multimedia Creative<br/>
+          Jabatan: CEO<br/>
+          Kontak: 085174461775
+        </div>
+        <div class="mt-2">
+          <b>Pihak II</b><br/>
+          Nama: <%= mouData.nama2 || '-' %><br/>
+          Instansi: <%= mouData.instansi2 || '-' %><br/>
+          Jabatan: <%= mouData.jabatan2 || '-' %><br/>
+          Kontak: <%= mouData.kontak2 || '-' %>
+        </div>
+        <div class="mt-2">
+          <b>Nama Kegiatan:</b> <%= mouData.namaKegiatan || '-' %><br/>
+          <b>Hari/Tanggal:</b> <%= mouData.hariTanggal || '-' %><br/>
+          <b>Tempat:</b> <%= mouData.tempat || '-' %>
+        </div>
+        <div class="mt-2">
+          <b>Tanggal Penandatanganan:</b> <%= mouData.tanggalPenandatanganan || '-' %>
+        </div>
+        <div class="mt-2">
+          <b>Pihak II (Tanda Tangan):</b><br/>
+          <% if (mouData.ttdPihak2) { %>
+            <img src="<%= mouData.ttdPihak2 %>" alt="Tanda Tangan Pihak II" class="max-h-24 border rounded" />
+          <% } else { %>
+            <span>-</span>
+          <% } %>
+        </div>
       </div>
-      <button class="absolute bottom-8 right-8 border border-[#7B7B6B] rounded-full px-6 py-1 text-xs text-[#7B7B6B] font-normal">
-       Print
+      <button onclick="window.location.href='/user/download-mou-pdf'" class="absolute bottom-8 right-8 border border-[#7B7B6B] rounded-full px-6 py-1 text-xs text-[#7B7B6B] font-normal">
+       Download PDF
       </button>
      </div>
     </section>

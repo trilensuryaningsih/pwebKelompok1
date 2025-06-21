@@ -66,7 +66,7 @@ const login = async (req, res) => {
     } else if (user.role === "pj") {
       res.redirect("/pj"); // Redirect to pj home
     } else if (user.role === "user") {
-      res.redirect("/user/orders"); // Redirect to user dashboard
+      res.redirect("/user/home"); // Redirect to user dashboard
     }
   } catch (error) {
     console.error(error);

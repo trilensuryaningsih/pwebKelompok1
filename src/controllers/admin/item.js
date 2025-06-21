@@ -1,4 +1,4 @@
-const { Item } = require('../../models');
+const { Item, Order, Service } = require('../../models');
 const path = require('path');
 
 // List all items (for page)
@@ -70,5 +70,94 @@ exports.deleteItem = async (req, res) => {
     res.redirect('/admin/items?delete=success');
   } catch (err) {
     res.status(500).send('Gagal menghapus item.');
+  }
+};
+
+exports.showPendingOrdersPage = async (req, res) => {
+  try {
+    // Ambil semua order dengan status pending
+    const orders = await Order.findAll({
+      where: { status: 'pending' },
+      include: [
+        { model: Item, attributes: ['name'], required: false },
+        { model: Service, attributes: ['name'], required: false }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+    // Map agar field name universal (barang/jasa)
+    const items = orders.map(order => ({
+      id: order.id,
+      name: order.itemType === 'item' && order.Item ? order.Item.name : (order.itemType === 'service' && order.Service ? order.Service.name : '-'),
+      startDate: order.startDate,
+      endDate: order.endDate
+    }));
+    res.render('admin/items/verification', { items });
+  } catch (err) {
+    res.status(500).send('Gagal memuat pesanan pending.');
+  }
+};
+
+exports.approveOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.findByPk(orderId);
+    if (!order) return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan' });
+    if (order.status !== 'pending') return res.status(400).json({ success: false, message: 'Pesanan tidak bisa diverifikasi' });
+    order.status = 'approved';
+    await order.save();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal memverifikasi pesanan' });
+  }
+};
+
+exports.rejectOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.findByPk(orderId);
+    if (!order) return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan' });
+    if (order.status !== 'pending') return res.status(400).json({ success: false, message: 'Pesanan tidak bisa ditolak' });
+    order.status = 'rejected';
+    await order.save();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal menolak pesanan' });
+  }
+};
+
+exports.showAllOrdersPage = async (req, res) => {
+  try {
+    const { User, Item, Service } = require('../../models');
+    
+    const orders = await Order.findAll({
+      include: [
+        { 
+          model: User, 
+          attributes: ['name', 'email'], 
+          required: false 
+        },
+        { 
+          model: Item, 
+          attributes: ['name', 'category'], 
+          required: false 
+        },
+        { 
+          model: Service, 
+          attributes: ['name', 'category'], 
+          required: false 
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    console.log('Orders found:', orders.length);
+    
+    res.render('admin/items/pesanan', { 
+      orders,
+      user: req.session.user || null
+    });
+  } catch (err) {
+    console.error('Error in showAllOrdersPage:', err);
+    res.status(500).send('Gagal memuat daftar pesanan: ' + err.message);
   }
 };

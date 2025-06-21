@@ -74,7 +74,10 @@ const barangController = {
     getAvailableServices: async () => {
         try {
             const availableServices = await Service.findAll({
-                where: { status: 'available' },
+                where: { 
+                    status: 'available',
+                    quantity: { [Op.gt]: 0 }
+                },
                 order: [['id', 'ASC']]
             });
             return availableServices;
@@ -105,7 +108,7 @@ const barangController = {
     },
 
     // Check service (jasa) availability
-    checkServiceAvailability: async (id) => {
+    checkServiceAvailability: async (id, requestedQuantity = 1) => {
         try {
             const service = await Service.findByPk(id);
             if (!service) {
@@ -113,6 +116,9 @@ const barangController = {
             }
             if (service.status !== 'available') {
                 return { available: false, message: 'Service is not available' };
+            }
+            if (service.quantity < requestedQuantity) {
+                return { available: false, message: `Only ${service.quantity} services available` };
             }
             return { available: true, service };
         } catch (error) {

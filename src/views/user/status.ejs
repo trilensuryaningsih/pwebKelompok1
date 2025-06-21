@@ -58,81 +58,91 @@
         <th class="py-3 px-4 text-left">
          Status
         </th>
+        <th class="py-3 px-4 text-left">
+         MOU
+        </th>
+        <th class="py-3 px-4 text-left">
+         Catatan
+        </th>
         <th class="py-3 px-4 text-left rounded-r-lg">
          Aksi
         </th>
        </tr>
       </thead>
       <tbody class="text-[#7f7a75] text-sm font-normal">
-       <tr class="border-b border-[#f0ebe0]">
-        <td class="py-6 px-4">
-         1
-        </td>
-        <td class="py-6 px-4">
-         P001
-        </td>
-        <td class="py-6 px-4">
-         10/05/2025
-        </td>
-        <td class="py-6 px-4">
-         18/05/2025
-        </td>
-        <td class="py-6 px-4">
-         21/05/2025
-        </td>
-        <td class="py-6 px-4">
-         <button class="bg-white border border-[#1f4d2f] text-[#1f4d2f] rounded-full px-4 py-1 font-semibold hover:bg-[#1f4d2f] hover:text-[#f0ebe0] transition">
-          Selesai
-         </button>
-        </td>
-        <td class="py-6 px-4 flex items-center space-x-3">
-         <button aria-label="Delete order 1" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
-          <i class="fas fa-trash">
-          </i>
-         </button>
-         <button aria-label="Return order 1" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
-          <i class="fas fa-undo">
-          </i>
-         </button>
-        </td>
-       </tr>
-       <tr>
-        <td class="py-6 px-4">
-         2
-        </td>
-        <td class="py-6 px-4">
-         P002
-        </td>
-        <td class="py-6 px-4">
-         05/06/2025
-        </td>
-        <td class="py-6 px-4">
-         15/06/2025
-        </td>
-        <td class="py-6 px-4">
-         20/06/2025
-        </td>
-        <td class="py-6 px-4">
-         <span class="inline-block bg-white border border-[#f4a261] text-[#f4a261] rounded-full px-4 py-1 font-semibold select-none">
-          Diajukan
-         </span>
-        </td>
-        <td class="py-6 px-4 flex items-center space-x-3">
-         <button aria-label="Delete order 2" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
-          <i class="fas fa-trash">
-          </i>
-         </button>
-         <button aria-label="Return order 2" class="bg-[#a09a8f] rounded-full p-2 text-[#4a4a4a] hover:bg-[#7f8a7d] transition">
-          <i class="fas fa-undo">
-          </i>
-         </button>
-        </td>
-       </tr>
+      <% if (orders && orders.length > 0) { %>
+        <% orders.forEach(function(order, idx) { %>
+        <tr class="border-b border-[#f0ebe0]">
+          <td class="py-6 px-4"><%= idx + 1 %></td>
+          <td class="py-6 px-4">#<%= order.id %></td>
+          <td class="py-6 px-4"><%= order.createdAt ? order.createdAt.toLocaleDateString('id-ID') : '-' %></td>
+          <td class="py-6 px-4"><%= order.startDate ? new Date(order.startDate).toLocaleDateString('id-ID') : '-' %></td>
+          <td class="py-6 px-4"><%= order.endDate ? new Date(order.endDate).toLocaleDateString('id-ID') : '-' %></td>
+          <td class="py-6 px-4">
+            <% let statusColor = {
+              pending: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+              approved: 'bg-blue-100 border-blue-400 text-blue-700',
+              rejected: 'bg-red-200 border-red-500 text-red-800',
+              active: 'bg-green-100 border-green-400 text-green-700',
+              completed: 'bg-gray-200 border-gray-400 text-gray-700',
+              cancelled: 'bg-gray-400 border-gray-700 text-gray-900',
+              exchange_requested: 'bg-purple-100 border-purple-400 text-purple-700'
+            }[order.status] || 'bg-white border-gray-300 text-gray-700'; %>
+            <span class="inline-block border font-semibold rounded-full px-4 py-1 select-none <%= statusColor %>">
+              <%= order.status %>
+            </span>
+          </td>
+          <td class="py-6 px-4">
+            <% if (order.mouFile) { %>
+              <a href="<%= order.mouFile %>" target="_blank" class="text-blue-600 underline">Lihat MOU</a>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+          <td class="py-6 px-4">
+            <% if (order.notes) { %>
+              <span class="block text-xs text-gray-500"><%= order.notes %></span>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+          <td class="py-6 px-4">
+            <button class="mt-2 bg-red-600 hover:bg-red-700 text-white rounded px-3 py-1 text-xs <%= !(['pending','approved'].includes(order.status)) ? 'opacity-50 cursor-not-allowed' : '' %>" <%= !(['pending','approved'].includes(order.status)) ? 'disabled' : '' %> onclick="batalkanOrder(<%= order.id %>)">Batalkan</button>
+            <button class="mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-1 text-xs <%= order.status !== 'active' ? 'opacity-50 cursor-not-allowed' : '' %>" <%= order.status !== 'active' ? 'disabled' : '' %>>Ajukan Pengembalian</button>
+          </td>
+        </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="9" class="text-center py-8">Belum ada pesanan.</td></tr>
+      <% } %>
       </tbody>
      </table>
     </section>
     <%- include('../partials/footer') %>  
   </div>            
 </body>
+
+<script>
+function batalkanOrder(id) {
+  const btn = event.currentTarget;
+  if(btn.disabled) return;
+  if(confirm('Yakin ingin membatalkan pesanan ini?')) {
+    fetch(`/user/orders/${id}/cancel`, {method:'POST',headers:{'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(res=>{
+        if(res.success) location.reload();
+        else alert(res.message||'Gagal membatalkan pesanan');
+      });
+  }
+}
+function exchangeOrder(id) {
+  if(confirm('Ajukan penukaran alat untuk pesanan ini?')) {
+    fetch(`/user/status/${id}/exchange`, {method:'POST',headers:{'Content-Type':'application/json'}})
+      .then(r=>r.json()).then(res=>{
+        if(res.success) location.reload();
+        else alert(res.message||'Gagal mengajukan penukaran');
+      });
+  }
+}
+</script>
 
 </html>

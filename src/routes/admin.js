@@ -23,7 +23,8 @@ router.get('/api/items/:id', itemControllers.getItemDetails);
 router.get('/items/edit', editControllers.edit);
 router.get('/items/status', statusControllers.showAllitemsPage); 
 router.get('/items/stock', stokControllers.showAllitemsPage);
-
+router.get('/items/verification', itemControllers.showPendingOrdersPage);
+router.get('/items/pesanan', itemControllers.showAllOrdersPage);
 
 router.post('/items/create', upload.single('foto'), itemControllers.createItem);
 router.post('/items/edit/:id', upload.single('foto'), itemControllers.updateItem);
@@ -42,5 +43,8 @@ router.get('/repair/create', repairControllers.showCreateRepairPage);
 router.post('/repair/create', repairControllers.createRepair);
 router.post('/repair/:id/status', repairControllers.updateRepairStatus);
 router.post('/repair/:id/delete', repairControllers.deleteRepair);
+
+router.post('/items/verification/:id/approve', itemControllers.approveOrder);
+router.post('/items/verification/:id/reject', itemControllers.rejectOrder);
 
 module.exports = router;

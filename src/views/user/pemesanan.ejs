@@ -56,20 +56,9 @@
 
                 <!-- Items List -->
                 <% if (items && items.length > 0) { %>
-                    <% items.forEach((item, index) => { %>
-                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6">
-                            <input 
-                                aria-label="Select <%= item.name || item.nama %>" 
-                                class="accent-[#7B7F75] w-5 h-5 item-checkbox" 
-                                name="item" 
-                                type="radio" 
-                                value="<%= item.id || item.id_item %>"
-                                data-price="<%= item.price || item.harga %>"
-                                data-name="<%= item.name || item.nama %>"
-                                data-stock="<%= item.quantity || item.jumlah %>"
-                                <%= index === 0 ? 'checked' : '' %>
-                            />
-                            
+                    <h2 class="text-lg font-bold text-[#7F6D6D] mb-4">Daftar Barang Tersedia</h2>
+                    <% items.forEach((item) => { %>
+                        <div class="bg-white rounded-xl p-6 flex items-center space-x-6 mb-4">
                             <% if ((item.photo || item.foto) && (item.photo || item.foto).trim() !== '') { %>
                                 <img 
                                     alt="<%= item.name || item.nama %>" 
@@ -87,47 +76,39 @@
                                     <i class="fas fa-image text-gray-400"></i>
                                 </div>
                             <% } %>
-                            
                             <div class="flex-1 grid grid-cols-[auto_1fr] gap-x-2 text-xs text-[#7B7F75]">
                                 <span class="col-span-2 font-semibold text-sm text-[#7F6D6D]">
                                     <%= item.name || item.nama %>
                                 </span>
                                 <span>Kategori :</span>
                                 <span class="text-right"><%= item.category || item.kategori %></span>
-                                
                                 <span>Harga :</span>
                                 <span class="text-right">
                                     Rp <%= typeof (item.price || item.harga) === 'number' ? (item.price || item.harga).toLocaleString('id-ID') : (item.price || item.harga) %>,-
                                 </span>
-                                
                                 <span>Stok :</span>
                                 <span class="text-right"><%= item.quantity || item.jumlah %></span>
-                                
                                 <span>Jumlah :</span>
                                 <span class="text-right">
-                                    <select 
-                                        aria-label="Jumlah <%= item.name || item.nama %>"
-                                        class="bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-16 quantity-select"
-                                        data-item-id="<%= item.id || item.id_item %>"
-                                    >
-                                        <% for (let i = 1; i <= Math.min(item.quantity || item.jumlah, 10); i++) { %>
-                                            <option value="<%= i %>"><%= i %></option>
-                                        <% } %>
-                                    </select>
+                                    <input type="number" min="1" max="<%= item.quantity || item.jumlah %>" value="1" class="input-qty-item bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-16" data-id="<%= item.id || item.id_item %>" />
                                 </span>
-                                
                                 <% if ((item.description || item.deskripsi) && (item.description || item.deskripsi).trim() !== '') { %>
                                     <span class="col-span-2 text-xs text-gray-600 mt-2">
                                         <%= item.description || item.deskripsi %>
                                     </span>
                                 <% } %>
-
                                 <% if (item.status && item.status !== 'available') { %>
                                     <span class="col-span-2 text-xs text-red-600 mt-1 font-semibold">
                                         Status: <%= item.status %>
                                     </span>
                                 <% } %>
                             </div>
+                            <button type="button" class="ml-4 px-3 py-1 bg-custom-green text-white rounded btn-tambah-item" 
+                                data-id="<%= item.id || item.id_item %>"
+                                data-name="<%= item.name || item.nama %>"
+                                data-price="<%= item.price || item.harga %>"
+                                data-max="<%= item.quantity || item.jumlah %>"
+                                >Tambah</button>
                         </div>
                     <% }); %>
                 <% } else { %>
@@ -173,6 +154,12 @@
                                 <span class="text-right">
                                     Rp <%= typeof service.price === 'number' ? service.price.toLocaleString('id-ID') : service.price %>,-
                                 </span>
+                                <span>Stok :</span>
+                                <span class="text-right"><%= service.quantity || 1 %></span>
+                                <span>Jumlah :</span>
+                                <span class="text-right">
+                                    <input type="number" min="1" max="<%= service.quantity || 1 %>" value="1" class="input-qty-service bg-[#D9D0C7] rounded px-2 py-0.5 text-xs font-semibold text-[#7F6D6D] w-16" data-id="<%= service.id %>" />
+                                </span>
                                 <% if (service.description && service.description.trim() !== '') { %>
                                     <span class="col-span-2 text-xs text-gray-600 mt-2">
                                         <%= service.description %>
@@ -184,6 +171,12 @@
                                     </span>
                                 <% } %>
                             </div>
+                            <button type="button" class="ml-4 px-3 py-1 bg-custom-green text-white rounded btn-tambah-service" 
+                                data-id="<%= service.id %>"
+                                data-name="<%= service.name %>"
+                                data-price="<%= service.price %>"
+                                data-max="<%= service.quantity || 1 %>"
+                                >Tambah</button>
                         </div>
                     <% }); %>
                 <% } %>
@@ -205,7 +198,6 @@
                                     class="flex-1 bg-transparent outline-none"
                                     required
                                 />
-                                <i class="far fa-calendar-alt ml-2"></i>
                             </div>
                         </div>
                         <div>
@@ -220,17 +212,15 @@
                                     class="flex-1 bg-transparent outline-none"
                                     required
                                 />
-                                <i class="far fa-calendar-alt ml-2"></i>
                             </div>
                         </div>
                     </div>
                     
+                    <div id="selected-items" class="text-xs text-[#7B7F75] space-y-1 mt-4">
+                        <!-- Selected items/services will be displayed here -->
+                    </div>
                     <div class="mt-4 text-[#7F6D6D] font-extrabold text-lg">
                         TOTAL <span id="total-harga">Rp 0</span>
-                    </div>
-                    
-                    <div id="selected-items" class="text-xs text-[#7B7F75] space-y-1 mt-4">
-                        <!-- Selected items will be displayed here -->
                     </div>
                     
                     <button
@@ -267,17 +257,30 @@
             tanggalPinjam.min = today;
             tanggalKembali.min = today;
 
-            // Update minimum return date when borrow date changes
+            // Update minimum and maximum return date when borrow date changes
             tanggalPinjam.addEventListener('change', function() {
                 const selectedDate = new Date(this.value);
                 const nextDay = new Date(selectedDate);
                 nextDay.setDate(selectedDate.getDate() + 1);
-                
+                const maxReturn = new Date(selectedDate);
+                maxReturn.setDate(selectedDate.getDate() + 3);
                 tanggalKembali.min = nextDay.toISOString().split('T')[0];
-                
-                // If return date is before or equal to borrow date, reset it
-                if (tanggalKembali.value <= this.value) {
+                tanggalKembali.max = maxReturn.toISOString().split('T')[0];
+                // If return date is before or equal to borrow date, or more than 3 days, reset it
+                if (tanggalKembali.value <= this.value || new Date(tanggalKembali.value) > maxReturn) {
                     tanggalKembali.value = nextDay.toISOString().split('T')[0];
+                }
+            });
+
+            // Validasi tanggal_kembali saat diubah
+            tanggalKembali.addEventListener('change', function() {
+                const pinjamDate = new Date(tanggalPinjam.value);
+                const kembaliDate = new Date(this.value);
+                const maxReturn = new Date(pinjamDate);
+                maxReturn.setDate(pinjamDate.getDate() + 3);
+                if (kembaliDate > maxReturn) {
+                    alert('Tanggal pengembalian maksimal 3 hari dari tanggal peminjaman!');
+                    this.value = maxReturn.toISOString().split('T')[0];
                 }
             });
 
@@ -358,70 +361,36 @@
                 select.addEventListener('change', updateTotal);
             });
 
-            // Order form submission
+            // Tambahkan field catatan
+            let catatanInput = document.createElement('textarea');
+            catatanInput.id = 'catatan';
+            catatanInput.name = 'catatan';
+            catatanInput.placeholder = 'Catatan pemesanan (opsional)';
+            catatanInput.className = 'w-full border border-[#7F6D6D] rounded px-2 py-1 text-xs text-[#7F6D6D] font-light mt-4';
+            orderForm.insertBefore(catatanInput, btnPesan);
+
             orderForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                
-                const selectedItem = document.querySelector('.item-checkbox:checked');
-                const pinjamDate = tanggalPinjam.value;
-                const kembaliDate = tanggalKembali.value;
-
-                if (!selectedItem) {
-                    showMessage('Pilih barang terlebih dahulu', true);
+                if (pesanan.length === 0) {
+                    alert('Pilih minimal satu alat atau jasa!');
                     return;
                 }
-
-                if (!pinjamDate || !kembaliDate) {
-                    showMessage('Pilih tanggal peminjaman dan pengembalian', true);
+                // Ambil tanggal
+                const tanggalPinjam = document.getElementById('tanggal-pinjam').value;
+                const tanggalKembali = document.getElementById('tanggal-kembali').value;
+                const catatan = document.getElementById('catatan').value;
+                if (!tanggalPinjam || !tanggalKembali) {
+                    alert('Tanggal peminjaman dan pengembalian harus diisi!');
                     return;
                 }
-
-                const quantitySelect = document.querySelector(`select[data-item-id="${selectedItem.value}"]`);
-                const quantity = parseInt(quantitySelect.value);
-
-                setLoading(true);
-
-                try {
-                    const response = await fetch('/user/pemesanan', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            item_id: selectedItem.value,
-                            quantity: quantity,
-                            tanggal_pinjam: pinjamDate,
-                            tanggal_kembali: kembaliDate
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        showMessage(result.message);
-                        
-                        // Reset form
-                        orderForm.reset();
-                        tanggalPinjam.min = today;
-                        tanggalKembali.min = today;
-                        
-                        // Refresh page after 2 seconds to show updated stock
-                        setTimeout(() => {
-                            if (result.redirect) {
-                                window.location.href = result.redirect;
-                            } else {
-                                location.reload();
-                            }
-                        }, 2000);
-                    } else {
-                        showMessage(result.message, true);
-                    }
-                } catch (error) {
-                    console.error('Error submitting order:', error);
-                    showMessage('Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.', true);
-                } finally {
-                    setLoading(false);
-                }
+                // Simpan data ke localStorage
+                localStorage.setItem('pemesananData', JSON.stringify({
+                    pesanan,
+                    startDate: tanggalPinjam,
+                    endDate: tanggalKembali,
+                    notes: catatan
+                }));
+                window.location.href = '/user/mou';
             });
 
             // Initial calculation
@@ -430,6 +399,62 @@
             // Check for connection to database
             console.log('Pemesanan page loaded successfully');
             console.log('Items loaded:', itemCheckboxes.length);
+
+            let pesanan = [];
+
+            function renderPesanan() {
+                const selectedItemsElement = document.getElementById('selected-items');
+                let total = 0;
+                selectedItemsElement.innerHTML = pesanan.map((item, idx) => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+                    return `<div class="flex items-center justify-between mb-1">
+                        <span>${item.type === 'tool' ? 'Alat' : 'Jasa'}: <b>${item.name}</b> x${item.quantity} = Rp ${itemTotal.toLocaleString('id-ID')}</span>
+                        <button type="button" class="text-red-500 ml-2 btn-hapus-pesanan" data-idx="${idx}">Hapus</button>
+                    </div>`;
+                }).join('');
+                document.getElementById('total-harga').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+            }
+
+            document.body.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-tambah-item')) {
+                    const id = e.target.dataset.id;
+                    const name = e.target.dataset.name;
+                    const price = parseFloat(e.target.dataset.price);
+                    const max = parseInt(e.target.dataset.max);
+                    const qty = parseInt(document.querySelector(`.input-qty-item[data-id='${id}']`).value);
+                    if (qty > max) return alert('Jumlah melebihi stok!');
+                    const existing = pesanan.find(p => p.type === 'tool' && p.id == id);
+                    if (existing) {
+                        existing.quantity += qty;
+                        if (existing.quantity > max) existing.quantity = max;
+                    } else {
+                        pesanan.push({type: 'tool', id, name, price, quantity: qty});
+                    }
+                    renderPesanan();
+                }
+                if (e.target.classList.contains('btn-tambah-service')) {
+                    const id = e.target.dataset.id;
+                    const name = e.target.dataset.name;
+                    const price = parseFloat(e.target.dataset.price);
+                    const max = parseInt(e.target.dataset.max);
+                    const qty = parseInt(document.querySelector(`.input-qty-service[data-id='${id}']`).value);
+                    if (qty > max) return alert('Jumlah melebihi stok!');
+                    const existing = pesanan.find(p => p.type === 'service' && p.id == id);
+                    if (existing) {
+                        existing.quantity += qty;
+                        if (existing.quantity > max) existing.quantity = max;
+                    } else {
+                        pesanan.push({type: 'service', id, name, price, quantity: qty});
+                    }
+                    renderPesanan();
+                }
+                if (e.target.classList.contains('btn-hapus-pesanan')) {
+                    const idx = parseInt(e.target.dataset.idx);
+                    pesanan.splice(idx, 1);
+                    renderPesanan();
+                }
+            });
         });
     </script>
 </body>

@@ -35,7 +35,7 @@
 
                 <!-- Content -->
                 <section class="flex-1 p-8 overflow-auto flex-1 p-6 flex flex-col">
-                    <form class="bg-white rounded-xl p-8 h-full flex flex-col justify-between min-h-[2000px] max-w-5xl mx-auto" autocomplete="off">
+                    <form id="mou-form" class="bg-white rounded-xl p-8 h-full flex flex-col justify-between min-h-[2000px] max-w-5xl mx-auto" autocomplete="off">
                     <h2 class="text-[#7F6D6D] font-semibold text-lg mb-6">
                     SURAT PERJANJIAN KERJASAMA<br/>
                     <span class="font-normal text-base">Memorandum of Understanding</span>
@@ -43,11 +43,32 @@
                     <div class="space-y-4 text-[#7F6D6D] text-sm font-light max-w-4xl">
                     <p>
                         Pada tanggal
-                        <input aria-label="Tanggal" class="border border-[#7F6D6D] rounded px-2 py-1 w-16 text-xs text-[#7F6D6D] font-light" name="tanggal" placeholder="01" type="text"/>
+                        <select disabled aria-label="Tanggal" class="border border-[#7F6D6D] rounded px-2 py-1 w-16 text-xs text-[#7F6D6D] font-light bg-gray-100 cursor-not-allowed" name="tanggal" id="tanggal-select">
+                            <% for(let i=1; i<=31; i++) { %>
+                                <option value="<%= i.toString().padStart(2, '0') %>"><%= i.toString().padStart(2, '0') %></option>
+                            <% } %>
+                        </select>
                         bulan
-                        <input aria-label="Bulan" class="border border-[#7F6D6D] rounded px-2 py-1 w-24 text-xs text-[#7F6D6D] font-light" name="bulan" placeholder="November" type="text"/>
+                        <select disabled aria-label="Bulan" class="border border-[#7F6D6D] rounded px-2 py-1 w-24 text-xs text-[#7F6D6D] font-light bg-gray-100 cursor-not-allowed" name="bulan" id="bulan-select">
+                            <option value="Januari">Januari</option>
+                            <option value="Februari">Februari</option>
+                            <option value="Maret">Maret</option>
+                            <option value="April">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Juni">Juni</option>
+                            <option value="Juli">Juli</option>
+                            <option value="Agustus">Agustus</option>
+                            <option value="September">September</option>
+                            <option value="Oktober">Oktober</option>
+                            <option value="November">November</option>
+                            <option value="Desember">Desember</option>
+                        </select>
                         tahun
-                        <input aria-label="Tahun" class="border border-[#7F6D6D] rounded px-2 py-1 w-20 text-xs text-[#7F6D6D] font-light" name="tahun" placeholder="2024" type="text"/>
+                        <select disabled aria-label="Tahun" class="border border-[#7F6D6D] rounded px-2 py-1 w-20 text-xs text-[#7F6D6D] font-light bg-gray-100 cursor-not-allowed" name="tahun" id="tahun-select">
+                            <% for(let t=2024; t<=2028; t++) { %>
+                                <option value="<%= t %>"><%= t %></option>
+                            <% } %>
+                        </select>
                         , kami yang bertanda tangan di bawah ini:
                     </p>
                     <div class="space-y-1">
@@ -132,7 +153,7 @@
                         <label class="block text-xs" for="hariTanggal">
                         Hari/Tanggal
                         </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="hariTanggal" name="hariTanggal" placeholder=""/>
+                        <input type="date" class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="hariTanggal" name="hariTanggal" />
                     </div>
                     <div class="space-y-1 mb-4">
                         <label class="block text-xs" for="tempat">
@@ -200,7 +221,7 @@
                     <div class="mb-8">
                         <p class="mb-6">
                         Padang,
-                        <input aria-label="Tanggal penandatanganan" class="border border-[#7F6D6D] rounded px-2 py-1 w-32 text-xs text-[#7F6D6D] font-light" name="tanggalPenandatanganan" placeholder=" 01 November 2023" type="text" />
+                        <input type="date" aria-label="Tanggal penandatanganan" class="border border-[#7F6D6D] rounded px-2 py-1 w-32 text-xs text-[#7F6D6D] font-light" name="tanggalPenandatanganan" />
                         </p>
                         <div class="flex justify-between max-w-3xl">
                         <div class="flex flex-col items-center space-y-1 text-xs font-light">
@@ -218,6 +239,11 @@
                         Pihak II,
                         </span>
                         <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="jabatan3" name="jabatan3" placeholder="Jabatan Pihak II" type="text"/>
+                        <div class="mt-2">
+                            <label class="block text-xs mb-1" for="ttdPihak2">Tanda Tangan (upload gambar)</label>
+                            <input type="file" accept="image/*" id="ttdPihak2" name="ttdPihak2" class="block w-full text-xs text-[#7F6D6D]" />
+                            <img id="preview-ttdPihak2" src="#" alt="Preview Tanda Tangan" class="mt-2 max-h-24 hidden border rounded" />
+                        </div>
                         <span class="block h-16 w-48 border-b border-[#7F6D6D]">
                         </span>
                         </div>
@@ -239,20 +265,142 @@
                     </div>
                     </div>
                     <div class="flex justify-between text-xs text-[#7F6D6D] font-light">
-                    <button class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
+                    <button id="btn-kembali" class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
                         Kembali
                     </button>
-                    <button class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
-                        Cetak
-                    </button>
-                    <button class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
+                    <button id="btn-submit" class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
                         Submit
                     </button>
+                    </div>
+                    <div id="success-message" class="hidden mt-4 text-green-600 font-semibold text-center">Data berhasil disimpan!</div>
+                    <!-- Modal Pop Up -->
+                    <div id="modal-success" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+                        <div class="bg-white rounded-lg p-8 shadow-lg max-w-xs w-full text-center">
+                            <div class="text-green-600 text-2xl mb-2"><i class="fas fa-check-circle"></i></div>
+                            <div class="mb-4 text-[#7F6D6D] font-semibold">Data berhasil disimpan!</div>
+                            <button id="btn-modal-cetak" class="mt-2 px-4 py-1 rounded bg-custom-green text-white">Cetak MOU</button>
+                        </div>
                     </div>
                     </form>
                     </section>
                 <%- include('../partials/footer') %>
         </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const date = today.getDate().toString().padStart(2, '0');
+        const month = today.toLocaleString('id-ID', { month: 'long' });
+        const year = today.getFullYear();
+
+        document.getElementById('tanggal-select').value = date;
+        document.getElementById('bulan-select').value = month;
+        document.getElementById('tahun-select').value = year;
+
+        const btnSubmit = document.getElementById('btn-submit');
+        const successMessage = document.getElementById('success-message');
+        const form = document.querySelector('form');
+
+        // Preview tanda tangan upload
+        const ttdInput = document.getElementById('ttdPihak2');
+        const ttdPreview = document.getElementById('preview-ttdPihak2');
+        ttdInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    ttdPreview.src = ev.target.result;
+                    ttdPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                ttdPreview.src = '#';
+                ttdPreview.classList.add('hidden');
+            }
+        });
+
+        // Ganti event listener ke tombol submit
+        btnSubmit.addEventListener('click', function(e) {
+            e.preventDefault();
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Menyimpan...';
+            successMessage.classList.add('hidden');
+            const data = {};
+            data.tanggal = document.getElementById('tanggal-select').value;
+            data.bulan = document.getElementById('bulan-select').value;
+            data.tahun = document.getElementById('tahun-select').value;
+            data.nama2 = document.getElementById('nama2').value;
+            data.instansi2 = document.getElementById('instansi2').value;
+            data.jabatan2 = document.getElementById('jabatan2').value;
+            data.kontak2 = document.getElementById('kontak2').value;
+            data.namaKegiatan = document.getElementById('namaKegiatan').value;
+            data.hariTanggal = document.getElementById('hariTanggal').value;
+            data.tempat = document.getElementById('tempat').value;
+            data.tanggalPenandatanganan = document.querySelector('input[name="tanggalPenandatanganan"]').value;
+            data.jabatan3 = document.getElementById('jabatan3').value;
+            data.nama3 = document.getElementById('nama3').value;
+            data.nim = document.getElementById('nim').value;
+            // Tanda tangan (base64)
+            const file = ttdInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async function(ev) {
+                data.ttdPihak2 = ev.target.result;
+                // Ambil data pesanan dari localStorage
+                const pemesananData = localStorage.getItem('pemesananData');
+                let pesananPayload = {};
+                if (pemesananData) {
+                    pesananPayload = JSON.parse(pemesananData);
+                }
+                // Kirim data MOU ke backend
+                fetch('/user/mou', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...data,
+                        orderData: pesananPayload
+                    })
+                }).then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Tampilkan pesan berhasil, disable submit
+                        successMessage.classList.remove('hidden');
+                        btnSubmit.disabled = true;
+                        btnSubmit.textContent = 'Submit';
+                        // Tampilkan modal pop up dengan hanya button cetak
+                        const modal = document.getElementById('modal-success');
+                        const modalContent = modal.querySelector('.bg-white');
+                        modalContent.innerHTML = `
+                            <div class="text-green-600 text-2xl mb-2"><i class="fas fa-check-circle"></i></div>
+                            <div class="mb-4 text-[#7F6D6D] font-semibold">Data berhasil disimpan!</div>
+                            <button id="btn-modal-cetak" class="mt-2 px-4 py-1 rounded bg-custom-green text-white">Cetak MOU</button>
+                        `;
+                        modal.classList.remove('hidden');
+                        // Hapus data pemesanan dari localStorage
+                        localStorage.removeItem('pemesananData');
+                    } else {
+                        // Tampilkan pesan error
+                        alert(result.message || 'Gagal menyimpan data');
+                        btnSubmit.disabled = false;
+                        btnSubmit.textContent = 'Submit';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menyimpan data');
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = 'Submit';
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'btn-modal-cetak') {
+                document.getElementById('modal-success').classList.add('hidden');
+                window.open('/user/cetak-mou', '_blank');
+            }
+        });
+    });
+</script>
 </body>
 
 </html>
