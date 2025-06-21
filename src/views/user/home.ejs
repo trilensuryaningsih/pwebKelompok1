@@ -1,41 +1,63 @@
-<%- include('../partials/header') %>
-<div class="max-w-7xl mx-auto px-4 py-8">
-  <h2 class="text-2xl font-bold mb-6">Katalog Alat</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    <% if (items && items.length > 0) { %>
-      <% items.forEach(item => { %>
-        <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
-          <div>
-            <h5 class="text-lg font-semibold mb-2"><%= item.name %></h5>
-            <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= item.category %></span></p>
-            <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
-            <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Katalog - UMCental Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    .bg-custom-dark { background-color: #181C14; }
+    .bg-custom-green { background-color: #697565; }
+    .bg-custom-green-dark { background-color: #5a6356; }
+    .focus\:ring-custom-green:focus { --tw-ring-color: rgba(105, 117, 101, 0.5); }
+  </style>
+</head>
+<body class="flex min-h-screen bg-[#f5f0e9]">
+<%- include('../partials/sidebar') %>
+<div class="flex-1 flex flex-col">
+  <%- include('../partials/header') %>
+  <main class="flex-1 px-10 py-8 overflow-auto">
+    <h2 class="text-2xl font-bold mb-6 text-[#7f7a75]">Katalog Alat</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <% if (items && items.length > 0) { %>
+        <% items.forEach(item => { %>
+          <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
+            <div>
+              <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= item.name %></h5>
+              <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= item.category %></span></p>
+              <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
+              <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
+            </div>
+            <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
           </div>
-          <a href="/user/orders/create?itemId=<%= item.id %>" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-span-full"><p class="text-gray-500">Tidak ada alat tersedia.</p></div>
-    <% } %>
-  </div>
-
-  <h2 class="text-2xl font-bold mb-6 mt-12">Katalog Jasa</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    <% if (services && services.length > 0) { %>
-      <% services.forEach(service => { %>
-        <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
-          <div>
-            <h5 class="text-lg font-semibold mb-2"><%= service.name %></h5>
-            <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= service.category %></span></p>
-            <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
-            <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-full"><p class="text-gray-500">Tidak ada alat tersedia.</p></div>
+      <% } %>
+    </div>
+    <h2 class="text-2xl font-bold mb-6 mt-12 text-[#7f7a75]">Katalog Jasa</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <% if (services && services.length > 0) { %>
+        <% services.forEach(service => { %>
+          <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
+            <div>
+              <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= service.name %></h5>
+              <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= service.category %></span></p>
+              <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
+              <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
+            </div>
+            <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
           </div>
-          <a href="/user/orders/create?serviceId=<%= service.id %>" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-span-full"><p class="text-gray-500">Tidak ada jasa tersedia.</p></div>
-    <% } %>
-  </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-full"><p class="text-gray-500">Tidak ada jasa tersedia.</p></div>
+      <% } %>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
 </div>
-<%- include('../partials/footer') %> 
+</body>
+</html> 

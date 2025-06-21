@@ -199,5 +199,7 @@ router.get('/feedback/list', requireAuth, feedbackController.listUserFeedback);
 router.get('/feedback/edit/:id', requireAuth, feedbackController.editForm);
 // Proses update feedback
 router.post('/feedback/edit/:id', requireAuth, feedbackController.update);
+// Proses hapus feedback
+router.post('/feedback/delete/:id', requireAuth, feedbackController.deleteFeedback);
 
 module.exports = router;

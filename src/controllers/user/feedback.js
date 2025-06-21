@@ -104,6 +104,31 @@ exports.update = async (req, res) => {
   }
 };
 
+// Menghapus feedback oleh user
+exports.deleteFeedback = async (req, res) => {
+    try {
+        const feedbackId = req.params.id;
+        const userId = req.session.user.id;
+
+        // Hapus feedback hanya jika feedbackId dan userId cocok
+        const result = await Feedback.destroy({
+            where: {
+                id: feedbackId,
+                user_id: userId
+            }
+        });
+
+        if (result === 0) {
+            return res.status(404).send('Feedback tidak ditemukan atau Anda tidak memiliki izin untuk menghapusnya.');
+        }
+
+        res.redirect('/user/feedback/list');
+    } catch (err) {
+        console.error('Error deleting feedback by user:', err);
+        res.status(500).send('Gagal menghapus feedback: ' + err.message);
+    }
+};
+
 // Tampilkan daftar feedback milik user
 exports.listUserFeedback = async (req, res) => {
   try {

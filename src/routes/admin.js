@@ -46,5 +46,7 @@ router.post('/repair/:id/delete', repairControllers.deleteRepair);
 
 // Feedback Management
 router.get('/feedback', feedbackAdminController.list);
+router.post('/feedback/:id/status', feedbackAdminController.updateStatus);
+router.post('/feedback/:id/delete', feedbackAdminController.deleteFeedback);
 
 module.exports = router;

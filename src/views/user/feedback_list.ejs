@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daftar Feedback Saya</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body class="flex min-h-screen bg-[#f5f0e9] ">
   <%- include('../partials/sidebar') %>
@@ -19,6 +20,7 @@
           <tr>
             <th class="py-2 px-4 border-b">Tanggal</th>
             <th class="py-2 px-4 border-b">Komentar</th>
+            <th class="py-2 px-4 border-b">Status</th>
             <th class="py-2 px-4 border-b">Aksi</th>
           </tr>
         </thead>
@@ -28,7 +30,18 @@
               <td class="py-2 px-4 border-b"><%= feedback.createdAt.toLocaleString('id-ID') %></td>
               <td class="py-2 px-4 border-b"><%= feedback.comment %></td>
               <td class="py-2 px-4 border-b">
-                <a href="/user/feedback/edit/<%= feedback.id %>" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Edit</a>
+                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                  <%= feedback.status === 'approved' ? 'bg-green-100 text-green-800' : '' %>
+                  <%= feedback.status === 'rejected' ? 'bg-red-100 text-red-800' : '' %>
+                  <%= feedback.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' %>">
+                  <%= feedback.status %>
+                </span>
+              </td>
+              <td class="py-2 px-4 border-b">
+                <a href="/user/feedback/edit/<%= feedback.id %>" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">Edit</a>
+                <form action="/user/feedback/delete/<%= feedback.id %>" method="POST" class="inline-block ml-2">
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus feedback ini?')">Hapus</button>
+                </form>
               </td>
             </tr>
           <% }) %>
