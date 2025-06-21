@@ -1,0 +1,41 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daftar Feedback Saya</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen bg-[#f5f0e9] ">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-1 flex flex-col">
+    <%- include('../partials/header') %>
+    <main class="flex-1 px-10 py-8 overflow-auto">
+      <h2 class="font-semibold text-lg mb-6 text-[#5a6356] text-center md:text-left">Daftar Feedback Saya</h2>
+      <% if (success) { %>
+        <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center max-w-2xl mx-auto">Feedback berhasil diupdate!</div>
+      <% } %>
+      <table class="min-w-full bg-white rounded shadow">
+        <thead>
+          <tr>
+            <th class="py-2 px-4 border-b">Tanggal</th>
+            <th class="py-2 px-4 border-b">Komentar</th>
+            <th class="py-2 px-4 border-b">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% feedbacks.forEach(function(feedback) { %>
+            <tr>
+              <td class="py-2 px-4 border-b"><%= feedback.createdAt.toLocaleString('id-ID') %></td>
+              <td class="py-2 px-4 border-b"><%= feedback.comment %></td>
+              <td class="py-2 px-4 border-b">
+                <a href="/user/feedback/edit/<%= feedback.id %>" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Edit</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </main>
+    <%- include('../partials/footer') %>
+  </div>
+</body>
+</html> 

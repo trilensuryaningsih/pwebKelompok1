@@ -21,7 +21,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    rating: DataTypes.INTEGER,
     comment: DataTypes.TEXT,
     status: DataTypes.ENUM('pending', 'approved', 'rejected'),
     phone_number: DataTypes.STRING

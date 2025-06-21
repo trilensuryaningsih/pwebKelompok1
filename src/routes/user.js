@@ -187,8 +187,17 @@ router.get('/status', (req, res, next) => {
     });
 });
 
-// Feedback Gabungan
+// Feedback Gabungan (Dashboard)
 router.get('/feedback', requireAuth, feedbackController.form);
+// Form untuk feedback baru
+router.get('/feedback/new', requireAuth, feedbackController.newForm);
 router.post('/feedback', requireAuth, feedbackController.submit);
+
+// List feedback user
+router.get('/feedback/list', requireAuth, feedbackController.listUserFeedback);
+// Form edit feedback
+router.get('/feedback/edit/:id', requireAuth, feedbackController.editForm);
+// Proses update feedback
+router.post('/feedback/edit/:id', requireAuth, feedbackController.update);
 
 module.exports = router;

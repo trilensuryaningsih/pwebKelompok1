@@ -1,19 +1,18 @@
-<div class="bg-[#3F4E4F] text-white h-screen w-64 fixed left-0 top-0">
-    <div class="p-4">
-        <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
-        <nav>
-            <div class="space-y-2">
-                <a href="/admin" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Dashboard</a>
-                <a href="/admin/items" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Daftar Barang</a>
-                <a href="/admin/items/status" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Status Peminjaman</a>
-                <a href="/admin/repair" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Perbaikan Alat</a>
-                <a href="/admin/pj" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Penanggung Jawab</a>
-            </div>
-            <div class="mt-8">
-                <form action="/auth/logout" method="POST">
-                    <button type="submit" class="w-full py-2 px-6 text-left cursor-pointer hover:bg-[#5a6356] rounded-md">Logout</button>
-                </form>
-            </div>
-        </nav>
-    </div>
+<div class="bg-[#3F4E4F] text-white h-screen w-64 fixed left-0 top-0 p-4">
+    <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+    <nav>
+        <div class="space-y-2">
+            <a href="/admin" class="block py-2 px-4 rounded-md hover:bg-[#5a6356] <%= path === '/admin/dashboard' ? 'bg-[#5a6356]' : '' %>">Dashboard</a>
+            <a href="/admin/items" class="block py-2 px-4 rounded-md hover:bg-[#5a6356] <%= path === '/admin/items' ? 'bg-[#5a6356]' : '' %>">Daftar Barang</a>
+            <a href="/admin/items/status" class="block py-2 px-4 rounded-md hover:bg-[#5a6356] <%= path === '/admin/items/status' ? 'bg-[#5a6356]' : '' %>">Status Peminjaman</a>
+            <a href="/admin/repair" class="block py-2 px-4 rounded-md hover:bg-[#5a6356] <%= path === '/admin/repair' ? 'bg-[#5a6356]' : '' %>">Perbaikan Alat</a>
+            <a href="/admin/pj" class="block py-2 px-4 rounded-md hover:bg-[#5a6356] <%= path === '/admin/pj' ? 'bg-[#5a6356]' : '' %>">Manajemen PJ</a>
+            <a href="/admin/feedback" class="block py-2 px-4 rounded-md hover:bg-[#5a6356] <%= path === '/admin/feedback' ? 'bg-[#5a6356]' : '' %>">Feedback</a>
+        </div>
+        <div class="mt-8">
+            <form action="/auth/logout" method="POST">
+                <button type="submit" class="w-full text-left py-2 px-4 rounded-md hover:bg-[#5a6356]">Logout</button>
+            </form>
+        </div>
+    </nav>
 </div>

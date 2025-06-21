@@ -1,0 +1,37 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Feedback</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen bg-[#f5f0e9] ">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-1 flex flex-col">
+    <%- include('../partials/header') %>
+    <main class="flex-1 px-10 py-8 overflow-auto">
+      <h2 class="font-semibold text-lg mb-6 text-[#5a6356] text-center md:text-left">Edit Feedback</h2>
+      <form action="/user/feedback/edit/<%= feedback.id %>" method="POST" class="max-w-2xl mx-auto bg-[#fff] rounded-2xl shadow p-8 border border-[#697565] grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1 text-[#3C3D37]">E-mail</label>
+            <input type="email" value="<%= user.email %>" readonly class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 text-[#3C3D37]" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1 text-[#3C3D37]">No. HP</label>
+            <input type="text" name="phone_number" value="<%= feedback.phone_number %>" class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 text-[#3C3D37]" />
+          </div>
+        </div>
+        <div class="flex flex-col h-full">
+          <label class="block text-sm font-medium mb-1 text-[#3C3D37]">Masukan Feedback</label>
+          <textarea name="comment" rows="7" class="w-full rounded bg-[#f5f0e9] border border-[#697565] px-3 py-2 flex-1 resize-none text-[#3C3D37]" required><%= feedback.comment %></textarea>
+        </div>
+        <div class="md:col-span-2 flex justify-center mt-4">
+          <button type="submit" class="px-8 py-2 rounded-full border border-[#181C14] bg-[#697565] hover:bg-[#3C3D37] text-[#ECDFCC] font-semibold text-lg transition">Update</button>
+        </div>
+      </form>
+    </main>
+    <%- include('../partials/footer') %>
+  </div>
+</body>
+</html> 
