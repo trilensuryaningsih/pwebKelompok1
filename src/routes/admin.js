@@ -12,6 +12,7 @@ var stokControllers = require('../controllers/admin/stok');
 var pjControllers = require('../controllers/admin/pj');
 var itemControllers = require('../controllers/admin/item');
 var repairControllers = require('../controllers/admin/repair');
+const feedbackAdminController = require('../controllers/admin/feedback');
 
 // GET Routes - Untuk menampilkan halaman
 router.get('/', adminControllers.index);
@@ -42,5 +43,10 @@ router.get('/repair/create', repairControllers.showCreateRepairPage);
 router.post('/repair/create', repairControllers.createRepair);
 router.post('/repair/:id/status', repairControllers.updateRepairStatus);
 router.post('/repair/:id/delete', repairControllers.deleteRepair);
+
+// Feedback Management
+router.get('/feedback', feedbackAdminController.list);
+router.post('/feedback/:id/status', feedbackAdminController.updateStatus);
+router.post('/feedback/:id/delete', feedbackAdminController.deleteFeedback);
 
 module.exports = router;
