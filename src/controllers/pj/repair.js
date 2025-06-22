@@ -10,7 +10,7 @@ exports.showRepairPage = async (req, res) => {
         { model: User, as: 'Verifier', attributes: ['name', 'email'] }
       ],
       where: { 
-        status: ['approved', 'in_progress'] // Only show repairs that need PJ attention
+        status: ['pending', 'in_progress'] // Include pending repairs that need PJ attention
       },
       order: [['requestDate', 'DESC']]
     });
@@ -21,11 +21,11 @@ exports.showRepairPage = async (req, res) => {
   }
 };
 
-// PJ verifies and approves/rejects repair
+// PJ verifies and approves repair
 exports.verifyRepair = async (req, res) => {
   try {
     const { id } = req.params;
-    const { action, notes } = req.body; // action: 'approve' or 'reject'
+    const { notes } = req.body;
     const pjId = req.session.user ? req.session.user.id : 1; // Use session user ID
 
     const repair = await Repair.findByPk(id);
@@ -33,30 +33,32 @@ exports.verifyRepair = async (req, res) => {
       return res.status(404).send('Perbaikan tidak ditemukan.');
     }
 
-    if (repair.status !== 'approved') {
-      return res.status(400).send('Hanya perbaikan dengan status disetujui yang dapat diverifikasi.');
+    if (repair.status !== 'pending') {
+      return res.status(400).send('Hanya perbaikan dengan status diajukan yang dapat diverifikasi.');
     }
 
-    let newStatus = 'in_progress';
-    let itemStatus = 'maintenance';
-
-    if (action === 'reject') {
-      newStatus = 'rejected';
-      itemStatus = 'damaged';
+    // Get the item to handle status
+    const item = await Item.findByPk(repair.itemId);
+    if (!item) {
+      return res.status(404).send('Alat tidak ditemukan.');
     }
 
+    // Approve the repair and set status to in_progress
     await repair.update({
-      status: newStatus,
+      status: 'in_progress',
       verifiedBy: pjId,
       verificationDate: new Date(),
       notes: notes || null
     });
 
-    // Update item status
-    await Item.update(
-      { status: itemStatus },
-      { where: { id: repair.itemId } }
-    );
+    // Determine item status based on current quantity
+    let newItemStatus = 'available';
+    if (item.quantity < 1) {
+      newItemStatus = 'maintenance';
+    }
+    await item.update({
+      status: newItemStatus
+    });
 
     res.redirect('/pj/repair?verify=success');
   } catch (err) {
@@ -115,6 +117,12 @@ exports.completeRepair = async (req, res) => {
       return res.status(400).send('Hanya perbaikan yang sedang berlangsung yang dapat diselesaikan.');
     }
 
+    // Get the item to restore quantity
+    const item = await Item.findByPk(repair.itemId);
+    if (!item) {
+      return res.status(404).send('Alat tidak ditemukan.');
+    }
+
     await repair.update({
       status: 'completed',
       verifiedBy: pjId,
@@ -122,11 +130,19 @@ exports.completeRepair = async (req, res) => {
       notes: completionNotes || null
     });
 
-    // Update item status to available
-    await Item.update(
-      { status: 'available' },
-      { where: { id: repair.itemId } }
-    );
+    // Restore item quantity and determine status based on restored quantity
+    const restoredQuantity = item.quantity + repair.quantity;
+    
+    // Determine new item status based on restored quantity
+    let newItemStatus = 'available';
+    if (restoredQuantity < 1) {
+      newItemStatus = 'maintenance'; // Still no available items
+    }
+    
+    await item.update({
+      status: newItemStatus,
+      quantity: restoredQuantity
+    });
 
     res.redirect('/pj/repair?complete=success');
   } catch (err) {

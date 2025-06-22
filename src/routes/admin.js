@@ -1,6 +1,12 @@
+
 var express = require('express');
 var router = express.Router();
+const { requireAuth, requireRole } = require('../middleware/auth');
 var upload = require('../middleware/upload'); 
+
+// Terapkan middleware otentikasi dan otorisasi untuk semua rute admin
+router.use(requireAuth);
+router.use(requireRole(['admin']));
 
 var adminControllers = require('../controllers/admin/index');
 var daftarControllers = require('../controllers/admin/daftar');
@@ -40,5 +46,6 @@ router.delete('/pj/:id', pjControllers.deletePJ);
 // Routes untuk verifikasi pesanan
 router.post('/items/verification/:id/approve', verificationControllers.approveOrder);
 router.post('/items/verification/:id/reject', verificationControllers.rejectOrder);
+
 
 module.exports = router;

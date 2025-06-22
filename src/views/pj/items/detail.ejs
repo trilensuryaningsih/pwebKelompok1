@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-[#F0EAE0] font-sans">
   <div class="flex">
     <%- include('../../partials/pj/sidebar') %>
     
@@ -25,59 +25,71 @@
         <% if (typeof item !== 'undefined') { %>
           <!-- Item Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-gray-50 p-6 rounded-lg">
-              <h2 class="text-lg font-semibold mb-4">Informasi Alat</h2>
-              <div class="space-y-3">
-                <div>
-                  <label class="text-sm font-medium text-gray-600">ID Alat:</label>
-                  <p class="text-gray-900"><%= item.id %></p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Nama Alat:</label>
-                  <p class="text-gray-900 font-medium"><%= item.name %></p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Kategori:</label>
-                  <p class="text-gray-900"><%= item.category %></p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Jumlah:</label>
-                  <p class="text-gray-900"><%= item.quantity %></p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Lokasi:</label>
-                  <p class="text-gray-900"><%= item.location %></p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Status:</label>
-                  <p class="text-gray-900">
-                    <% if (item.status === 'available') { %>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        Tersedia
-                      </span>
-                    <% } else if (item.status === 'maintenance') { %>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
-                        Sedang Diperbaiki
-                      </span>
-                    <% } else if (item.status === 'damaged') { %>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                        Rusak
-                      </span>
-                    <% } else if (item.status === 'borrowed') { %>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                        Dipinjam
-                      </span>
-                    <% } %>
-                  </p>
+            <!-- Left Column -->
+            <div class="flex flex-col gap-6">
+              <!-- Description Box -->
+              <div class="bg-gray-50 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Deskripsi</h2>
+                <p class="text-gray-700 leading-relaxed">
+                  <%= item.description %>
+                </p>
+              </div>
+              <!-- Other Details Box -->
+              <div class="bg-gray-50 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Informasi Alat</h2>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">ID Alat:</label>
+                    <p class="text-gray-900"><%= item.id %></p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Nama Alat:</label>
+                    <p class="text-gray-900 font-medium"><%= item.name %></p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Kategori:</label>
+                    <p class="text-gray-900"><%= item.category %></p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Jumlah:</label>
+                    <p class="text-gray-900"><%= item.quantity %></p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-600">Status:</label>
+                    <p class="text-gray-900">
+                      <% if (item.status === 'available') { %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          Tersedia
+                        </span>
+                      <% } else if (item.status === 'maintenance') { %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                          Sedang Diperbaiki
+                        </span>
+                      <% } else if (item.status === 'damaged') { %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                          Rusak
+                        </span>
+                      <% } else if (item.status === 'borrowed') { %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                          Dipinjam
+                        </span>
+                      <% } %>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-
+            
+            <!-- Right Column -->
             <div class="bg-gray-50 p-6 rounded-lg">
-              <h2 class="text-lg font-semibold mb-4">Deskripsi</h2>
-              <p class="text-gray-700 leading-relaxed">
-                <%= item.description %>
-              </p>
+              <h2 class="text-lg font-semibold mb-4">Foto Alat</h2>
+              <% if (item.photo) { %>
+                <img src="/uploads/<%= item.photo %>" alt="<%= item.name %>" class="w-full h-auto object-cover rounded-lg shadow-md">
+              <% } else { %>
+                <div class="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                  <span class="text-gray-400 text-sm">Tidak ada foto</span>
+                </div>
+              <% } %>
             </div>
           </div>
 

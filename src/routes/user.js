@@ -1,7 +1,8 @@
+
 const express = require('express');
 const barangController = require('../controllers/user/barang');
 const ordersController = require('../controllers/user/orders');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireRole } = require('../middleware/auth');
 const PDFDocument = require('pdfkit');
 const { Readable } = require('stream');
 const path = require('path');
@@ -13,7 +14,9 @@ const { Item, Service } = require('../models');
 
 const router = express.Router();
 
-// Home route (menggantikan dashboard)
+// Terapkan middleware otentikasi dan otorisasi untuk semua rute user
+router.use(requireAuth);
+router.use(requireRole(['user']));// Home route (menggantikan dashboard)
 router.get('/home', requireAuth, async (req, res) => {
     try {
         const items = await Item.findAll({ where: { status: 'available' }, order: [['name', 'ASC']] });

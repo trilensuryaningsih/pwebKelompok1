@@ -12,7 +12,7 @@ exports.showItems = async (req, res) => {
           required: false
         }
       ],
-      order: [['name', 'ASC']]
+      order: [['id', 'ASC']]
     });
 
     // Get repair statistics for each item
@@ -48,20 +48,22 @@ exports.showAddItem = async (req, res) => {
 // Add new item
 exports.addItem = async (req, res) => {
   try {
-    const { name, description, category, quantity, location } = req.body;
+    const { name, description, category, quantity } = req.body;
+    const photoFile = req.file; // File yang diupload
     
     // Validate required fields
-    if (!name || !description || !category || !quantity || !location) {
+    if (!name || !description || !category || !quantity || !photoFile) {
       return res.status(400).send('Semua field harus diisi.');
     }
 
-    // Create new item
+    // Create new item with price = 0
     await Item.create({
       name,
       description,
       category,
       quantity: parseInt(quantity),
-      location,
+      photo: photoFile.filename, // Nama file yang sudah di-generate oleh middleware
+      price: 0, // Harga otomatis Rp.0
       status: 'available',
       type: 'tool' // Default to tool type
     });
