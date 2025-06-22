@@ -760,6 +760,72 @@
             // Initial render
             renderPesanan();
 
+            // Load selected items from session storage (from home page)
+            function loadSelectedItemsFromSession() {
+                const selectedItems = JSON.parse(sessionStorage.getItem('selectedItems') || '[]');
+                
+                if (selectedItems.length > 0) {
+                    console.log('Loading selected items from session:', selectedItems);
+                    
+                    // Clear session storage after loading
+                    sessionStorage.removeItem('selectedItems');
+                    
+                    // Add each selected item to pesanan
+                    selectedItems.forEach(item => {
+                        // Find the item/service in the available items
+                        let foundItem = null;
+                        
+                        if (item.type === 'item') {
+                            // Look for item in tools
+                            const toolElements = document.querySelectorAll('.btn-tambah-item');
+                            toolElements.forEach(btn => {
+                                if (parseInt(btn.dataset.id) === item.id) {
+                                    foundItem = {
+                                        type: 'tool',
+                                        id: parseInt(btn.dataset.id),
+                                        name: btn.dataset.name,
+                                        price: parseFloat(btn.dataset.price),
+                                        quantity: item.quantity
+                                    };
+                                }
+                            });
+                        } else if (item.type === 'service') {
+                            // Look for service in services
+                            const serviceElements = document.querySelectorAll('.btn-tambah-service');
+                            serviceElements.forEach(btn => {
+                                if (parseInt(btn.dataset.id) === item.id) {
+                                    foundItem = {
+                                        type: 'service',
+                                        id: parseInt(btn.dataset.id),
+                                        name: btn.dataset.name,
+                                        price: parseFloat(btn.dataset.price),
+                                        quantity: item.quantity
+                                    };
+                                }
+                            });
+                        }
+                        
+                        if (foundItem) {
+                            // Check if item already exists in pesanan
+                            const existing = pesanan.find(p => p.type === foundItem.type && p.id === foundItem.id);
+                            if (existing) {
+                                existing.quantity += foundItem.quantity;
+                            } else {
+                                pesanan.push(foundItem);
+                            }
+                            
+                            showMessage(`${foundItem.name} berhasil ditambahkan ke pesanan!`, false);
+                        }
+                    });
+                    
+                    // Re-render pesanan
+                    renderPesanan();
+                }
+            }
+
+            // Load selected items when page loads
+            loadSelectedItemsFromSession();
+
             // Check for connection to database
             console.log('Pemesanan page loaded successfully');
             console.log('Layout: Fixed sidebar with sticky footer');

@@ -138,7 +138,7 @@
                 <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
                 <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
               </div>
-              <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
+              <button class="btn-add-to-order mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center" data-type="item" data-id="<%= item.id %>" data-name="<%= item.name %>">Pesan</button>
             </div>
           <% }) %>
         <% } else { %>
@@ -156,7 +156,7 @@
                 <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
                 <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
               </div>
-              <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
+              <button class="btn-add-to-order mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center" data-type="service" data-id="<%= service.id %>" data-name="<%= service.name %>">Pesan</button>
             </div>
           <% }) %>
         <% } else { %>
@@ -193,6 +193,46 @@
             console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
             // Force reflow to ensure layout updates
             document.body.offsetHeight;
+        });
+
+        // Handle add to order buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-add-to-order')) {
+                const type = e.target.dataset.type;
+                const id = e.target.dataset.id;
+                const name = e.target.dataset.name;
+                
+                console.log('Adding to order:', { type, id, name });
+                
+                // Store the selected item/service in session storage
+                const selectedItems = JSON.parse(sessionStorage.getItem('selectedItems') || '[]');
+                
+                // Check if item already exists
+                const existingItem = selectedItems.find(item => item.id == id && item.type === type);
+                
+                if (existingItem) {
+                    // If item exists, increment quantity
+                    existingItem.quantity = (existingItem.quantity || 1) + 1;
+                    alert(`${name} sudah ada di keranjang. Jumlah ditambah menjadi ${existingItem.quantity}`);
+                } else {
+                    // Add new item
+                    selectedItems.push({
+                        id: parseInt(id),
+                        type: type,
+                        name: name,
+                        quantity: 1
+                    });
+                    alert(`${name} berhasil ditambahkan ke keranjang!`);
+                }
+                
+                // Save back to session storage
+                sessionStorage.setItem('selectedItems', JSON.stringify(selectedItems));
+                
+                // Redirect to pemesanan page
+                setTimeout(() => {
+                    window.location.href = '/user/pemesanan';
+                }, 1000);
+            }
         });
     });
   </script>
