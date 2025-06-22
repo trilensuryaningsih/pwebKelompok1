@@ -1,0 +1,175 @@
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>- Dashboard -</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <style>
+    .bg-custom-dark {
+      background-color: #181C14;
+    }
+
+    .bg-custom-green {
+      background-color: #697565;
+    }
+
+    .bg-custom-green-dark {
+      background-color: #5a6356;
+    }
+
+    .focus\:ring-custom-green:focus {
+      --tw-ring-color: rgba(105, 117, 101, 0.5);
+    }
+  </style>
+</head>
+
+<body class="flex min-h-screen bg-[#f5f0e9] ">
+
+  <%- include('../partials/sidebar') %>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col">
+    <%- include('../partials/header', { userType: 'admin' }) %>
+
+    <!-- Content -->
+    <main class="content p-5 lg:p-10 flex flex-col gap-6 bg-brand-beige">
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <div class="status-filters flex gap-2"></div>
+
+        <div class="flex items-center gap-4">
+          <a href="/admin/edit"
+            class="bg-brand-beige hover:bg-brand-brown text-brand-brown hover:text-brand-beige border-2 border-brand-brown py-2 px-4 rounded-full font-semibold flex items-center gap-1.5 transition-all duration-200 hover:shadow-lg">
+            <span class="material-icons text-xl">edit</span> Edit item
+          </a>
+          <a href="/admin/tambah"
+            class="bg-brand-brown hover:bg-brand-brown-dark text-brand-beige border-2 border-brand-brown py-2 px-4 rounded-full font-semibold flex items-center gap-1.5 transition-all duration-200 hover:shadow-lg">
+            <span class="material-icons text-xl">add</span> Add item
+          </a>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full rounded-xl overflow-hidden bg-brand-olive text-brand-beige">
+          <thead class="bg-brand-olive">
+            <tr>
+              <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">No</th>
+              <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Nama</th>
+              <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Kategori</th>
+              <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Deskripsi</th>
+              <th scope="col" class="p-4 px-3 text-left font-semibold align-middle">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="bg-brand-beige text-brand-brown">
+            <% if (typeof items !=='undefined' && items.length> 0) { %>
+              <% items.forEach((item, index)=> { %>
+                <tr id="item-row-<%= item.id %>" class="border-b border-brand-brown-light">
+                  <td class="row-number p-4 px-3 align-middle font-bold text-sm">
+                    <%= index + 1 %>
+                  </td>
+                  <td class="p-4 px-3 align-middle font-bold text-sm">
+                    <%= item.nama %>
+                  </td>
+                  <td class="p-4 px-3 align-middle font-bold text-sm">
+                    <%= item.kategori %>
+                  </td>
+                  <td class="p-4 px-3 align-middle font-bold text-sm">
+                    <%= item.deskripsi %>
+                  </td>
+
+
+                  <td class="p-4 px-3 align-middle text-center">
+                    <button type="button"
+                      class="delete-button text-red-500 hover:text-red-700 transition-colors cursor-pointer"
+                      data-id="<%= item.id %>" data-nama="<%= item.nama %>">
+                      <span class="material-icons text-xl">delete</span>
+                    </button>
+                    </a>
+                  </td>
+                </tr>
+                <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="7" class="text-center p-5">Tidak ada data untuk ditampilkan.</td>
+                    </tr>
+                    <% } %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- Logika untuk Notifikasi dari URL (Tambah/Edit) ---
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('create') || params.has('update')) {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: `Item berhasil ${params.has('create') ? 'ditambahkan' : 'diubah'}`,
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          });
+        }
+
+        // --- Logika BARU untuk Tombol Hapus ---
+        const deleteButtons = document.querySelectorAll('.delete-button');
+
+        deleteButtons.forEach(button => {
+          button.addEventListener('click', function () {
+            const itemId = this.dataset.id;
+            const itemName = this.dataset.nama;
+
+            // 1. Munculkan pop-up konfirmasi
+            Swal.fire({
+              title: 'Apakah Anda Yakin?',
+              html: `Anda akan menghapus item:<br><b>"${itemName}"</b><br>Tindakan ini tidak bisa dibatalkan!`,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#6e7881',
+              confirmButtonText: 'Ya, hapus!',
+              cancelButtonText: 'Batal'
+            }).then((result) => {
+              // 2. Jika dikonfirmasi, lakukan proses hapus
+              if (result.isConfirmed) {
+                fetch(`/admin/api/hapus/${itemId}`, { method: 'DELETE' })
+                  .then(response => response.json().then(data => {
+                    if (!response.ok) throw new Error(data.message || 'Gagal menghapus.');
+                    return data;
+                  }))
+                  .then(data => {
+                    // 3. Tampilkan notifikasi sukses
+                    Swal.fire({
+                      title: 'Dihapus!',
+                      text: data.message,
+                      icon: 'success',
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+
+                    // 4. Hapus baris dari tabel dengan animasi
+                    const row = document.getElementById(`item-row-${itemId}`);
+                    if (row) {
+                      row.classList.add('row-fade-out');
+                      setTimeout(() => row.remove(), 500);
+                    }
+                  })
+                  .catch(error => {
+                    // Tampilkan notifikasi gagal
+                    Swal.fire('Gagal!', error.message, 'error');
+                  });
+              }
+            })
+          });
+        });
+      });
+    </script>
+    <%- include('../partials/footer') %>
+  </div>
+
+</body>
+
+</html>

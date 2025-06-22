@@ -1,3 +1,4 @@
+
 var express = require('express');
 var router = express.Router();
 const { requireAuth, requireRole } = require('../middleware/auth');
@@ -16,7 +17,7 @@ var statusControllers = require('../controllers/admin/status');
 var stokControllers = require('../controllers/admin/stok');
 var pjControllers = require('../controllers/admin/pj');
 var itemControllers = require('../controllers/admin/item');
-var repairControllers = require('../controllers/admin/repair');
+var verificationControllers = require('../controllers/admin/verification');
 
 // GET Routes - Untuk menampilkan halaman
 router.get('/', adminControllers.index);
@@ -28,7 +29,8 @@ router.get('/api/items/:id', itemControllers.getItemDetails);
 router.get('/items/edit', editControllers.edit);
 router.get('/items/status', statusControllers.showAllitemsPage); 
 router.get('/items/stock', stokControllers.showAllitemsPage);
-
+router.get('/items/verification', verificationControllers.showPendingOrdersPage);
+router.get('/items/pesanan', itemControllers.showAllOrdersPage);
 
 router.post('/items/create', upload.single('foto'), itemControllers.createItem);
 router.post('/items/edit/:id', upload.single('foto'), itemControllers.updateItem);
@@ -41,11 +43,9 @@ router.post('/pj', pjControllers.createPJ);
 router.put('/pj/:id', pjControllers.updatePJ);
 router.delete('/pj/:id', pjControllers.deletePJ);
 
-// Routes untuk manajemen perbaikan
-router.get('/repair', repairControllers.showRepairPage);
-router.get('/repair/create', repairControllers.showCreateRepairPage);
-router.post('/repair/create', repairControllers.createRepair);
-router.post('/repair/:id/status', repairControllers.updateRepairStatus);
-router.post('/repair/:id/delete', repairControllers.deleteRepair);
+// Routes untuk verifikasi pesanan
+router.post('/items/verification/:id/approve', verificationControllers.approveOrder);
+router.post('/items/verification/:id/reject', verificationControllers.rejectOrder);
+
 
 module.exports = router;

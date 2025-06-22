@@ -1,7 +1,22 @@
+
 <aside class="bg-[#697565] text-[#F0EAE0] h-screen w-64 fixed left-0 top-0 p-4 flex flex-col">
     <div class="mb-8">
         <h2 class="text-xl font-bold">Admin Panel</h2>
         <p class="text-[#F0EAE0] opacity-75 text-sm">Administrator</p>
+        <nav>
+            <div class="space-y-2">
+                <a href="/admin" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Dashboard</a>
+                <a href="/admin/items" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Daftar Barang</a>
+                <a href="/admin/items/status" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Status Peminjaman</a>
+                <a href="/admin/repair" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Perbaikan Alat</a>
+                <a href="/admin/pj" class="py-2 px-6 block cursor-pointer hover:bg-[#5a6356] rounded-md">Penanggung Jawab</a>
+            </div>
+            <div class="mt-8">
+                <form action="/auth/logout" method="POST">
+                    <button type="submit" class="w-full py-2 px-6 text-left cursor-pointer hover:bg-[#3C3D37] rounded-md">Logout</button>
+                </form>
+            </div>
+        </nav>
     </div>
     
     <nav>

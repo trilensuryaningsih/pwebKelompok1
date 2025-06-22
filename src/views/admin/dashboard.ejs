@@ -1,60 +1,66 @@
-<!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>- Dashboard -</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    .bg-custom-dark {
+      background-color: #181C14;
+    }
+
+    .bg-custom-green {
+      background-color: #697565;
+    }
+
+    .bg-custom-green-dark {
+      background-color: #5a6356;
+    }
+
+    .focus\:ring-custom-green:focus {
+      --tw-ring-color: rgba(105, 117, 101, 0.5);
+    }
+  </style>
+
 </head>
-<body class="bg-[#F0EAE0] h-screen overflow-hidden font-sans">
-        <%- include('../../partials/admin/sidebar') %>
 
+<body class="flex min-h-screen bg-[#f5f0e9] ">
 
+  <%- include('../partials/sidebar') %>
 
-    <div class="ml-64 p-8">
-        <div class="p-6">
-            <h1 class="text-2xl font-bold mb-6 text-[#181C14]">Dashboard</h1>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-lg p-6 shadow">
-                    <h3 class="text-lg font-semibold mb-2 text-[#3C3D37]">Total barang dan jasa</h3>
-                    <p class="text-3xl font-bold text-[#3C3D37]">20</p>
-                </div>
-                
-                <div class="bg-white rounded-lg p-6 shadow">
-                    <h3 class="text-lg font-semibold mb-2 text-[#3C3D37]">Total Barang</h3>
-                    <p class="text-3xl font-bold text-[#3C3D37]">7</p>
-                </div>
-                
-                <div class="bg-white rounded-lg p-6 shadow">
-                    <h3 class="text-lg font-semibold mb-2 text-[#3C3D37]">Total jasa</h3>
-                    <p class="text-3xl font-bold text-[#3C3D37]">4</p>
-                </div>
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col">
+    <%- include('../partials/header', { userType: 'admin' }) %>
+
+    <!-- Content -->
+    <main class="flex-1 px-10 py-8 overflow-auto">
+      <div class="flex h-[calc(100vh-60px)]">
+        <div class="w-[200px] text-white">
+        <div
+          <div class="flex gap-20 mb-10">
+            <div class="bg-white/90 p-8 rounded-lg text-center min-w-[200px] shadow">
+              <div class="text-sm text-gray-500 mb-2">Total Alat</div>
+              <div class="text-4xl font-bold text-gray-800">20</div>
             </div>
-
-            <div class="mt-8">
-                <h2 class="text-xl font-semibold mb-4 text-[#181C14]">Peminjaman Terbaru</h2>
-                <div class="bg-white rounded-lg overflow-hidden shadow">
-                    <table class="min-w-full">
-                        <thead class="bg-white/50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[#3C3D37] uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[#3C3D37] uppercase tracking-wider">Nama Peminjam</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[#3C3D37] uppercase tracking-wider">Barang</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[#3C3D37] uppercase tracking-wider">Tanggal Pinjam</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-[#3C3D37] uppercase tracking-wider">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <!-- Data will be populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white/90 p-8 rounded-lg text-center min-w-[200px] shadow">
+              <div class="text-sm text-gray-500 mb-2">Total Jasa</div>
+              <div class="text-4xl font-bold text-gray-800">7</div>
             </div>
+            <div class="bg-white/90 p-8 rounded-lg text-center min-w-[200px] shadow">
+              <div class="text-sm text-gray-500 mb-2">Sedang dipinjam</div>
+              <div class="text-4xl font-bold text-gray-800">4</div>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
+    </main>
+    <%- include('../partials/footer') %>
   </div>
 
 </body>
+
 </html>
+

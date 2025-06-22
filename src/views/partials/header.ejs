@@ -11,7 +11,7 @@
       <div
         class="bg-white text-[#3C3D37] text-sm font-normal px-3 py-1 rounded select-none"
       >
-        User
+        <%= typeof userType !== 'undefined' && userType === 'admin' ? 'Admin' : 'User' %>
       </div>
       <button
         aria-label="User profile"
@@ -20,7 +20,3 @@
         <i class="fas fa-user-circle"></i>
       </button>
     </header>
-
-<head>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>

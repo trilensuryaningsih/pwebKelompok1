@@ -22,237 +22,691 @@
         .focus\:ring-custom-green:focus {
             --tw-ring-color: rgba(105, 117, 101, 0.5);
         }
+
+        /* Fixed layout styles */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f0e9 0%, #e8e0d5 100%);
+        }
+
+        .sidebar-fixed {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 50;
+            width: 12rem; /* 192px - match w-48 */
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            margin-left: 12rem; /* 192px - match sidebar width */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 12rem; /* 192px - match sidebar width */
+            right: 0;
+            z-index: 30;
+            background: #f5f0e9;
+            border-bottom: 1px solid #5a6356;
+        }
+
+        .content-scrollable {
+            flex: 1;
+            padding: 1.5rem;
+            margin-top: 4rem; /* Account for fixed header */
+        }
+
+        .footer-sticky {
+            margin-top: auto; /* Push footer to bottom */
+            background: #181C14;
+            border-top: 1px solid #2d3748;
+            width: 100%;
+        }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Form styling */
+        .form-section {
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+
+        .form-input:focus {
+            border-color: #697565;
+            box-shadow: 0 0 0 3px rgba(105, 117, 101, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #697565 0%, #5a6356 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(105, 117, 101, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .signature-area {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .signature-area:hover {
+            border-color: #697565;
+            background: linear-gradient(135deg, #f1f3f4 0%, #e3e6ea 100%);
+        }
+
+        .modal-overlay {
+            backdrop-filter: blur(5px);
+        }
+
+        /* Responsive design for mobile */
+        @media (max-width: 1024px) {
+            .sidebar-fixed {
+                display: none;
+            }
+            
+            .content-wrapper {
+                margin-left: 0;
+            }
+            
+            .header-fixed {
+                left: 0;
+            }
+            
+            .content-scrollable {
+                padding: 1rem;
+                margin-top: 4rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 640px) {
+            .content-scrollable {
+                padding: 0.5rem;
+                margin-top: 3.5rem;
+            }
+            
+            .header-fixed {
+                padding: 0.5rem;
+            }
+            
+            .footer-sticky {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Ensure proper box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Improve performance */
+        .sidebar-fixed,
+        .header-fixed {
+            will-change: transform;
+            transform: translateZ(0);
+        }
     </style>
 </head>
 
-<body class="flex min-h-screen bg-[#f5f0e9] ">
+<body>
 
+    <!-- Fixed Sidebar -->
+    <div class="sidebar-fixed">
     <%- include('../partials/sidebar') %>
+    </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
+    <!-- Main Content Container -->
+    <div class="content-wrapper">
+        <!-- Fixed Header -->
+        <div class="header-fixed">
             <%- include('../partials/header') %>
+        </div>
 
-                <!-- Content -->
-                <section class="flex-1 p-8 overflow-auto flex-1 p-6 flex flex-col">
-                    <form class="bg-white rounded-xl p-8 h-full flex flex-col justify-between min-h-[2000px] max-w-5xl mx-auto" autocomplete="off">
-                    <h2 class="text-[#7F6D6D] font-semibold text-lg mb-6">
-                    SURAT PERJANJIAN KERJASAMA<br/>
-                    <span class="font-normal text-base">Memorandum of Understanding</span>
+        <!-- Scrollable Content -->
+        <div class="content-scrollable custom-scrollbar">
+            <div class="max-w-6xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-8 text-center">
+                    <h1 class="text-3xl font-bold text-[#7F6D6D] mb-2">Memorandum of Understanding</h1>
+                    <p class="text-[#7B7F75] text-sm">Lengkapi formulir perjanjian kerjasama dengan data yang diperlukan</p>
+                </div>
+
+                <form id="mou-form" class="bg-white rounded-2xl shadow-xl p-8 space-y-8" autocomplete="off">
+                    <!-- Required Fields Note -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-blue-800">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Catatan:</strong> Semua field yang ditandai dengan <span class="text-red-500 font-bold">*</span> wajib diisi.
+                        </p>
+                    </div>
+
+                    <!-- Document Header -->
+                    <div class="text-center border-b-2 border-gray-200 pb-6">
+                        <h2 class="text-2xl font-bold text-[#7F6D6D] mb-2">
+                            SURAT PERJANJIAN KERJASAMA
                     </h2>
-                    <div class="space-y-4 text-[#7F6D6D] text-sm font-light max-w-4xl">
-                    <p>
+                        <p class="text-lg text-[#7B7F75]">Memorandum of Understanding</p>
+                    </div>
+
+                    <!-- Opening Section -->
+                    <div class="form-section p-6">
+                        <p class="text-[#7F6D6D] text-sm mb-4">
                         Pada tanggal
-                        <input aria-label="Tanggal" class="border border-[#7F6D6D] rounded px-2 py-1 w-16 text-xs text-[#7F6D6D] font-light" name="tanggal" placeholder="01" type="text"/>
+                            <select disabled aria-label="Tanggal" class="form-input rounded px-3 py-2 w-20 text-sm text-[#7F6D6D] bg-gray-100 cursor-not-allowed mx-2" name="tanggal" id="tanggal-select" required>
+                            <% for(let i=1; i<=31; i++) { %>
+                                <option value="<%= i.toString().padStart(2, '0') %>"><%= i.toString().padStart(2, '0') %></option>
+                            <% } %>
+                        </select>
                         bulan
-                        <input aria-label="Bulan" class="border border-[#7F6D6D] rounded px-2 py-1 w-24 text-xs text-[#7F6D6D] font-light" name="bulan" placeholder="November" type="text"/>
+                            <select disabled aria-label="Bulan" class="form-input rounded px-3 py-2 w-32 text-sm text-[#7F6D6D] bg-gray-100 cursor-not-allowed mx-2" name="bulan" id="bulan-select" required>
+                            <option value="Januari">Januari</option>
+                            <option value="Februari">Februari</option>
+                            <option value="Maret">Maret</option>
+                            <option value="April">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Juni">Juni</option>
+                            <option value="Juli">Juli</option>
+                            <option value="Agustus">Agustus</option>
+                            <option value="September">September</option>
+                            <option value="Oktober">Oktober</option>
+                            <option value="November">November</option>
+                            <option value="Desember">Desember</option>
+                        </select>
                         tahun
-                        <input aria-label="Tahun" class="border border-[#7F6D6D] rounded px-2 py-1 w-20 text-xs text-[#7F6D6D] font-light" name="tahun" placeholder="2024" type="text"/>
+                            <select disabled aria-label="Tahun" class="form-input rounded px-3 py-2 w-24 text-sm text-[#7F6D6D] bg-gray-100 cursor-not-allowed mx-2" name="tahun" id="tahun-select" required>
+                            <% for(let t=2024; t<=2028; t++) { %>
+                                <option value="<%= t %>"><%= t %></option>
+                            <% } %>
+                        </select>
                         , kami yang bertanda tangan di bawah ini:
                     </p>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="nama1">
-                        Nama
-                        </label>
-                        <label class="block text-xs" for="nama1">
-                        Toni Windra
-                        </label>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="instansi1">
-                        Instansi
-                        </label>
-                        <label class="block text-xs" for="nama1">
-                        Universal Multimedia Creative
-                        </label>
+
+                    <!-- Parties Information -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Pihak I -->
+                        <div class="form-section p-6">
+                            <h3 class="text-lg font-semibold text-[#7F6D6D] mb-4">Pihak I</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Nama</label>
+                                    <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                        <span class="text-[#7F6D6D] font-medium">Toni Windra</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Instansi</label>
+                                    <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                        <span class="text-[#7F6D6D] font-medium">Universal Multimedia Creative</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Jabatan</label>
+                                    <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                        <span class="text-[#7F6D6D] font-medium">CEO</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Kontak</label>
+                                    <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                        <span class="text-[#7F6D6D] font-medium">085174461775</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="jabatan1">
-                        Jabatan
-                        </label>
-                        <label class="block text-xs" for="nama1">
-                        CEO
-                        </label>
+
+                        <!-- Pihak II -->
+                        <div class="form-section p-6">
+                            <h3 class="text-lg font-semibold text-[#7F6D6D] mb-4">Pihak II</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Nama <span class="text-red-500">*</span></label>
+                                    <input class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="nama2" name="nama2" placeholder="Masukkan nama lengkap" type="text" required/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Instansi <span class="text-red-500">*</span></label>
+                                    <input class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="instansi2" name="instansi2" placeholder="Masukkan nama instansi" type="text" required/>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="kontak1">
-                        Kontak
-                        </label>
-                        <label class="block text-xs" for="nama1">
-                        085174461775
-                        </label>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Jabatan <span class="text-red-500">*</span></label>
+                                    <input class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="jabatan2" name="jabatan2" placeholder="Masukkan jabatan" type="text" required/>
                     </div>
-                    <p class="mb-4">
-                        Dalam hal ini bertindak sebagai <strong>Pihak I</strong>
-                    </p>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="nama2">
-                        Nama
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="nama2" name="nama2" placeholder="" type="text"/>
+                                <div>
+                                    <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Kontak <span class="text-red-500">*</span></label>
+                                    <input class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="kontak2" name="kontak2" placeholder="Masukkan nomor kontak" type="text" required/>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="instansi2">
-                        Instansi
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="instansi2" name="instansi2" placeholder="" type="text"/>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="jabatan2">
-                        Jabatan
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="jabatan2" name="jabatan2" placeholder="" type="text"/>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs" for="kontak2">
-                        Kontak
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="kontak2" name="kontak2" placeholder="" type="text"/>
                     </div>
-                    <p class="mb-4">
-                        Dalam hal ini bertindak sebagai <strong>Pihak II</strong>
-                    </p>
-                    <p class="mb-4">
+
+                    <!-- Agreement Statement -->
+                    <div class="form-section p-6">
+                        <p class="text-[#7F6D6D] text-sm">
                         Kedua pihak sepakat untuk mengadakan kerja sama dengan ketentuan-ketentuan sebagai berikut:
                     </p>
-                    <h3 class="font-semibold text-[#7F6D6D] mb-2 text-sm">
-                        Pasal 1<br/>
-                        NAMA DAN WAKTU PELAKSANAAN
-                    </h3>
-                    <p class="mb-2">
-                        Pihak I dan Pihak II telah sepakat kerja sama dalam kegiatan:
-                    </p>
-                    <div class="space-y-1 mb-4">
-                        <label class="block text-xs" for="namaKegiatan">
-                        Nama Kegiatan
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="namaKegiatan" name="namaKegiatan" placeholder=""/>
                     </div>
-                    <div class="space-y-1 mb-4">
-                        <label class="block text-xs" for="hariTanggal">
-                        Hari/Tanggal
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="hariTanggal" name="hariTanggal" placeholder=""/>
+
+                    <!-- Activity Information -->
+                    <div class="form-section p-6">
+                        <h3 class="text-lg font-semibold text-[#7F6D6D] mb-4">Informasi Kegiatan</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Nama Kegiatan <span class="text-red-500">*</span></label>
+                                <input class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="namaKegiatan" name="namaKegiatan" placeholder="Masukkan nama kegiatan" required/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Hari/Tanggal <span class="text-red-500">*</span></label>
+                                <input type="date" class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="hariTanggal" name="hariTanggal" required />
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Tempat <span class="text-red-500">*</span></label>
+                                <input class="form-input w-full px-4 py-3 text-sm text-[#7F6D6D]" id="tempat" name="tempat" placeholder="Masukkan lokasi kegiatan" required/>
+                            </div>
+                        </div>
                     </div>
-                    <div class="space-y-1 mb-4">
-                        <label class="block text-xs" for="tempat">
-                        Tempat
-                        </label>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="tempat" name="tempat" placeholder=""/>
+
+                    <!-- Agreement Terms -->
+                    <div class="form-section p-6">
+                        <h3 class="text-lg font-semibold text-[#7F6D6D] mb-4">Ketentuan Perjanjian</h3>
+                        
+                        <div class="text-sm text-[#7F6D6D] space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-[#7F6D6D] mb-2">Pasal 1</h4>
+                                <h5 class="font-semibold text-[#7F6D6D] mb-2">NAMA DAN WAKTU PELAKSANAAN</h5>
+                                <p>Pihak I dan Pihak II telah sepakat kerja sama dalam kegiatan yang telah disebutkan di atas.</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-[#7F6D6D] mb-2">Pasal 2</h4>
+                                <h5 class="font-semibold text-[#7F6D6D] mb-2">PERATURAN KERJA SAMA</h5>
+                                <h6 class="font-semibold text-[#7F6D6D] mb-2">PENYEDIAAN BARANG DAN JASA</h6>
+                                <p>Barang yang dipinjamkan oleh Pihak I meliputi, perlengkapan yang diperlukan untuk kegiatan fotografi atau videografi.</p>
+                                <p>Jasa yang disediakan oleh Pihak I meliputi, tim produksi visual sesuai kebutuhan Pihak II.</p>
+                                <p>Pihak II wajib memberikan informasi yang jelas mengenai spesifikasi dan jumlah barang yang diperlukan serta jadwal penggunaan jasa fotografi atau videografi.</p>
+                                <p>Pihak II bertanggung jawab atas keamanan barang yang dipinjamkan selama masa peminjaman dan akan mengganti barang yang rusak atau hilang sesuai kesepakatan harga.</p>
+                                <p>Pihak I akan menyediakan barang dan jasa sesuai dengan spesifikasi yang telah disepakati dan dalam kondisi yang baik pada waktu peminjaman.</p>
+                                <p>Pihak II bertanggung jawab untuk menggunakan barang dan jasa sesuai dengan ketentuan yang telah disepakati dan tidak melakukan tindakan yang merusak atau mengubah barang tersebut tanpa izin dari Pihak I.</p>
+                                <p>Pembayaran sewa barang dan jasa akan dilakukan oleh Pihak II sesuai dengan tarif yang telah disepakati sebelum kegiatan dimulai.</p>
+                                <p>Pihak II wajib menyerahkan bukti pemesanan atau pembayaran setelah menerima barang atau menggunakan jasa untuk keperluan administrasi Pihak I.</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-[#7F6D6D] mb-2">Pasal 3</h4>
+                                <h5 class="font-semibold text-[#7F6D6D] mb-2">PENYELESAIAN PERSELISIHAN</h5>
+                                <p>Apabila terjadi suatu perselisihan antara Pihak I dan Pihak II sehubungan dengan pelaksanaan perjanjian kerjasama ini akan diselesaikan secara musyawarah mufakat oleh kedua belah pihak.</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-[#7F6D6D] mb-2">Pasal 4</h4>
+                                <h5 class="font-semibold text-[#7F6D6D] mb-2">HAK CIPTA DAN PENGGUNAAN KONTEN</h5>
+                                <p>Semua hasil rekaman dan dokumentasi yang dihasilkan selama kegiatan, termasuk foto dan video, dapat digunakan oleh kedua belah pihak untuk keperluan promosi, dokumentasi, dan publikasi dengan tetap mencantumkan kredit kepada masing-masing pihak sesuai kontribusi.</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-[#7F6D6D] mb-2">Pasal 5</h4>
+                                <h5 class="font-semibold text-[#7F6D6D] mb-2">KETENTUAN LAIN</h5>
+                                <p>Hal-hal lain yang berkenaan dengan perjanjian ini dan hal-hal lain yang belum diatur pada perjanjian ini akan dimusyawarahkan kedua belah pihak.</p>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="font-semibold text-[#7F6D6D] mb-2 text-sm">
-                        Pasal 2<br/>
-                        PERATURAN KERJA SAMA
-                    </h3>
-                    <p class="mb-2 font-light">
-                        PENYEDIAAN BARANG DAN JASA 
-                    </p>
-                    <ol class="list-decimal list-inside space-y-1 text-xs font-light mb-4">
-                        <li>
-                            Barang yang dipinjamkan oleh Pihak I meliputi, perlengkapan yang diperlukan untuk kegiatan fotografi atau videografi.
-                        </li>
-                        <li>
-                            Jasa yang disediakan oleh Pihak I meliputi, tim produksi visual sesuai kebutuhan Pihak II.
-                        </li>
-                        <li>
-                            Pihak II wajib memberikan informasi yang jelas mengenai spesifikasi dan jumlah barang yang diperlukan serta jadwal penggunaan jasa fotografi atau videografi.
-                        </li>
-                        <li>
-                            Pihak II bertanggung jawab atas keamanan barang yang dipinjamkan selama masa peminjaman dan akan mengganti barang yang rusak atau hilang sesuai kesepakatan harga.
-                        </li>
-                        <li>
-                            Pihak I akan menyediakan barang dan jasa sesuai dengan spesifikasi yang telah disepakati dan dalam kondisi yang baik pada waktu peminjaman.
-                        </li>
-                        <li>
-                            Pihak II bertanggung jawab untuk menggunakan barang dan jasa sesuai dengan ketentuan yang telah disepakati dan tidak melakukan tindakan yang merusak atau mengubah barang tersebut tanpa izin dari Pihak I.
-                        </li>
-                        <li>
-                            Pembayaran sewa barang dan jasa akan dilakukan oleh Pihak II sesuai dengan tarif yang telah disepakati sebelum kegiatan dimulai.
-                        </li>
-                        <li>
-                            Pihak II wajib menyerahkan bukti pemesanan atau pembayaran setelah menerima barang atau menggunakan jasa untuk keperluan administrasi Pihak I.
-                        </li>
-                    </ol>
-                    <h3 class="font-semibold text-[#7F6D6D] mb-2 text-sm">
-                        Pasal 3<br/>
-                        PENYELESAIAN PERSELISIHAN
-                    </h3>
-                    <p class="mb-4 text-xs font-light">
-                        Apabila terjadi suatu perselisihan antara Pihak I dan Pihak II sehubungan dengan pelaksanaan perjanjian kerjasama ini akan diselesaikan secara musyawarah mufakat oleh kedua belah pihak.
-                    </p>
-                    <h3 class="font-semibold text-[#7F6D6D] mb-2 text-sm">
-                        Pasal 4<br/>
-                        HAK CIPTA DAN PENGGUNAAN KONTEN
-                    </h3>
-                    <p class="mb-4 text-xs font-light">
-                        Semua hasil rekaman dan dokumentasi yang dihasilkan selama kegiatan, termasuk foto dan video, dapat digunakan oleh kedua belah pihak untuk keperluan promosi, dokumentasi, dan publikasi dengan tetap mencantumkan kredit kepada masing-masing pihak sesuai kontribusi.
-                    </p>
-                    <h3 class="font-semibold text-[#7F6D6D] mb-2 text-sm">
-                        Pasal 5<br/>
-                        KETENTUAN LAIN
-                    </h3>
-                    <p class="mb-4 text-xs font-light">
-                        Hal-hal lain yang berkenaan dengan perjanjian ini dan hal-hal lain yang belum diatur pada perjanjian ini akan dimusyawarahkan kedua belah pihak
-                    </p>
-                    <p class="mb-8 text-xs font-light">
+
+                    <!-- Closing Statement -->
+                    <div class="form-section p-6">
+                        <h3 class="text-lg font-semibold text-[#7F6D6D] mb-4">Penutup</h3>
+                        <p class="text-[#7F6D6D] text-sm">
                         Dengan ini Surat Perjanjian Kerjasama ini dibuat serta ditandatangani oleh kedua belah pihak.
                     </p>
-                    <div class="mb-8">
-                        <p class="mb-6">
-                        Padang,
-                        <input aria-label="Tanggal penandatanganan" class="border border-[#7F6D6D] rounded px-2 py-1 w-32 text-xs text-[#7F6D6D] font-light" name="tanggalPenandatanganan" placeholder=" 01 November 2023" type="text" />
-                        </p>
-                        <div class="flex justify-between max-w-3xl">
-                        <div class="flex flex-col items-center space-y-1 text-xs font-light">
-                        <span>
-                        Pihak I,
-                        </span>
-                        <label>
-                        Pihak Penyedia Layanan
-                        </label>
-                        <span class="block h-16 w-48 border-b border-[#7F6D6D]">
-                        </span>
+                    </div>
+
+                    <!-- Signature Section -->
+                    <div class="form-section p-6">
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-[#7F6D6D] mb-2">Tanggal Penandatanganan <span class="text-red-500">*</span></label>
+                            <input type="date" aria-label="Tanggal penandatanganan" class="form-input px-4 py-3 w-48 text-sm text-[#7F6D6D]" name="tanggalPenandatanganan" required />
                         </div>
-                        <div class="flex flex-col items-center space-y-1 text-xs font-light">
-                        <span>
-                        Pihak II,
-                        </span>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="jabatan3" name="jabatan3" placeholder="Jabatan Pihak II" type="text"/>
-                        <span class="block h-16 w-48 border-b border-[#7F6D6D]">
-                        </span>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Pihak I Signature -->
+                            <div class="text-center">
+                                <div class="signature-area p-6 rounded-lg mb-4">
+                                    <p class="text-sm text-[#7F6D6D] mb-4">Pihak I</p>
+                                    <img src="/images/Toni.jpg" alt="Tanda Tangan Toni Windra" class="mx-auto mb-4 max-h-20 border rounded" />
+                                    <p class="font-semibold text-[#7F6D6D]">Toni Windra</p>
+                                    <p class="text-xs text-gray-600">NIM.2111517002</p>
+                                </div>
+                            </div>
+
+                            <!-- Pihak II Signature -->
+                            <div class="text-center">
+                                <div class="signature-area p-6 rounded-lg mb-4">
+                                    <p class="text-sm text-[#7F6D6D] mb-4">Pihak II</p>
+                                    
+                                    <!-- Signature Upload -->
+                                    <div class="mb-4">
+                                        <label class="block text-xs text-[#7F6D6D] mb-2">Upload Tanda Tangan <span class="text-red-500">*</span></label>
+                                        <input type="file" accept="image/*" id="ttdPihak2" name="ttdPihak2" class="block w-full text-xs text-[#7F6D6D] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#697565] file:text-white hover:file:bg-[#5a6356]" required />
+                                        <img id="preview-ttdPihak2" src="#" alt="Preview Tanda Tangan" class="mt-2 max-h-24 mx-auto hidden border rounded" />
+                        </div>
+
+                                    <!-- Signature Line -->
+                                    <div class="border-b-2 border-gray-400 mb-4" style="height: 80px;"></div>
+                                    
+                                    <!-- Name and NIM Inputs -->
+                                    <div class="space-y-2">
+                                        <input class="form-input w-full px-3 py-2 text-sm text-[#7F6D6D]" id="nama3" name="nama3" placeholder="Nama Pihak II" type="text" required/>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-xs text-gray-600">NIM. <span class="text-red-500">*</span></span>
+                                            <input class="form-input flex-1 px-3 py-2 text-sm text-[#7F6D6D]" id="nim" name="nim" placeholder="NIM Pihak II" type="text" required/>
                         </div>
                         </div>
-                        <div class="flex justify-between max-w-3xl mt-2 text-xs font-light">
-                        <div>
-                        <span>
-                        Toni Windra <br>
-                        NIM.2111517002
-                        </span>
                         </div>
-                        <div class="text-right">
-                        <span>
-                        <input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="nama3" name="nama3" placeholder="Nama Pihak II" type="text"/><br/>
-                        NIM.<input class="border border-[#7F6D6D] rounded px-2 py-1 w-full text-xs text-[#7F6D6D] font-light" id="nim" name="nim" placeholder="NIM Pihak II" type="text"/>
-                        </span>
                         </div>
                         </div>
                     </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                        <button id="btn-kembali" class="btn-secondary px-8 py-3 rounded-lg font-semibold text-white text-sm flex items-center space-x-2" type="button">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Kembali</span>
+                    </button>
+                        <button id="btn-submit" class="btn-primary px-8 py-3 rounded-lg font-semibold text-white text-sm flex items-center space-x-2" type="button">
+                            <i class="fas fa-save"></i>
+                            <span>Submit MOU</span>
+                    </button>
                     </div>
-                    <div class="flex justify-between text-xs text-[#7F6D6D] font-light">
-                    <button class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
-                        Kembali
-                    </button>
-                    <button class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
-                        Cetak
-                    </button>
-                    <button class="mx-auto mt-auto border border-[#7F6D6D] rounded-full px-6 py-1 text-xs text-[#7F6D6D] hover:bg-[#D9D0C7]" type="button">
-                        Submit
-                    </button>
+
+                    <!-- Success Message -->
+                    <div id="success-message" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 font-semibold text-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Data berhasil disimpan!
                     </div>
                     </form>
-                    </section>
+            </div>
+        </div>
+
+        <!-- Fixed Footer -->
+        <div class="footer-sticky">
                 <%- include('../partials/footer') %>
         </div>
+    </div>
+
+    <!-- Modal Pop Up -->
+    <div id="modal-success" class="fixed inset-0 bg-black bg-opacity-40 modal-overlay flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 shadow-2xl max-w-md w-full mx-4 text-center transform transition-all">
+            <div class="text-green-600 text-4xl mb-4">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="text-xl font-bold text-[#7F6D6D] mb-2">Berhasil!</h3>
+            <p class="text-[#7B7F75] mb-6">Data MOU berhasil disimpan. Anda dapat mencetak dokumen sekarang.</p>
+            <button id="btn-modal-cetak" class="btn-primary px-6 py-3 rounded-lg font-semibold text-white text-sm flex items-center space-x-2 mx-auto">
+                <i class="fas fa-print"></i>
+                <span>Cetak MOU</span>
+            </button>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const date = today.getDate().toString().padStart(2, '0');
+        const month = today.toLocaleString('id-ID', { month: 'long' });
+        const year = today.getFullYear();
+
+        document.getElementById('tanggal-select').value = date;
+        document.getElementById('bulan-select').value = month;
+        document.getElementById('tahun-select').value = year;
+
+        const btnSubmit = document.getElementById('btn-submit');
+        const btnKembali = document.getElementById('btn-kembali');
+        const successMessage = document.getElementById('success-message');
+        const form = document.querySelector('form');
+
+        // Preview tanda tangan upload
+        const ttdInput = document.getElementById('ttdPihak2');
+        const ttdPreview = document.getElementById('preview-ttdPihak2');
+        ttdInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    ttdPreview.src = ev.target.result;
+                    ttdPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                ttdPreview.src = '#';
+                ttdPreview.classList.add('hidden');
+            }
+        });
+
+        // Ganti event listener ke tombol submit
+        btnSubmit.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Validate required fields
+            const requiredFields = [
+                { id: 'nama2', name: 'Nama Pihak II' },
+                { id: 'instansi2', name: 'Instansi' },
+                { id: 'jabatan2', name: 'Jabatan' },
+                { id: 'kontak2', name: 'Kontak' },
+                { id: 'namaKegiatan', name: 'Nama Kegiatan' },
+                { id: 'hariTanggal', name: 'Hari/Tanggal' },
+                { id: 'tempat', name: 'Tempat' },
+                { id: 'nama3', name: 'Nama Pihak II (Tanda Tangan)' },
+                { id: 'nim', name: 'NIM' }
+            ];
+            
+            const tanggalPenandatanganan = document.querySelector('input[name="tanggalPenandatanganan"]').value;
+            const signatureFile = ttdInput.files[0];
+            
+            // Check if any required field is empty
+            const emptyFields = [];
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (!element.value.trim()) {
+                    emptyFields.push(field.name);
+                    element.classList.add('border-red-500');
+                } else {
+                    element.classList.remove('border-red-500');
+                }
+            });
+            
+            if (!tanggalPenandatanganan) {
+                emptyFields.push('Tanggal Penandatanganan');
+                document.querySelector('input[name="tanggalPenandatanganan"]').classList.add('border-red-500');
+                    } else {
+                document.querySelector('input[name="tanggalPenandatanganan"]').classList.remove('border-red-500');
+                    }
+            
+            if (!signatureFile) {
+                emptyFields.push('Upload Tanda Tangan');
+                ttdInput.classList.add('border-red-500');
+            } else {
+                ttdInput.classList.remove('border-red-500');
+            }
+            
+            if (emptyFields.length > 0) {
+                alert(`Mohon lengkapi field berikut:\n${emptyFields.join('\n')}`);
+                return;
+            }
+            
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Menyimpan...</span>';
+            successMessage.classList.add('hidden');
+            
+            const data = {};
+            data.tanggal = document.getElementById('tanggal-select').value;
+            data.bulan = document.getElementById('bulan-select').value;
+            data.tahun = document.getElementById('tahun-select').value;
+            data.nama2 = document.getElementById('nama2').value;
+            data.instansi2 = document.getElementById('instansi2').value;
+            data.jabatan2 = document.getElementById('jabatan2').value;
+            data.kontak2 = document.getElementById('kontak2').value;
+            data.namaKegiatan = document.getElementById('namaKegiatan').value;
+            data.hariTanggal = document.getElementById('hariTanggal').value;
+            data.tempat = document.getElementById('tempat').value;
+            data.tanggalPenandatanganan = document.querySelector('input[name="tanggalPenandatanganan"]').value;
+            data.nama3 = document.getElementById('nama3').value;
+            data.nim = document.getElementById('nim').value;
+            
+            // Handle signature file upload
+            const file = ttdInput.files[0];
+            
+            const submitData = () => {
+                // Ambil data pesanan dari localStorage
+                const pemesananData = localStorage.getItem('pemesananData');
+                let pesananPayload = {};
+                if (pemesananData) {
+                    pesananPayload = JSON.parse(pemesananData);
+                }
+                
+                // Kirim data MOU ke backend
+                fetch('/user/mou', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...data,
+                        orderData: pesananPayload
+                    })
+                }).then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                    // Tampilkan pesan berhasil, disable submit
+                    successMessage.classList.remove('hidden');
+                    btnSubmit.disabled = true;
+                        btnSubmit.innerHTML = '<i class="fas fa-check"></i><span>Berhasil Disimpan</span>';
+                    // Tampilkan modal pop up
+                        const modal = document.getElementById('modal-success');
+                        modal.classList.remove('hidden');
+                        // Hapus data pemesanan dari localStorage
+                        localStorage.removeItem('pemesananData');
+                    } else {
+                        // Tampilkan pesan error
+                        alert(result.message || 'Gagal menyimpan data');
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = '<i class="fas fa-save"></i><span>Submit MOU</span>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menyimpan data');
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="fas fa-save"></i><span>Submit MOU</span>';
+                });
+            };
+            
+            // If there's a signature file, read it first
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    data.ttdPihak2 = ev.target.result;
+                    submitData();
+                };
+                reader.onerror = function() {
+                    // If file reading fails, continue without signature
+                    submitData();
+            };
+            reader.readAsDataURL(file);
+            } else {
+                // No signature file, submit directly
+                submitData();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'btn-modal-cetak') {
+                const btnCetak = e.target;
+                const originalText = btnCetak.innerHTML;
+                
+                // Show loading state
+                btnCetak.disabled = true;
+                btnCetak.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Membuka...</span>';
+                
+                // Open in new window with loading message
+                const newWindow = window.open('/user/cetak-mou', '_blank');
+                
+                // Reset button after a short delay
+                setTimeout(() => {
+                    btnCetak.disabled = false;
+                    btnCetak.innerHTML = originalText;
+            document.getElementById('modal-success').classList.add('hidden');
+                }, 2000);
+            }
+        });
+
+        // Kembali button functionality
+        btnKembali.addEventListener('click', function() {
+            window.location.href = '/user/status';
+        });
+
+        console.log('MOU page loaded successfully');
+        console.log('Layout: Fixed sidebar with sticky footer');
+        console.log('Screen size:', window.innerWidth, 'x', window.innerHeight);
+        
+        // Check if all elements are properly loaded
+        const sidebar = document.querySelector('.sidebar-fixed');
+        const header = document.querySelector('.header-fixed');
+        const footer = document.querySelector('.footer-sticky');
+        const content = document.querySelector('.content-scrollable');
+        
+        console.log('Sidebar found:', !!sidebar);
+        console.log('Header found:', !!header);
+        console.log('Footer found:', !!footer);
+        console.log('Content found:', !!content);
+        
+        // Handle window resize for responsive design
+        window.addEventListener('resize', function() {
+            console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+            // Force reflow to ensure layout updates
+            document.body.offsetHeight;
+        });
+    });
+</script>
 </body>
 
 </html>

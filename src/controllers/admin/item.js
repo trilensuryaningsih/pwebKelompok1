@@ -1,4 +1,4 @@
-const { Item } = require('../../models');
+const { Item, Order, Service } = require('../../models');
 const path = require('path');
 
 // List all items (for page)
@@ -70,5 +70,42 @@ exports.deleteItem = async (req, res) => {
     res.redirect('/admin/items?delete=success');
   } catch (err) {
     res.status(500).send('Gagal menghapus item.');
+  }
+};
+
+exports.showAllOrdersPage = async (req, res) => {
+  try {
+    const { User, Item, Service } = require('../../models');
+    
+    const orders = await Order.findAll({
+      include: [
+        { 
+          model: User, 
+          attributes: ['name', 'email'], 
+          required: false 
+        },
+        { 
+          model: Item, 
+          attributes: ['name', 'category'], 
+          required: false 
+        },
+        { 
+          model: Service, 
+          attributes: ['name', 'category'], 
+          required: false 
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    console.log('Orders found:', orders.length);
+    
+    res.render('admin/items/pesanan', { 
+      orders,
+      user: req.session.user || null
+    });
+  } catch (err) {
+    console.error('Error in showAllOrdersPage:', err);
+    res.status(500).send('Gagal memuat daftar pesanan: ' + err.message);
   }
 };

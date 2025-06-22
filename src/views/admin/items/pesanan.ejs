@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Pesanan - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+  <%- include('../../partials/admin/sidebar') %>
+  <div class="ml-64 p-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold mb-6 text-[#697565]">Daftar Semua Pesanan</h1>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg shadow divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Pesanan</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Pemesan</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Barang/Jasa</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tgl Pinjam</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tgl Kembali</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MOU File</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% if (orders && orders.length > 0) { %>
+              <% orders.forEach(function(order, idx) { %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= idx + 1 %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#<%= order.id %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= order.User ? order.User.name : 'N/A' %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= order.Item ? order.Item.name : (order.Service ? order.Service.name : 'N/A') %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= order.startDate ? new Date(order.startDate).toLocaleDateString('id-ID') : '-' %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= order.endDate ? new Date(order.endDate).toLocaleDateString('id-ID') : '-' %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if (order.totalAmount) { %>
+                      Rp <%= parseFloat(order.totalAmount).toLocaleString('id-ID') %>
+                    <% } else { %>
+                      -
+                    <% } %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if (order.mouFile) { %>
+                      <a href="<%= order.mouFile %>" target="_blank" class="text-blue-600 hover:text-blue-900 underline">
+                        <i class="material-icons text-sm">picture_as_pdf</i> Download MOU
+                      </a>
+                    <% } else { %>
+                      <span class="text-gray-400">-</span>
+                    <% } %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% let statusColor = {
+                      pending: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+                      approved: 'bg-blue-100 border-blue-400 text-blue-700',
+                      rejected: 'bg-red-200 border-red-500 text-red-800',
+                      active: 'bg-green-100 border-green-400 text-green-700',
+                      completed: 'bg-gray-200 border-gray-400 text-gray-700',
+                      cancelled: 'bg-gray-400 border-gray-700 text-gray-900',
+                      exchange_requested: 'bg-purple-100 border-purple-400 text-purple-700'
+                    }[order.status] || 'bg-white border-gray-300 text-gray-700'; %>
+                    <span class="inline-block border font-semibold rounded-full px-4 py-1 select-none <%= statusColor %>">
+                      <%= order.status %>
+                    </span>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada pesanan.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

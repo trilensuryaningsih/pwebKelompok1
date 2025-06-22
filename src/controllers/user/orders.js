@@ -1,4 +1,4 @@
-const { Order, User, Item } = require('../../models');
+const { Order, User, Item, Service } = require('../../models');
 const { Op } = require('sequelize');
 
 const ordersController = {
@@ -256,6 +256,9 @@ const ordersController = {
             const { id } = req.params;
             const user_id = req.session.user.id;
 
+            console.log(`Cancelling order ${id} for user ${user_id}`);
+
+            // Find order first
             const order = await Order.findOne({
                 where: { 
                     id: id,
@@ -264,27 +267,95 @@ const ordersController = {
             });
 
             if (!order) {
+                console.log(`Order ${id} not found for user ${user_id}`);
                 return res.status(404).json({
                     success: false,
                     message: 'Order not found'
                 });
             }
 
+            console.log(`Found order:`, {
+                id: order.id,
+                itemType: order.itemType,
+                itemId: order.itemId,
+                quantity: order.quantity,
+                status: order.status
+            });
+
             // Only allow cancellation of pending orders
             if (order.status !== 'pending') {
+                console.log(`Order ${id} cannot be cancelled - status: ${order.status}`);
                 return res.status(400).json({
                     success: false,
                     message: 'Only pending orders can be cancelled'
                 });
             }
 
-            await order.update({ status: 'cancelled' });
+            // Start transaction to ensure data consistency
+            const transaction = await Order.sequelize.transaction();
+            
+            try {
+                console.log(`Starting transaction for order ${id}`);
+                
+                // Update order status to cancelled
+                await order.update({ status: 'cancelled' }, { transaction });
+                console.log(`Order ${id} status updated to cancelled`);
+                
+                // Return quantity to Item or Service
+                if (order.itemType === 'item') {
+                    console.log(`Processing item with ID: ${order.itemId}`);
+                    const item = await Item.findByPk(order.itemId, { transaction });
+                    if (item) {
+                        const oldQuantity = item.quantity;
+                        const newQuantity = oldQuantity + order.quantity;
+                        console.log(`Item ${item.name}: ${oldQuantity} + ${order.quantity} = ${newQuantity}`);
+                        
+                        await item.update({ 
+                            quantity: newQuantity,
+                            status: newQuantity > 0 ? 'available' : 'unavailable'
+                        }, { transaction });
+                        
+                        console.log(`Item ${item.name} quantity updated successfully`);
+                    } else {
+                        console.log(`Item with ID ${order.itemId} not found`);
+                    }
+                } else if (order.itemType === 'service') {
+                    console.log(`Processing service with ID: ${order.itemId}`);
+                    const service = await Service.findByPk(order.itemId, { transaction });
+                    if (service) {
+                        const oldQuantity = service.quantity;
+                        const newQuantity = oldQuantity + order.quantity;
+                        console.log(`Service ${service.name}: ${oldQuantity} + ${order.quantity} = ${newQuantity}`);
+                        
+                        await service.update({ 
+                            quantity: newQuantity,
+                            status: newQuantity > 0 ? 'available' : 'unavailable'
+                        }, { transaction });
+                        
+                        console.log(`Service ${service.name} quantity updated successfully`);
+                    } else {
+                        console.log(`Service with ID ${order.itemId} not found`);
+                    }
+                } else {
+                    console.log(`Unknown itemType: ${order.itemType}`);
+                }
+                
+                // Commit transaction
+                await transaction.commit();
+                console.log(`Transaction committed successfully for order ${id}`);
 
-            return res.json({
-                success: true,
-                message: 'Order cancelled successfully',
-                data: order
-            });
+                return res.json({
+                    success: true,
+                    message: 'Order cancelled successfully and quantity returned',
+                    data: order
+                });
+                
+            } catch (error) {
+                // Rollback transaction on error
+                console.error(`Error in transaction for order ${id}:`, error);
+                await transaction.rollback();
+                throw error;
+            }
         } catch (error) {
             console.error('Error cancelling order:', error);
             return res.status(500).json({

@@ -60,6 +60,26 @@ module.exports = {
         is_active: true,
         createdAt: new Date(),
         updatedAt: new Date()
+      },
+      {
+        name: 'Admin Demo',
+        email: 'admin@example.com',
+        password: '$2b$10$NonF5ewvVK1hnHOJSmHAqOFsjdp9rDTS9NetJLdIEAVXKKGmo63fm', // admin123
+        role: 'admin',
+        phone_number: '081234567890',
+        is_active: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        name: 'PJ Demo',
+        email: 'pj@example.com',
+        password: '$2b$10$qg0UgoDoQaUdDcaYRxe66.8Tdyqae5yiB1E2XkhhCjTvyJGI0.zB6', // pj123
+        role: 'pj',
+        phone_number: '081234567891',
+        is_active: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ], {});
   },

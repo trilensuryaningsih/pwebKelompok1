@@ -1,37 +1,77 @@
+
 const express = require('express');
 const barangController = require('../controllers/user/barang');
 const ordersController = require('../controllers/user/orders');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const PDFDocument = require('pdfkit');
+const { Readable } = require('stream');
+const path = require('path');
+const statusController = require('../controllers/user/status');
+const pesanController = require('../controllers/user/pesan');
+const mouController = require('../controllers/user/mou');
+const cancelController = require('../controllers/user/cancel');
 const { Item, Service } = require('../models');
 
 const router = express.Router();
 
 // Terapkan middleware otentikasi dan otorisasi untuk semua rute user
 router.use(requireAuth);
-router.use(requireRole(['user']));
-
-router.get('/home', async (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/user');
-    }
+router.use(requireRole(['user']));// Home route (menggantikan dashboard)
+router.get('/home', requireAuth, async (req, res) => {
     try {
         const items = await Item.findAll({ where: { status: 'available' }, order: [['name', 'ASC']] });
         const services = await Service.findAll({ order: [['name', 'ASC']] });
-        res.render('user/home', { items, services, user: req.session.user });
+        res.render('user/home', { items, services, user: req.session.user, currentPage: 'home' });
     } catch (err) {
         res.status(500).send('Gagal memuat data.');
     }
 });
 
-
-router.get('/dashboard', (req, res, next) => {
-    res.render('user/dashboard', {
-        user: req.session.user
-    });
+// Pemesanan page (alat)
+router.get('/pemesanan', requireAuth, async (req, res, next) => {
+    try {
+        const availableItems = await barangController.getAvailableItems();
+        const availableServices = await barangController.getAvailableServices();
+        res.render('user/pemesanan', {
+            items: availableItems,
+            services: availableServices,
+            errorMessage: null,
+            user: req.session.user,
+            currentPage: 'pemesanan'
+        });
+    } catch (error) {
+        console.error('Error loading pemesanan page:', error);
+        res.render('user/pemesanan', {
+            items: [],
+            services: [],
+            errorMessage: 'Gagal memuat data barang. Silakan coba lagi.',
+            user: req.session.user,
+            currentPage: 'pemesanan'
+        });
+    }
 });
 
+// Pemesanan jasa (opsional, jika ada halaman khusus)
+router.get('/pemesanan-jasa', async (req, res, next) => {
+    try {
+        const availableServices = await barangController.getAvailableServices();
+        res.render('user/pemesanan-jasa', {
+            services: availableServices,
+            errorMessage: null,
+            user: req.session.user
+        });
+    } catch (error) {
+        console.error('Error loading pemesanan jasa page:', error);
+        res.render('user/pemesanan-jasa', {
+            services: [],
+            errorMessage: 'Gagal memuat data jasa. Silakan coba lagi.',
+            user: req.session.user
+        });
+    }
+});
+
+// Orders page (baru)
 router.get('/orders', requireAuth, (req, res, next) => {
-    // Render the orders page - the JavaScript will load the data via API
     res.render('user/orders', {
         user: req.session.user
     });
@@ -44,73 +84,8 @@ router.get('/orders/:id', requireAuth, (req, res, next) => {
     });
 });
 
-// POST route for creating orders
-router.post('/pemesanan', async (req, res) => {
-    try {
-        const { item_id, quantity, tanggal_pinjam, tanggal_kembali } = req.body;
-        
-        // Validate input
-        if (!item_id || !quantity || !tanggal_pinjam || !tanggal_kembali) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Semua field harus diisi' 
-            });
-        }
-
-        // Validate dates
-        const pinjamDate = new Date(tanggal_pinjam);
-        const kembaliDate = new Date(tanggal_kembali);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        if (pinjamDate < today) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Tanggal peminjaman tidak boleh kurang dari hari ini' 
-            });
-        }
-
-        if (kembaliDate <= pinjamDate) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Tanggal pengembalian harus setelah tanggal peminjaman' 
-            });
-        }
-
-        // Create order
-        const orderData = {
-            id_item: parseInt(item_id),
-            quantity: parseInt(quantity),
-            tanggal_pinjam,
-            tanggal_kembali,
-            user_id: req.session.user ? req.session.user.id : null
-        };
-
-        const result = await barangController.createOrder(orderData);
-        
-        if (result.success) {
-            res.json({ 
-                success: true, 
-                message: 'Pesanan berhasil dibuat!',
-                redirect: '/user/status'
-            });
-        } else {
-            res.status(400).json({ 
-                success: false, 
-                message: result.message 
-            });
-        }
-    } catch (error) {
-        console.error('Error creating order:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Terjadi kesalahan server. Silakan coba lagi.' 
-        });
-    }
-});
-
 // API endpoint to get items by category
-router.get('/api/items/category/:kategori', async (req, res) => {
+router.get('/items/category/:kategori', async (req, res) => {
     try {
         const { kategori } = req.params;
         const items = await barangController.getItemsByCategory(kategori);
@@ -122,7 +97,7 @@ router.get('/api/items/category/:kategori', async (req, res) => {
 });
 
 // API endpoint to check item availability
-router.get('/api/items/availability/:id/:quantity', async (req, res) => {
+router.get('/items/availability/:id/:quantity', async (req, res) => {
     try {
         const { id, quantity } = req.params;
         const availability = await barangController.checkItemAvailability(
@@ -136,21 +111,33 @@ router.get('/api/items/availability/:id/:quantity', async (req, res) => {
     }
 });
 
-// API Routes for Orders
-router.get('/api/orders', ordersController.getUserOrders);
-router.get('/api/orders/:id', ordersController.getOrderById);
-router.get('/api/orders/status/:status', ordersController.getOrdersByStatus);
-router.post('/api/orders', ordersController.createOrder);
-router.put('/api/orders/:id/status', ordersController.updateOrderStatus);
-router.delete('/api/orders/:id', ordersController.cancelOrder);
-router.get('/api/orders/stats', ordersController.getOrderStats);
-
-// API Routes for Items and Services
-router.get('/api/items', async (req, res) => {
+// API endpoint to check service availability
+router.get('/services/availability/:id/:quantity', async (req, res) => {
     try {
-        const items = await Item.findAll({
-            order: [['id', 'ASC']]
-        });
+        const { id, quantity } = req.params;
+        const availability = await barangController.checkServiceAvailability(parseInt(id), parseInt(quantity));
+        res.json(availability);
+    } catch (error) {
+        console.error('Error checking service availability:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// API endpoint to get available items
+router.get('/items/available', async (req, res) => {
+    try {
+        const availableItems = await barangController.getAvailableItems();
+        res.json({ success: true, data: availableItems });
+    } catch (error) {
+        console.error('Error fetching available items:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// API endpoint to get all items
+router.get('/items', async (req, res) => {
+    try {
+        const items = await barangController.getAllItems();
         res.json({ success: true, data: items });
     } catch (error) {
         console.error('Error fetching items:', error);
@@ -158,11 +145,10 @@ router.get('/api/items', async (req, res) => {
     }
 });
 
-router.get('/api/services', async (req, res) => {
+// API endpoint to get all services
+router.get('/services', async (req, res) => {
     try {
-        const services = await Service.findAll({
-            order: [['id', 'ASC']]
-        });
+        const services = await barangController.getAllServices();
         res.json({ success: true, data: services });
     } catch (error) {
         console.error('Error fetching services:', error);
@@ -170,22 +156,35 @@ router.get('/api/services', async (req, res) => {
     }
 });
 
-router.get('/mou', (req, res, next) => {
-    res.render('user/mou', {
-        user: req.session.user
-    });
+// API endpoint to get available services
+router.get('/services/available', async (req, res) => {
+    try {
+        const availableServices = await barangController.getAvailableServices();
+        res.json({ success: true, data: availableServices });
+    } catch (error) {
+        console.error('Error fetching available services:', error);
+        res.status(500).json({ success: false, message: 'Error fetching available services' });
+    }
 });
 
-router.get('/cetak-mou', (req, res, next) => {
-    res.render('user/cetak-mou', {
-        user: req.session.user
-    });
-});
+// API routes for orders (baru)
+router.get('/orders', ordersController.getUserOrders);
+router.get('/orders/:id', ordersController.getOrderById);
+router.get('/orders/status/:status', ordersController.getOrdersByStatus);
+router.put('/orders/:id/status', ordersController.updateOrderStatus);
+router.delete('/orders/:id', ordersController.cancelOrder);
+router.get('/orders/stats', ordersController.getOrderStats);
+router.post('/orders/:id/cancel', requireAuth, cancelController.cancelOrder);
 
-router.get('/status', (req, res, next) => {
-    res.render('user/status', {
-        user: req.session.user
-    });
-});
+// MOU, cetak-mou, status
+router.get('/mou', requireAuth, mouController.form);
+router.post('/mou', requireAuth, mouController.submit);
+router.get('/cetak-mou', requireAuth, mouController.cetak);
+router.get('/download-mou-pdf', requireAuth, mouController.downloadPdf);
+
+router.get('/status', requireAuth, statusController.getUserOrdersStatus);
+
+router.post('/status/:id/cancel', requireAuth, statusController.cancelOrder);
+router.post('/status/:id/exchange', requireAuth, statusController.requestExchange);
 
 module.exports = router;

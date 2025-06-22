@@ -1,15 +1,16 @@
 <!-- Sidebar -->
-<div class="w-48 bg-[#697565] text-[#F0EAE0] shadow-lg flex flex-col h-screen">
+ 
+<div class="w-48 bg-[#697565] text-white shadow-lg flex flex-col h-full">
   <div class="flex justify-center items-center p-6">
     <img src="/images/logo_umc.png" alt="Black triangular logo" class="w-10 h-auto" />
   </div>
   <div class="flex-1 px-4 overflow-y-auto">
     <nav class="flex flex-col space-y-4 text-sm font-normal">
-      <a href="/user/dashboard" class="bg-[#3C3D37] rounded-md py-2 px-6 block text-center cursor-pointer">Dashboard</a>
-      <a href="/user/pemesanan" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Pemesanan</a>
-      <a href="/user/status" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Status Peminjaman</a>
-      <a href="/user/pembayaran" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Pembayaran</a>
-      <a href="/user/feedback" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Feedback</a>
+      <a href="/user/home" class="py-2 px-6 block cursor-pointer rounded-md <%= (typeof currentPage !== 'undefined' && currentPage === 'home') ? 'bg-[#5a6356]' : 'hover:bg-[#5a6356]' %>">Dashboard</a>
+      <a href="/user/pemesanan" class="py-2 px-6 block cursor-pointer rounded-md <%= (typeof currentPage !== 'undefined' && currentPage === 'pemesanan') ? 'bg-[#5a6356]' : 'hover:bg-[#5a6356]' %>">Pemesanan</a>
+      <a href="/user/status" class="py-2 px-6 block cursor-pointer rounded-md <%= (typeof currentPage !== 'undefined' && currentPage === 'status') ? 'bg-[#5a6356]' : 'hover:bg-[#5a6356]' %>">Status Peminjaman</a>
+      <a href="/user/pembayaran" class="py-2 px-6 block cursor-pointer rounded-md <%= (typeof currentPage !== 'undefined' && currentPage === 'pembayaran') ? 'bg-[#5a6356]' : 'hover:bg-[#5a6356]' %>">Pembayaran</a>
+      <a href="/user/feedback" class="py-2 px-6 block cursor-pointer rounded-md <%= (typeof currentPage !== 'undefined' && currentPage === 'feedback') ? 'bg-[#5a6356]' : 'hover:bg-[#5a6356]' %>">Feedback</a>
     </nav>
   </div>
 </div>

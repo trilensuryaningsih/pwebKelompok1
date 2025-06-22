@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verifikasi Barang - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+  <%- include('../../partials/admin/sidebar') %>
+  <div class="ml-64 p-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold mb-6 text-[#697565]">Verifikasi Barang</h1>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-lg shadow divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Pesanan</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Barang/Jasa</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Peminjaman</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pengembalian</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% if (items && items.length > 0) { %>
+              <% items.forEach(function(item, idx) { %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= idx + 1 %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#<%= item.id %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= item.name %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= item.startDate ? new Date(item.startDate).toLocaleDateString('id-ID') : '-' %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= item.endDate ? new Date(item.endDate).toLocaleDateString('id-ID') : '-' %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="bg-green-600 hover:bg-green-700 text-white rounded px-3 py-1 text-xs mr-2" onclick="verifikasiOrder('<%= item.id %>')">Verifikasi</button>
+                    <button class="bg-red-600 hover:bg-red-700 text-white rounded px-3 py-1 text-xs" onclick="tolakOrder('<%= item.id %>')">Tolak</button>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada pesanan yang perlu diverifikasi.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+  function verifikasiOrder(id) {
+    if(confirm('Verifikasi pesanan ini?')) {
+      fetch(`/admin/items/verification/${id}/approve`, {method:'POST',headers:{'Content-Type':'application/json'}})
+        .then(r=>r.json()).then(res=>{
+          if(res.success) {
+            alert('Pesanan berhasil diverifikasi!');
+            location.reload();
+          } else {
+            alert(res.message||'Gagal memverifikasi pesanan');
+          }
+        });
+    }
+  }
+  function tolakOrder(id) {
+    if(confirm('Tolak pesanan ini? Stok akan dikembalikan ke database.')) {
+      fetch(`/admin/items/verification/${id}/reject`, {method:'POST',headers:{'Content-Type':'application/json'}})
+        .then(r=>r.json()).then(res=>{
+          if(res.success) {
+            alert(res.message || 'Pesanan berhasil ditolak dan stok telah dikembalikan!');
+            location.reload();
+          } else {
+            alert(res.message||'Gagal menolak pesanan');
+          }
+        });
+    }
+  }
+  </script>
+</body>
+</html> 

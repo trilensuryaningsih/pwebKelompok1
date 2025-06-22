@@ -1,41 +1,240 @@
-<%- include('../partials/header') %>
-<div class="max-w-7xl mx-auto px-4 py-8">
-  <h2 class="text-2xl font-bold mb-6">Katalog Alat</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    <% if (items && items.length > 0) { %>
-      <% items.forEach(item => { %>
-        <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
-          <div>
-            <h5 class="text-lg font-semibold mb-2"><%= item.name %></h5>
-            <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= item.category %></span></p>
-            <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
-            <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
-          </div>
-          <a href="/user/orders/create?itemId=<%= item.id %>" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-span-full"><p class="text-gray-500">Tidak ada alat tersedia.</p></div>
-    <% } %>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Katalog - UMCental Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    .bg-custom-dark { background-color: #181C14; }
+    .bg-custom-green { background-color: #697565; }
+    .bg-custom-green-dark { background-color: #5a6356; }
+    .focus\:ring-custom-green:focus { --tw-ring-color: rgba(105, 117, 101, 0.5); }
+
+    /* Fixed layout styles */
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f0e9 0%, #e8e0d5 100%);
+    }
+
+    .sidebar-fixed {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 50;
+        width: 12rem; /* 192px - match w-48 */
+        overflow-y: auto;
+    }
+
+    .content-wrapper {
+        margin-left: 12rem; /* 192px - match sidebar width */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-fixed {
+        position: fixed;
+        top: 0;
+        left: 12rem; /* 192px - match sidebar width */
+        right: 0;
+        z-index: 30;
+        background: #f5f0e9;
+        border-bottom: 1px solid #5a6356;
+    }
+
+    .content-scrollable {
+        flex: 1;
+        padding: 1.5rem;
+        margin-top: 4rem; /* Account for fixed header */
+    }
+
+    .footer-sticky {
+        margin-top: auto; /* Push footer to bottom */
+        background: #181C14;
+        border-top: 1px solid #2d3748;
+        width: 100%;
+    }
+
+    /* Responsive design for mobile */
+    @media (max-width: 1024px) {
+        .sidebar-fixed {
+            display: none;
+        }
+        
+        .content-wrapper {
+            margin-left: 0;
+        }
+        
+        .header-fixed {
+            left: 0;
+        }
+        
+        .content-scrollable {
+            padding: 1rem;
+            margin-top: 4rem;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 640px) {
+        .content-scrollable {
+            padding: 0.5rem;
+            margin-top: 3.5rem;
+        }
+        
+        .header-fixed {
+            padding: 0.5rem;
+        }
+        
+        .footer-sticky {
+            padding: 0.5rem;
+        }
+    }
+
+    /* Ensure proper box-sizing */
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Improve performance */
+    .sidebar-fixed,
+    .header-fixed {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Sidebar -->
+  <div class="sidebar-fixed">
+    <%- include('../partials/sidebar') %>
   </div>
 
-  <h2 class="text-2xl font-bold mb-6 mt-12">Katalog Jasa</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    <% if (services && services.length > 0) { %>
-      <% services.forEach(service => { %>
-        <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
-          <div>
-            <h5 class="text-lg font-semibold mb-2"><%= service.name %></h5>
-            <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= service.category %></span></p>
-            <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
-            <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
-          </div>
-          <a href="/user/orders/create?serviceId=<%= service.id %>" class="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-span-full"><p class="text-gray-500">Tidak ada jasa tersedia.</p></div>
-    <% } %>
+  <!-- Main Content Container -->
+  <div class="content-wrapper">
+    <!-- Fixed Header -->
+    <div class="header-fixed">
+      <%- include('../partials/header') %>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content-scrollable">
+      <h2 class="text-2xl font-bold mb-6 text-[#7f7a75]">Katalog Alat</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% if (items && items.length > 0) { %>
+          <% items.forEach(item => { %>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
+              <div>
+                <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= item.name %></h5>
+                <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= item.category %></span></p>
+                <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
+                <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
+              </div>
+              <button class="btn-add-to-order mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center" data-type="item" data-id="<%= item.id %>" data-name="<%= item.name %>">Pesan</button>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-span-full"><p class="text-gray-500">Tidak ada alat tersedia.</p></div>
+        <% } %>
+      </div>
+      <h2 class="text-2xl font-bold mb-6 mt-12 text-[#7f7a75]">Katalog Jasa</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% if (services && services.length > 0) { %>
+          <% services.forEach(service => { %>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
+              <div>
+                <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= service.name %></h5>
+                <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= service.category %></span></p>
+                <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
+                <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
+              </div>
+              <button class="btn-add-to-order mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center" data-type="service" data-id="<%= service.id %>" data-name="<%= service.name %>">Pesan</button>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-span-full"><p class="text-gray-500">Tidak ada jasa tersedia.</p></div>
+        <% } %>
+      </div>
+    </div>
+    
+    <!-- Sticky Footer -->
+    <div class="footer-sticky">
+      <%- include('../partials/footer') %>
+    </div>
   </div>
-</div>
-<%- include('../partials/footer') %> 
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Home page loaded successfully');
+        console.log('Layout: Fixed sidebar with sticky footer');
+        console.log('Screen size:', window.innerWidth, 'x', window.innerHeight);
+        
+        // Check if all elements are properly loaded
+        const sidebar = document.querySelector('.sidebar-fixed');
+        const header = document.querySelector('.header-fixed');
+        const footer = document.querySelector('.footer-sticky');
+        const content = document.querySelector('.content-scrollable');
+        
+        console.log('Sidebar found:', !!sidebar);
+        console.log('Header found:', !!header);
+        console.log('Footer found:', !!footer);
+        console.log('Content found:', !!content);
+        
+        // Handle window resize for responsive design
+        window.addEventListener('resize', function() {
+            console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+            // Force reflow to ensure layout updates
+            document.body.offsetHeight;
+        });
+
+        // Handle add to order buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-add-to-order')) {
+                const type = e.target.dataset.type;
+                const id = e.target.dataset.id;
+                const name = e.target.dataset.name;
+                
+                console.log('Adding to order:', { type, id, name });
+                
+                // Store the selected item/service in session storage
+                const selectedItems = JSON.parse(sessionStorage.getItem('selectedItems') || '[]');
+                
+                // Check if item already exists
+                const existingItem = selectedItems.find(item => item.id == id && item.type === type);
+                
+                if (existingItem) {
+                    // If item exists, increment quantity
+                    existingItem.quantity = (existingItem.quantity || 1) + 1;
+                    alert(`${name} sudah ada di keranjang. Jumlah ditambah menjadi ${existingItem.quantity}`);
+                } else {
+                    // Add new item
+                    selectedItems.push({
+                        id: parseInt(id),
+                        type: type,
+                        name: name,
+                        quantity: 1
+                    });
+                    alert(`${name} berhasil ditambahkan ke keranjang!`);
+                }
+                
+                // Save back to session storage
+                sessionStorage.setItem('selectedItems', JSON.stringify(selectedItems));
+                
+                // Redirect to pemesanan page
+                setTimeout(() => {
+                    window.location.href = '/user/pemesanan';
+                }, 1000);
+            }
+        });
+    });
+  </script>
+</body>
+</html> 
