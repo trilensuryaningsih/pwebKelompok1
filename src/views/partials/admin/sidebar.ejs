@@ -1,19 +1,50 @@
-<div class="bg-[#697565] text-[#F0EAE0] h-screen w-64 fixed left-0 top-0">
-    <div class="p-4">
-        <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
-        <nav>
-            <div class="space-y-2">
-                <a href="/admin" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Dashboard</a>
-                <a href="/admin/items" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Daftar Barang</a>
-                <a href="/admin/items/status" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Status Peminjaman</a>
-                <a href="/admin/repair" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Perbaikan Alat</a>
-                <a href="/admin/pj" class="py-2 px-6 block cursor-pointer hover:bg-[#3C3D37] rounded-md">Penanggung Jawab</a>
-            </div>
-            <div class="mt-8">
-                <form action="/auth/logout" method="POST">
-                    <button type="submit" class="w-full py-2 px-6 text-left cursor-pointer hover:bg-[#3C3D37] rounded-md">Logout</button>
-                </form>
-            </div>
-        </nav>
+<aside class="bg-[#697565] text-[#F0EAE0] h-screen w-64 fixed left-0 top-0 p-4 flex flex-col">
+    <div class="mb-8">
+        <h2 class="text-xl font-bold">Admin Panel</h2>
+        <p class="text-[#F0EAE0] opacity-75 text-sm">Administrator</p>
     </div>
-</div>
+    
+    <nav>
+        <ul class="space-y-2">
+        <li>
+            <a href="/admin" class="flex items-center px-4 py-2 rounded-lg hover:bg-[#3C3D37] transition-colors whitespace-nowrap <%= (typeof path !== 'undefined' && path === '/admin') ? 'bg-[#3C3D37]' : '' %>">
+            <span class="material-icons mr-3">dashboard</span>
+            Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="/admin/items" class="flex items-center px-4 py-2 rounded-lg hover:bg-[#3C3D37] transition-colors whitespace-nowrap <%= (typeof path !== 'undefined' && path === '/admin/items') ? 'bg-[#3C3D37]' : '' %>">
+            <span class="material-icons mr-3">inventory_2</span>
+            Daftar Barang
+            </a>
+        </li>
+        <li>
+            <a href="/admin/items/status" class="flex items-center px-4 py-2 rounded-lg hover:bg-[#3C3D37] transition-colors whitespace-nowrap <%= (typeof path !== 'undefined' && path === '/admin/items/status') ? 'bg-[#3C3D37]' : '' %>">
+            <span class="material-icons mr-3">history_toggle_off</span>
+            Status Peminjaman
+            </a>
+        </li>
+        <li>
+            <a href="/admin/repair" class="flex items-center px-4 py-2 rounded-lg hover:bg-[#3C3D37] transition-colors whitespace-nowrap <%= (typeof path !== 'undefined' && path === '/admin/repair') ? 'bg-[#3C3D37]' : '' %>">
+            <span class="material-icons mr-3">build</span>
+            Perbaikan Alat
+            </a>
+        </li>
+        <li>
+            <a href="/admin/pj" class="flex items-center px-4 py-2 rounded-lg hover:bg-[#3C3D37] transition-colors whitespace-nowrap <%= (typeof path !== 'undefined' && path === '/admin/pj') ? 'bg-[#3C3D37]' : '' %>">
+            <span class="material-icons mr-3">supervisor_account</span>
+            Penanggung Jawab
+            </a>
+        </li>
+        </ul>
+    </nav>
+    
+    <div class="mt-auto pt-4 border-t border-[#3C3D37]">
+        <form action="/auth/logout" method="POST" class="w-full">
+            <button type="submit" class="w-full flex items-center px-4 py-2 rounded-lg hover:bg-[#3C3D37] transition-colors">
+                <span class="material-icons mr-3">logout</span>
+                Logout
+            </button>
+        </form>
+    </div>
+</aside>
