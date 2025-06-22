@@ -4,10 +4,17 @@ const { Op } = require('sequelize');
 // Show PJ dashboard
 exports.showDashboard = async (req, res) => {
   try {
+    // Set headers to prevent caching
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+
     // Get repair statistics
     const totalRepairs = await Repair.count();
     const pendingRepairs = await Repair.count({
-      where: { status: 'approved' }
+      where: { status: 'pending' }
     });
     const completedRepairs = await Repair.count({
       where: { status: 'completed' }
@@ -20,7 +27,7 @@ exports.showDashboard = async (req, res) => {
         { model: User, as: 'Requester', attributes: ['name', 'email'] }
       ],
       where: { 
-        status: ['approved', 'in_progress', 'completed']
+        status: ['pending', 'in_progress', 'completed']
       },
       order: [['requestDate', 'DESC']],
       limit: 5

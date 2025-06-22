@@ -15,8 +15,8 @@
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900">Dashboard Penanggung Jawab</h1>
-          <p class="text-gray-600 mt-2">Selamat datang di panel Penanggung Jawab</p>
+          <h1 class="text-3xl font-bold text-gray-900">Dashboard Penanggung Jawab UMC</h1>
+          <p class="text-gray-600 mt-2">Selamat datang di panel Penanggung Jawab UMC</p>
         </div>
 
         <!-- Stats Cards -->
@@ -96,42 +96,42 @@
               class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center transition-colors"
             >
               <span class="material-icons mr-2">download</span>
-              Generate & Download PDF
+              Download PDF
             </a>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div class="bg-gray-50 p-3 rounded-lg">
+            <a href="/pj/items" class="block bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors">
               <div class="flex items-center">
                 <span class="material-icons text-blue-600 mr-2">inventory</span>
                 <span class="font-medium">Data Alat</span>
               </div>
               <p class="text-gray-600 mt-1">Daftar lengkap alat dengan status</p>
-            </div>
+            </a>
             
-            <div class="bg-gray-50 p-3 rounded-lg">
+            <a href="/pj/services" class="block bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors">
               <div class="flex items-center">
                 <span class="material-icons text-green-600 mr-2">miscellaneous_services</span>
                 <span class="font-medium">Data Jasa</span>
               </div>
               <p class="text-gray-600 mt-1">Daftar jasa yang tersedia di UMC</p>
-            </div>
+            </a>
             
-            <div class="bg-gray-50 p-3 rounded-lg">
+            <a href="/pj/repair" class="block bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors">
               <div class="flex items-center">
                 <span class="material-icons text-orange-600 mr-2">pending</span>
                 <span class="font-medium">Pengajuan Perbaikan</span>
               </div>
               <p class="text-gray-600 mt-1">Daftar pengajuan yang menunggu verifikasi</p>
-            </div>
+            </a>
             
-            <div class="bg-gray-50 p-3 rounded-lg">
+            <a href="/pj/repair" class="block bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors">
               <div class="flex items-center">
                 <span class="material-icons text-green-600 mr-2">check_circle</span>
                 <span class="font-medium">Perbaikan Selesai</span>
               </div>
               <p class="text-gray-600 mt-1">Riwayat perbaikan yang telah selesai</p>
-            </div>
+            </a>
           </div>
         </div>
 
@@ -139,7 +139,7 @@
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold text-gray-900">Perbaikan Terbaru</h2>
-            <a href="/pj/repair" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Semua</a>
+            <a href="/pj/repair" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Pengajuan Perbaikan</a>
           </div>
           
           <% if (typeof recentRepairs !== 'undefined' && recentRepairs.length > 0) { %>

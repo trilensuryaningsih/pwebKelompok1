@@ -22,7 +22,6 @@ exports.showRepairPage = async (req, res) => {
 exports.showCreateRepairPage = async (req, res) => {
   try {
     const items = await Item.findAll({
-      where: { status: ['available', 'damaged'] },
       order: [['name', 'ASC']]
     });
     res.render('admin/repair/create', { items });
@@ -35,22 +34,50 @@ exports.showCreateRepairPage = async (req, res) => {
 // Create repair request
 exports.createRepair = async (req, res) => {
   try {
-    const { itemId, reason } = req.body;
+    const { itemId, reason, quantity } = req.body;
     const adminId = 1; // Default admin ID, should be replaced with actual user authentication
 
+    // Validate quantity
+    const repairQuantity = parseInt(quantity);
+    if (!repairQuantity || repairQuantity < 1) {
+      return res.status(400).send('Jumlah alat tidak valid.');
+    }
+
+    // Get the item to check current quantity
+    const item = await Item.findByPk(itemId);
+    if (!item) {
+      return res.status(404).send('Alat tidak ditemukan.');
+    }
+
+    if (repairQuantity > item.quantity) {
+      return res.status(400).send('Jumlah alat yang diajukan melebihi jumlah yang tersedia.');
+    }
+
+    // Create repair record
     await Repair.create({
       itemId,
       requestedBy: adminId,
       reason,
-      status: 'approved',
+      quantity: repairQuantity,
+      status: 'pending',
       requestDate: new Date()
     });
 
-    // Update item status to maintenance
-    await Item.update(
-      { status: 'maintenance' },
-      { where: { id: itemId } }
-    );
+    // Update item quantity (subtract repair quantity from available quantity)
+    const newAvailableQuantity = Math.max(0, item.quantity - repairQuantity);
+    
+    // Determine new item status based on remaining quantity
+    let newItemStatus = item.status;
+    if (newAvailableQuantity < 1) {
+      newItemStatus = 'maintenance'; // Change to maintenance if quantity < 1
+    } else {
+      newItemStatus = 'available'; // Keep as available if quantity >= 1
+    }
+
+    await item.update({
+      quantity: newAvailableQuantity,
+      status: newItemStatus
+    });
 
     res.redirect('/admin/repair?create=success');
   } catch (err) {

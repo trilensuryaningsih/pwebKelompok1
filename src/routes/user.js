@@ -1,13 +1,15 @@
+
 const express = require('express');
 const barangController = require('../controllers/user/barang');
 const ordersController = require('../controllers/user/orders');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireRole } = require('../middleware/auth');
 const { Item, Service } = require('../models');
-const feedbackController = require('../controllers/user/feedback');
 
 const router = express.Router();
 
-
+// Terapkan middleware otentikasi dan otorisasi untuk semua rute user
+router.use(requireAuth);
+router.use(requireRole(['user']));
 
 router.get('/home', async (req, res) => {
     if (!req.session.user) {
@@ -187,19 +189,5 @@ router.get('/status', (req, res, next) => {
     });
 });
 
-// Feedback Gabungan (Dashboard)
-router.get('/feedback', requireAuth, feedbackController.form);
-// Form untuk feedback baru
-router.get('/feedback/new', requireAuth, feedbackController.newForm);
-router.post('/feedback', requireAuth, feedbackController.submit);
-
-// List feedback user
-router.get('/feedback/list', requireAuth, feedbackController.listUserFeedback);
-// Form edit feedback
-router.get('/feedback/edit/:id', requireAuth, feedbackController.editForm);
-// Proses update feedback
-router.post('/feedback/edit/:id', requireAuth, feedbackController.update);
-// Proses hapus feedback
-router.post('/feedback/delete/:id', requireAuth, feedbackController.deleteFeedback);
 
 module.exports = router;
