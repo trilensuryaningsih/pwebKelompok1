@@ -58,6 +58,7 @@ exports.approveOrder = async (req, res) => {
 exports.rejectOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
+<<<<<<< HEAD
     console.log(`Rejecting order ${orderId}`);
     
     const order = await Order.findByPk(orderId);
