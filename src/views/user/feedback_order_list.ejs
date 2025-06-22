@@ -1,0 +1,13 @@
+<h2>Feedback Orderan</h2>
+<ul>
+  <% orders.forEach(function(order) { %>
+    <li>
+      Order ID: <%= order.id %> - Status: <%= order.status %>
+      <% if (!order.Feedback) { %>
+        <a href="/user/feedback/order/<%= order.id %>">Beri Feedback</a>
+      <% } else { %>
+        (Sudah diberi feedback)
+      <% } %>
+    </li>
+  <% }); %>
+</ul> 
