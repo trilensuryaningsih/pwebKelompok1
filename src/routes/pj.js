@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { requireAuth, requireRole } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const repairControllers = require('../controllers/pj/repair');
 const indexControllers = require('../controllers/pj/index');
 const itemsControllers = require('../controllers/pj/items');
@@ -23,7 +24,7 @@ router.post('/repair/:id/complete', repairControllers.completeRepair);
 // Routes untuk manajemen alat oleh PJ
 router.get('/items', itemsControllers.showItems);
 router.get('/items/add', itemsControllers.showAddItem);
-router.post('/items/add', itemsControllers.addItem);
+router.post('/items/add', upload.single('photo'), itemsControllers.addItem);
 router.get('/items/:id', itemsControllers.showItemDetail);
 
 // Routes untuk melihat jasa oleh PJ

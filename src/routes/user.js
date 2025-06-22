@@ -1,12 +1,14 @@
 const express = require('express');
 const barangController = require('../controllers/user/barang');
 const ordersController = require('../controllers/user/orders');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireRole } = require('../middleware/auth');
 const { Item, Service } = require('../models');
 
 const router = express.Router();
 
-
+// Terapkan middleware otentikasi dan otorisasi untuk semua rute user
+router.use(requireAuth);
+router.use(requireRole(['user']));
 
 router.get('/home', async (req, res) => {
     if (!req.session.user) {
