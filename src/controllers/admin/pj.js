@@ -13,7 +13,10 @@ const pjController = {
             const pjUsers = await User.findAll({
                 where: { role: 'pj' }
             });
-            res.render('admin/pj/index', { pjUsers });
+            res.render('admin/pj/index', { 
+                pjUsers,
+                path: '/admin/pj' // Variabel 'path' yang dibutuhkan sidebar
+            });
         } catch (error) {
             console.error('Error fetching PJ users:', error);
             res.status(500).send('Error fetching PJ users');

@@ -1,14 +1,19 @@
 const { item } = require('../../models');
 
 exports.status = (req, res) => {
-    return res.render('admin/status');
+    return res.render('admin/status', {
+        path: '/admin/status'
+    });
 }
 
 
 exports.showAllitemsPage = async (req, res) => {
     try {
         const items = await item.findAll();
-        res.render('admin/items/status', { items });
+        res.render('admin/items/status', { 
+            items,
+            path: '/admin/items/status'
+        });
     } catch (err) {
         res.status(500).send('Gagal memuat data item.');
     }

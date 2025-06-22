@@ -1,0 +1,35 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>- Manajemen Feedback -</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body class="flex min-h-screen bg-[#f5f0e9]">
+  <%- include('../partials/sidebar') %>
+  <div class="flex-1 flex flex-col">
+    <%- include('../partials/header') %>
+    <main class="flex-1 px-10 py-8 overflow-auto">
+      <h2 class="font-semibold text-lg mb-6 text-[#5a6356] text-center md:text-left">Manajemen Feedback</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        
+        <!-- Opsi Beri Feedback Baru -->
+        <a href="/user/feedback/new" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow border border-gray-200">
+          <h3 class="font-semibold text-xl text-[#5a6356] mb-2">Beri Feedback Baru</h3>
+          <p class="text-gray-600">Kirim ulasan, kritik, atau saran baru kepada admin.</p>
+        </a>
+
+        <!-- Opsi Lihat Feedback Saya -->
+        <a href="/user/feedback/list" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow border border-gray-200">
+          <h3 class="font-semibold text-xl text-[#5a6356] mb-2">Daftar Feedback Saya</h3>
+          <p class="text-gray-600">Tampilkan semua feedback yang pernah Anda berikan dan lakukan perubahan jika perlu.</p>
+        </a>
+
+      </div>
+    </main>
+    <%- include('../partials/footer') %>
+  </div>
+</body>
+</html> 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF--8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manajemen Alat dan Jasa Dashboard</title>
   
@@ -47,18 +47,21 @@
 </head>
 
 <body class="bg-brand-beige text-brand-brown font-sans flex flex-col min-h-screen">
-      <%- include('../../partials/admin/sidebar') %>
+  <%- include('../../partials/admin/sidebar') %>
 
   <div id="notification-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
   <div class="ml-64 app flex-grow" role="main">
-    
     <div class="flex flex-col w-full">
       <header class="bg-brand-beige px-5 lg:px-10 py-4 flex justify-between items-center gap-4 sticky top-0 lg:relative border-b border-brand-brown/30 lg:border-none">
-          <div class="flex items-center gap-4 ml-auto">
-              <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Notifikasi"><span class="material-icons text-xl">notifications</span></button>
-              <div class="border border-brand-brown text-brand-brown font-semibold py-1.5 px-3 rounded-xl hidden sm:block">Admin</div>
-              <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Profil pengguna"><span class="material-icons text-xl">person</span></button>
-          </div>
+        <div class="flex items-center gap-4 ml-auto">
+          <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Notifikasi">
+            <span class="material-icons text-xl">notifications</span>
+          </button>
+          <div class="border border-brand-brown text-brand-brown font-semibold py-1.5 px-3 rounded-xl hidden sm:block">Admin</div>
+          <button class="bg-brand-olive hover:bg-brand-olive-dark text-brand-beige rounded-full w-9 h-9 flex justify-center items-center transition-colors" aria-label="Profil pengguna">
+            <span class="material-icons text-xl">person</span>
+          </button>
+        </div>
       </header>
       
       <main class="content p-8 flex flex-col gap-6 bg-gray-100">
@@ -102,7 +105,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
               <% if (typeof items !== 'undefined' && items.length > 0) { %>
                 <% items.forEach((item) => { %>
-                  <tr>
+                  <tr id="item-row-<%= item.id %>">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= item.id %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= item.name %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= item.category %></td>
@@ -138,9 +141,12 @@
                     <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= item.createdAt ? item.createdAt.toLocaleDateString('id-ID') : '-' %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400"><%= item.updatedAt ? item.updatedAt.toLocaleDateString('id-ID') : '-' %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <form action="/admin/items/delete/<%= item.id %>" method="POST" onsubmit="return confirm('Yakin ingin menghapus barang ini?')">
-                        <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
-                      </form>
+                      <button 
+                        class="delete-button text-red-600 hover:text-red-900" 
+                        data-id="<%= item.id %>" 
+                        data-nama="<%= item.name %>">
+                        Hapus
+                      </button>
                     </td>
                   </tr>
                 <% }); %>

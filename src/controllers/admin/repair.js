@@ -1,8 +1,43 @@
 const { Repair, Item, User } = require('../../models');
 
+// Fungsi untuk mengecek data repair (temporary)
+exports.checkRepairData = async (req, res) => {
+  try {
+    console.log('=== CHECKING REPAIR DATA ===');
+    
+    // Cek jumlah data repair
+    const repairCount = await Repair.count();
+    console.log('Total repair records:', repairCount);
+    
+    // Cek jumlah data item
+    const itemCount = await Item.count();
+    console.log('Total item records:', itemCount);
+    
+    // Cek jumlah data user
+    const userCount = await User.count();
+    console.log('Total user records:', userCount);
+    
+    // Coba ambil data repair tanpa include dulu
+    const repairsSimple = await Repair.findAll();
+    console.log('Repair data (simple):', repairsSimple.length);
+    
+    res.json({
+      repairCount,
+      itemCount,
+      userCount,
+      repairsSimple: repairsSimple.length
+    });
+  } catch (err) {
+    console.error('Error checking repair data:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Show repair list page
 exports.showRepairPage = async (req, res) => {
   try {
+    console.log('Mencoba mengambil data repair...');
+    
     const repairs = await Repair.findAll({
       include: [
         { model: Item },
@@ -11,10 +46,18 @@ exports.showRepairPage = async (req, res) => {
       ],
       order: [['requestDate', 'DESC']]
     });
-    res.render('admin/repair/index', { repairs });
+    
+    console.log(`Berhasil mengambil ${repairs.length} data repair`);
+    
+    res.render('admin/repair/index', { 
+      repairs,
+      path: '/admin/repair' // Variabel 'path' yang dibutuhkan sidebar
+    });
   } catch (err) {
-    console.error('Error fetching repairs:', err);
-    res.status(500).send('Gagal memuat data perbaikan.');
+    console.error('Error detail saat mengambil data repair:', err);
+    console.error('Error message:', err.message);
+    console.error('Error stack:', err.stack);
+    res.status(500).send('Gagal memuat data perbaikan. Error: ' + err.message);
   }
 };
 

@@ -5,7 +5,9 @@ const { items } = require('../../models');
 
 // Fungsi render halaman tambah (ini sudah benar)
 exports.tambah = (req, res) => {
-  res.render('admin/items/create');
+  res.render('admin/items/create', {
+    path: '/admin/items/create' // Variabel 'path' yang dibutuhkan sidebar
+  });
 };
 
 // Fungsi untuk handle post data

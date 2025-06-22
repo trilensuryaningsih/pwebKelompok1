@@ -10,7 +10,10 @@ const { items } = require('../../models');
 exports.edit = async (req, res) => {
   try {
     const items = await items.findAll();
-    res.render('admin/items/edit', { items });
+    res.render('admin/items/edit', { 
+      items,
+      path: '/admin/items/edit' // Variabel 'path' yang dibutuhkan sidebar
+    });
   } catch (error) {
     console.error('Error fetching items:', error);
     res.status(500).send('Error fetching items');

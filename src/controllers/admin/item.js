@@ -5,7 +5,10 @@ const path = require('path');
 exports.showAllItemsPage = async (req, res) => {
   try {
     const items = await Item.findAll();
-    res.render('admin/items/index', { items });
+    res.render('admin/items/index', { 
+      items,
+      path: '/admin/items' // Variabel 'path' yang dibutuhkan sidebar
+    });
   } catch (err) {
     res.status(500).send('Gagal memuat data item.');
   }
