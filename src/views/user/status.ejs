@@ -150,6 +150,7 @@
                         <tr class="bg-[#7f8a7d] rounded-lg text-[#e6e1d9] text-xs font-normal">
                             <th class="py-3 px-4 text-left rounded-l-lg">No</th>
                             <th class="py-3 px-4 text-left">Kode Pesanan</th>
+                            <th class="py-3 px-4 text-left">Tipe</th>
                             <th class="py-3 px-4 text-left">Item/Jasa</th>
                             <th class="py-3 px-4 text-left">Jumlah</th>
                             <th class="py-3 px-4 text-left">Tanggal Peminjaman</th>
@@ -166,6 +167,15 @@
                                 <tr class="border-b border-[#f0ebe0] hover:bg-gray-50">
                                     <td class="py-6 px-4"><%= idx + 1 %></td>
                                     <td class="py-6 px-4 font-semibold">#<%= order.id %></td>
+                                    <td class="py-6 px-4">
+                                        <% if (order.itemType === 'item') { %>
+                                            <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">Item</span>
+                                        <% } else if (order.itemType === 'service') { %>
+                                            <span class="inline-block bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">Jasa</span>
+                                        <% } else { %>
+                                            <span class="text-gray-400">-</span>
+                                        <% } %>
+                                    </td>
                                     <td class="py-6 px-4">
                                         <% if (order.Item) { %>
                                             <span class="font-medium"><%= order.Item.name %></span>
@@ -231,7 +241,7 @@
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="10" class="text-center py-12">
+                                <td colspan="11" class="text-center py-12">
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-inbox text-4xl text-gray-300 mb-4"></i>
                                         <p class="text-gray-500 text-lg font-medium mb-2">Belum ada pesanan</p>
