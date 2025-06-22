@@ -17,10 +17,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   Feedback.init({
     user_id: DataTypes.INTEGER,
-    orderId: DataTypes.INTEGER,
-    rating: DataTypes.INTEGER,
+    orderId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     comment: DataTypes.TEXT,
-    status: DataTypes.ENUM('pending', 'approved', 'rejected')
+    status: DataTypes.ENUM('pending', 'approved', 'rejected'),
+    phone_number: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Feedback',
