@@ -58,19 +58,121 @@
             color: #374151;
             border-color: #9ca3af;
         }
+
+        /* Fixed layout styles */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f0e9 0%, #e8e0d5 100%);
+        }
+
+        .sidebar-fixed {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 50;
+            width: 12rem; /* 192px - match w-48 */
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            margin-left: 12rem; /* 192px - match sidebar width */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 12rem; /* 192px - match sidebar width */
+            right: 0;
+            z-index: 30;
+            background: #f5f0e9;
+            border-bottom: 1px solid #5a6356;
+        }
+
+        .content-scrollable {
+            flex: 1;
+            padding: 1.5rem;
+            margin-top: 4rem; /* Account for fixed header */
+        }
+
+        .footer-sticky {
+            margin-top: auto; /* Push footer to bottom */
+            background: #181C14;
+            border-top: 1px solid #2d3748;
+            width: 100%;
+        }
+
+        /* Responsive design for mobile */
+        @media (max-width: 1024px) {
+            .sidebar-fixed {
+                display: none;
+            }
+            
+            .content-wrapper {
+                margin-left: 0;
+            }
+            
+            .header-fixed {
+                left: 0;
+            }
+            
+            .content-scrollable {
+                padding: 1rem;
+                margin-top: 4rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 640px) {
+            .content-scrollable {
+                padding: 0.5rem;
+                margin-top: 3.5rem;
+            }
+            
+            .header-fixed {
+                padding: 0.5rem;
+            }
+            
+            .footer-sticky {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Ensure proper box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Improve performance */
+        .sidebar-fixed,
+        .header-fixed {
+            will-change: transform;
+            transform: translateZ(0);
+        }
     </style>
 </head>
 
-<body class="flex min-h-screen bg-[#f5f0e9]">
+<body>
 
-    <%- include('../partials/sidebar') %>
+    <!-- Fixed Sidebar -->
+    <div class="sidebar-fixed">
+        <%- include('../partials/sidebar') %>
+    </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col">
-        <%- include('../partials/header') %>
+    <!-- Main Content Container -->
+    <div class="content-wrapper">
+        <!-- Fixed Header -->
+        <div class="header-fixed">
+            <%- include('../partials/header') %>
+        </div>
 
-        <!-- Content -->
-        <section class="flex-1 p-8 overflow-x-auto">
+        <!-- Scrollable Content -->
+        <div class="content-scrollable">
             <!-- Header -->
             <div class="mb-6">
                 <h1 class="text-2xl font-bold text-[#181C14] mb-2">Daftar Pesanan</h1>
@@ -185,9 +287,12 @@
                     </div>
                 </div>
             </div>
-        </section>
-
-        <%- include('../partials/footer') %>
+        </div>
+        
+        <!-- Sticky Footer -->
+        <div class="footer-sticky">
+            <%- include('../partials/footer') %>
+        </div>
     </div>
 
     <!-- Cancel Order Modal -->
@@ -449,6 +554,28 @@
             };
             return statusTexts[status] || status;
         }
+
+        console.log('Orders page loaded successfully');
+        console.log('Layout: Fixed sidebar with sticky footer');
+        console.log('Screen size:', window.innerWidth, 'x', window.innerHeight);
+        
+        // Check if all elements are properly loaded
+        const sidebar = document.querySelector('.sidebar-fixed');
+        const header = document.querySelector('.header-fixed');
+        const footer = document.querySelector('.footer-sticky');
+        const content = document.querySelector('.content-scrollable');
+        
+        console.log('Sidebar found:', !!sidebar);
+        console.log('Header found:', !!header);
+        console.log('Footer found:', !!footer);
+        console.log('Content found:', !!content);
+        
+        // Handle window resize for responsive design
+        window.addEventListener('resize', function() {
+            console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+            // Force reflow to ensure layout updates
+            document.body.offsetHeight;
+        });
     </script>
 </body>
 

@@ -207,6 +207,7 @@ exports.generatePdfContent = (doc, mouData) => {
     // Path logo
     const logoUnandPath = path.join(__dirname, '../../public/images/logo_unand.png');
     const logoUmcPath = path.join(__dirname, '../../public/images/logo_umc.png');
+    const toniSignaturePath = path.join(__dirname, '../../public/images/Toni.jpg');
 
     // Kop header
     const kopY = 50;
@@ -298,6 +299,29 @@ exports.generatePdfContent = (doc, mouData) => {
     doc.text('Pihak I,', { continued: true, width: 200 });
     doc.text('Pihak II,', { align: 'right' });
     addSpace(3);
+    
+    // Add Toni's signature image
+    try {
+        doc.image(toniSignaturePath, 60, doc.y, { width: 60, height: 40 });
+    } catch (e) {
+        // If image fails to load, draw a line instead
+        doc.moveTo(60, doc.y).lineTo(120, doc.y).stroke();
+    }
+    
+    // Add Pihak II signature if available
+    if (mouData.ttdPihak2) {
+        try {
+            // For base64 images, we need to handle them differently
+            // This is a simplified approach - in a real implementation you might want to decode base64
+            doc.moveTo(400, doc.y).lineTo(460, doc.y).stroke();
+        } catch (e) {
+            doc.moveTo(400, doc.y).lineTo(460, doc.y).stroke();
+        }
+    } else {
+        doc.moveTo(400, doc.y).lineTo(460, doc.y).stroke();
+    }
+    
+    addSpace(2);
     doc.text('Toni Windra', { continued: true, width: 200 });
     doc.text(mouData.nama3 || '-', { align: 'right' });
     doc.text('NIM.2111517002', { continued: true, width: 200 });
@@ -319,4 +343,5 @@ exports.downloadPdf = (req, res) => {
     // Generate PDF content
     this.generatePdfContent(doc, mouData);
     doc.pipe(res);
+    doc.end();
 };

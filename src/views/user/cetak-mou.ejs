@@ -3,85 +3,386 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>UMCental Dashboard</title>
+    <title>Cetak MOU - UMCental</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <style>
-        .bg-custom-dark {
-            background-color: #181C14;
+        /* Fixed layout styles */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f0e9 0%, #e8e0d5 100%);
         }
 
-        .bg-custom-green {
-            background-color: #697565;
+        .sidebar-fixed {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 50;
+            width: 12rem; /* 192px - match w-48 */
+            overflow-y: auto;
         }
 
-        .bg-custom-green-dark {
-            background-color: #5a6356;
+        .content-wrapper {
+            margin-left: 12rem; /* 192px - match sidebar width */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .focus\:ring-custom-green:focus {
-            --tw-ring-color: rgba(105, 117, 101, 0.5);
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 12rem; /* 192px - match sidebar width */
+            right: 0;
+            z-index: 30;
+            background: #f5f0e9;
+            border-bottom: 1px solid #5a6356;
+        }
+
+        .content-scrollable {
+            flex: 1;
+            padding: 1.5rem;
+            margin-top: 4rem; /* Account for fixed header */
+        }
+
+        .footer-sticky {
+            margin-top: auto; /* Push footer to bottom */
+            background: #181C14;
+            border-top: 1px solid #2d3748;
+            width: 100%;
+        }
+
+        /* Print styles */
+        .print-container {
+            background: white;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-primary {
+            color: #7F6D6D;
+        }
+
+        .text-secondary {
+            color: #7B7F75;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #697565;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6356;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Responsive design for mobile */
+        @media (max-width: 1024px) {
+            .sidebar-fixed {
+                display: none;
+            }
+            
+            .content-wrapper {
+                margin-left: 0;
+            }
+            
+            .header-fixed {
+                left: 0;
+            }
+            
+            .content-scrollable {
+                padding: 1rem;
+                margin-top: 4rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 640px) {
+            .content-scrollable {
+                padding: 0.5rem;
+                margin-top: 3.5rem;
+            }
+            
+            .header-fixed {
+                padding: 0.5rem;
+            }
+            
+            .footer-sticky {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Ensure proper box-sizing */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Improve performance */
+        .sidebar-fixed,
+        .header-fixed {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+            }
+            .print-container {
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .sidebar-fixed,
+            .header-fixed,
+            .footer-sticky {
+                display: none !important;
+            }
+            .content-wrapper {
+                margin-left: 0 !important;
+            }
+            .content-scrollable {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+                padding: 0 !important;
+            }
         }
     </style>
 </head>
 
-<body class="flex min-h-screen bg-[#f5f0e9] ">
+<body class="bg-gradient-to-br from-[#f5f0e9] to-[#e8e0d5]">
 
+    <!-- Fixed Sidebar -->
+    <div class="sidebar-fixed">
     <%- include('../partials/sidebar') %>
+    </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
+    <!-- Main Content Container -->
+    <div class="content-wrapper">
+        <!-- Fixed Header -->
+        <div class="header-fixed">
             <%- include('../partials/header') %>
+        </div>
 
-                <!-- Content -->
-                <section class="flex-1 p-8">
-     <div class="bg-white rounded-xl p-8 max-w-5xl mx-auto relative overflow-auto" style="min-height: 300px; max-height: 1000px;">
-      <h2 class="text-[#7F6D6D] font-semibold text-lg mb-6 text-center">
-        SURAT PERJANJIAN KERJASAMA<br/>
-        <span class="font-normal text-base">Memorandum of Understanding</span>
-      </h2>
-      <div class="text-[#7F6D6D] text-sm font-light max-w-4xl mx-auto">
-        <p>
-          Pada tanggal <b><%= mouData.tanggal || '-' %></b> bulan <b><%= mouData.bulan || '-' %></b> tahun <b><%= mouData.tahun || '-' %></b>, kami yang bertanda tangan di bawah ini:
-        </p>
-        <div class="mt-2">
-          <b>Pihak I</b><br/>
-          Nama: Toni Windra<br/>
-          Instansi: Universal Multimedia Creative<br/>
-          Jabatan: CEO<br/>
-          Kontak: 085174461775
+        <!-- Scrollable Content -->
+        <div class="content-scrollable">
+            <div class="print-container">
+                <!-- Header dengan Logo -->
+                <div class="flex justify-between items-center mb-8 border-b-2 border-gray-300 pb-4">
+                    <img src="/images/logo_unand.png" alt="Logo UNAND" class="w-16 h-16 object-contain" />
+                    <div class="text-center">
+                        <h1 class="text-lg font-bold text-primary">TIM CREATIVE KEMAHASISWAAN</h1>
+                        <h2 class="text-lg font-bold text-primary">UNIVERSAL MULTIMEDIA CREATIVE (UMC)</h2>
+                        <h3 class="text-lg font-bold text-primary">UNIVERSITAS ANDALAS</h3>
+                        <p class="text-sm text-gray-600">Gedung PKM, Kampus Limau manis, Padang – 25163</p>
+                    </div>
+                    <img src="/images/logo_umc.png" alt="Logo UMC" class="w-16 h-16 object-contain" />
+                </div>
+
+                <!-- Judul Dokumen -->
+                <div class="text-center mb-8">
+                    <h2 class="text-xl font-bold text-primary mb-2">
+                        SURAT PERJANJIAN KERJASAMA
+                    </h2>
+                    <h3 class="text-lg text-primary">
+                        Memorandum of Understanding
+                    </h3>
+                </div>
+
+                <!-- Pembukaan -->
+                <div class="text-sm text-primary mb-6 leading-relaxed">
+                    <p class="mb-4">
+                        Pada tanggal <span class="font-semibold"><%= mouData.tanggal || '-' %></span> bulan 
+                        <span class="font-semibold"><%= mouData.bulan || '-' %></span> tahun 
+                        <span class="font-semibold"><%= mouData.tahun || '-' %></span>, kami yang bertanda tangan di bawah ini:
+                    </p>
+                </div>
+
+                <!-- Pihak-pihak -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <!-- Pihak I -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-primary mb-3">Pihak I</h4>
+                        <div class="text-sm space-y-1">
+                            <p><span class="font-semibold">Nama:</span> Toni Windra</p>
+                            <p><span class="font-semibold">Instansi:</span> Universal Multimedia Creative</p>
+                            <p><span class="font-semibold">Jabatan:</span> CEO</p>
+                            <p><span class="font-semibold">Kontak:</span> 085174461775</p>
+                        </div>
+                    </div>
+
+                    <!-- Pihak II -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-primary mb-3">Pihak II</h4>
+                        <div class="text-sm space-y-1">
+                            <p><span class="font-semibold">Nama:</span> <%= mouData.nama2 || '-' %></p>
+                            <p><span class="font-semibold">Instansi:</span> <%= mouData.instansi2 || '-' %></p>
+                            <p><span class="font-semibold">Jabatan:</span> <%= mouData.jabatan2 || '-' %></p>
+                            <p><span class="font-semibold">Kontak:</span> <%= mouData.kontak2 || '-' %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informasi Kegiatan -->
+                <div class="bg-blue-50 p-4 rounded-lg mb-8">
+                    <h4 class="font-bold text-primary mb-3">Informasi Kegiatan</h4>
+                    <div class="text-sm space-y-1">
+                        <p><span class="font-semibold">Nama Kegiatan:</span> <%= mouData.namaKegiatan || '-' %></p>
+                        <p><span class="font-semibold">Hari/Tanggal:</span> <%= mouData.hariTanggal || '-' %></p>
+                        <p><span class="font-semibold">Tempat:</span> <%= mouData.tempat || '-' %></p>
+                        <p><span class="font-semibold">Tanggal Penandatanganan:</span> <%= mouData.tanggalPenandatanganan || '-' %></p>
+                    </div>
+                </div>
+
+                <!-- Pasal-pasal Perjanjian -->
+                <div class="space-y-6 text-sm leading-relaxed">
+                    <!-- Pasal 1 -->
+                    <div>
+                        <h4 class="font-bold text-primary mb-2">Pasal 1</h4>
+                        <h5 class="font-semibold text-primary mb-2">NAMA DAN WAKTU PELAKSANAAN</h5>
+                        <p>Pihak I dan Pihak II telah sepakat kerja sama dalam kegiatan yang telah disebutkan di atas.</p>
+                    </div>
+
+                    <!-- Pasal 2 -->
+                    <div>
+                        <h4 class="font-bold text-primary mb-2">Pasal 2</h4>
+                        <h5 class="font-semibold text-primary mb-2">PERATURAN KERJA SAMA</h5>
+                        <h6 class="font-semibold text-primary mb-2">PENYEDIAAN BARANG DAN JASA</h6>
+                        <ol class="list-decimal list-inside space-y-2 ml-4">
+                            <li>Barang yang dipinjamkan oleh Pihak I meliputi, perlengkapan yang diperlukan untuk kegiatan fotografi atau videografi.</li>
+                            <li>Jasa yang disediakan oleh Pihak I meliputi, tim produksi visual sesuai kebutuhan Pihak II.</li>
+                            <li>Pihak II wajib memberikan informasi yang jelas mengenai spesifikasi dan jumlah barang yang diperlukan serta jadwal penggunaan jasa fotografi atau videografi.</li>
+                            <li>Pihak II bertanggung jawab atas keamanan barang yang dipinjamkan selama masa peminjaman dan akan mengganti barang yang rusak atau hilang sesuai kesepakatan harga.</li>
+                            <li>Pihak I akan menyediakan barang dan jasa sesuai dengan spesifikasi yang telah disepakati dan dalam kondisi yang baik pada waktu peminjaman.</li>
+                            <li>Pihak II bertanggung jawab untuk menggunakan barang dan jasa sesuai dengan ketentuan yang telah disepakati dan tidak melakukan tindakan yang merusak atau mengubah barang tersebut tanpa izin dari Pihak I.</li>
+                            <li>Pembayaran sewa barang dan jasa akan dilakukan oleh Pihak II sesuai dengan tarif yang telah disepakati sebelum kegiatan dimulai.</li>
+                            <li>Pihak II wajib menyerahkan bukti pemesanan atau pembayaran setelah menerima barang atau menggunakan jasa untuk keperluan administrasi Pihak I.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Pasal 3 -->
+                    <div>
+                        <h4 class="font-bold text-primary mb-2">Pasal 3</h4>
+                        <h5 class="font-semibold text-primary mb-2">PENYELESAIAN PERSELISIHAN</h5>
+                        <p>Apabila terjadi suatu perselisihan antara Pihak I dan Pihak II sehubungan dengan pelaksanaan perjanjian kerjasama ini akan diselesaikan secara musyawarah mufakat oleh kedua belah pihak.</p>
+                    </div>
+
+                    <!-- Pasal 4 -->
+                    <div>
+                        <h4 class="font-bold text-primary mb-2">Pasal 4</h4>
+                        <h5 class="font-semibold text-primary mb-2">HAK CIPTA DAN PENGGUNAAN KONTEN</h5>
+                        <p>Semua hasil rekaman dan dokumentasi yang dihasilkan selama kegiatan, termasuk foto dan video, dapat digunakan oleh kedua belah pihak untuk keperluan promosi, dokumentasi, dan publikasi dengan tetap mencantumkan kredit kepada masing-masing pihak sesuai kontribusi.</p>
+                    </div>
+
+                    <!-- Pasal 5 -->
+                    <div>
+                        <h4 class="font-bold text-primary mb-2">Pasal 5</h4>
+                        <h5 class="font-semibold text-primary mb-2">KETENTUAN LAIN</h5>
+                        <p>Hal-hal lain yang berkenaan dengan perjanjian ini dan hal-hal lain yang belum diatur pada perjanjian ini akan dimusyawarahkan kedua belah pihak.</p>
+                    </div>
         </div>
-        <div class="mt-2">
-          <b>Pihak II</b><br/>
-          Nama: <%= mouData.nama2 || '-' %><br/>
-          Instansi: <%= mouData.instansi2 || '-' %><br/>
-          Jabatan: <%= mouData.jabatan2 || '-' %><br/>
-          Kontak: <%= mouData.kontak2 || '-' %>
+
+                <!-- Penutup -->
+                <div class="mt-8 text-sm leading-relaxed">
+                    <p class="mb-6">Dengan ini Surat Perjanjian Kerjasama ini dibuat serta ditandatangani oleh kedua belah pihak.</p>
         </div>
-        <div class="mt-2">
-          <b>Nama Kegiatan:</b> <%= mouData.namaKegiatan || '-' %><br/>
-          <b>Hari/Tanggal:</b> <%= mouData.hariTanggal || '-' %><br/>
-          <b>Tempat:</b> <%= mouData.tempat || '-' %>
+
+                <!-- Tanda Tangan -->
+                <div class="mt-8">
+                    <p class="text-sm mb-6">Padang, <%= mouData.tanggalPenandatanganan || '-' %></p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Tanda Tangan Pihak I -->
+                        <div class="text-center">
+                            <p class="text-sm mb-8">Pihak I,</p>
+                            <img src="/images/Toni.jpg" alt="Tanda Tangan Toni Windra" class="mx-auto mb-4 max-h-20 border rounded" />
+                            <p class="font-semibold">Toni Windra</p>
+                            <p class="text-xs">NIM.2111517002</p>
         </div>
-        <div class="mt-2">
-          <b>Tanggal Penandatanganan:</b> <%= mouData.tanggalPenandatanganan || '-' %>
-        </div>
-        <div class="mt-2">
-          <b>Pihak II (Tanda Tangan):</b><br/>
+
+                        <!-- Tanda Tangan Pihak II -->
+                        <div class="text-center">
+                            <p class="text-sm mb-8">Pihak II,</p>
           <% if (mouData.ttdPihak2) { %>
-            <img src="<%= mouData.ttdPihak2 %>" alt="Tanda Tangan Pihak II" class="max-h-24 border rounded" />
+                                <img src="<%= mouData.ttdPihak2 %>" alt="Tanda Tangan Pihak II" class="mx-auto mb-4 max-h-20 border rounded" />
           <% } else { %>
-            <span>-</span>
+                                <div class="border-b-2 border-gray-400 mb-4" style="height: 60px;"></div>
           <% } %>
+                            <p class="font-semibold"><%= mouData.nama3 || '-' %></p>
+                            <p class="text-xs">NIM.<%= mouData.nim || '-' %></p>
+                        </div>
         </div>
       </div>
-      <button onclick="window.location.href='/user/download-mou-pdf'" class="absolute bottom-8 right-8 border border-[#7B7B6B] rounded-full px-6 py-1 text-xs text-[#7B7B6B] font-normal">
-       Download PDF
+
+                <!-- Tombol Aksi -->
+                <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-300 no-print">
+                    <button onclick="window.location.href='/user/status'" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>Kembali
+                    </button>
+                    <button onclick="window.location.href='/user/download-mou-pdf'" class="btn btn-primary">
+                        <i class="fas fa-download mr-2"></i>Download PDF
       </button>
      </div>
-    </section>
+            </div>
+        </div>
+        
+        <!-- Fixed Footer -->
+        <div class="footer-sticky">
                 <%- include('../partials/footer') %>
         </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Cetak MOU page loaded successfully');
+            console.log('Layout: Fixed sidebar with sticky footer');
+            console.log('Screen size:', window.innerWidth, 'x', window.innerHeight);
+            
+            // Check if all elements are properly loaded
+            const sidebar = document.querySelector('.sidebar-fixed');
+            const header = document.querySelector('.header-fixed');
+            const footer = document.querySelector('.footer-sticky');
+            const content = document.querySelector('.content-scrollable');
+            
+            console.log('Sidebar found:', !!sidebar);
+            console.log('Header found:', !!header);
+            console.log('Footer found:', !!footer);
+            console.log('Content found:', !!content);
+            
+            // Handle window resize for responsive design
+            window.addEventListener('resize', function() {
+                console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+                // Force reflow to ensure layout updates
+                document.body.offsetHeight;
+            });
+        });
+    </script>
 </body>
 
 </html>

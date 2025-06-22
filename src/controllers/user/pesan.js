@@ -50,15 +50,108 @@ exports.cancelOrder = async (req, res) => {
     try {
         const userId = req.session.user.id;
         const orderId = req.params.id;
-        const order = await Order.findOne({ where: { id: orderId, user_id: userId } });
-        if (!order) return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan' });
-        if (!['pending', 'approved'].includes(order.status)) {
-            return res.status(400).json({ success: false, message: 'Pesanan tidak bisa dibatalkan' });
+        
+        console.log(`Cancelling order ${orderId} for user ${userId}`);
+        
+        // Find order first
+        const order = await Order.findOne({ 
+            where: { id: orderId, user_id: userId }
+        });
+        
+        if (!order) {
+            console.log(`Order ${orderId} not found for user ${userId}`);
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Pesanan tidak ditemukan' 
+            });
         }
-        order.status = 'cancelled';
-        await order.save();
-        res.json({ success: true });
+        
+        console.log(`Found order:`, {
+            id: order.id,
+            itemType: order.itemType,
+            itemId: order.itemId,
+            quantity: order.quantity,
+            status: order.status
+        });
+        
+        if (!['pending', 'approved'].includes(order.status)) {
+            console.log(`Order ${orderId} cannot be cancelled - status: ${order.status}`);
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Pesanan tidak bisa dibatalkan' 
+            });
+        }
+
+        // Start transaction to ensure data consistency
+        const transaction = await Order.sequelize.transaction();
+        
+        try {
+            console.log(`Starting transaction for order ${orderId}`);
+            
+            // Update order status to cancelled
+            await order.update({ status: 'cancelled' }, { transaction });
+            console.log(`Order ${orderId} status updated to cancelled`);
+            
+            // Return quantity to Item or Service
+            if (order.itemType === 'item') {
+                console.log(`Processing item with ID: ${order.itemId}`);
+                const item = await Item.findByPk(order.itemId, { transaction });
+                if (item) {
+                    const oldQuantity = item.quantity;
+                    const newQuantity = oldQuantity + order.quantity;
+                    console.log(`Item ${item.name}: ${oldQuantity} + ${order.quantity} = ${newQuantity}`);
+                    
+                    await item.update({ 
+                        quantity: newQuantity,
+                        status: newQuantity > 0 ? 'available' : 'unavailable'
+                    }, { transaction });
+                    
+                    console.log(`Item ${item.name} quantity updated successfully`);
+                } else {
+                    console.log(`Item with ID ${order.itemId} not found`);
+                }
+            } else if (order.itemType === 'service') {
+                console.log(`Processing service with ID: ${order.itemId}`);
+                const service = await Service.findByPk(order.itemId, { transaction });
+                if (service) {
+                    const oldQuantity = service.quantity;
+                    const newQuantity = oldQuantity + order.quantity;
+                    console.log(`Service ${service.name}: ${oldQuantity} + ${order.quantity} = ${newQuantity}`);
+                    
+                    await service.update({ 
+                        quantity: newQuantity,
+                        status: newQuantity > 0 ? 'available' : 'unavailable'
+                    }, { transaction });
+                    
+                    console.log(`Service ${service.name} quantity updated successfully`);
+                } else {
+                    console.log(`Service with ID ${order.itemId} not found`);
+                }
+            } else {
+                console.log(`Unknown itemType: ${order.itemType}`);
+            }
+            
+            // Commit transaction
+            await transaction.commit();
+            console.log(`Transaction committed successfully for order ${orderId}`);
+            
+            res.json({ 
+                success: true, 
+                message: 'Pesanan berhasil dibatalkan dan quantity telah dikembalikan' 
+            });
+            
+        } catch (error) {
+            // Rollback transaction on error
+            console.error(`Error in transaction for order ${orderId}:`, error);
+            await transaction.rollback();
+            throw error;
+        }
+        
     } catch (e) {
-        res.status(500).json({ success: false, message: 'Gagal membatalkan pesanan' });
+        console.error('Error cancelling order:', e);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Gagal membatalkan pesanan' 
+        });
     }
 }; 

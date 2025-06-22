@@ -13,51 +13,188 @@
     .bg-custom-green { background-color: #697565; }
     .bg-custom-green-dark { background-color: #5a6356; }
     .focus\:ring-custom-green:focus { --tw-ring-color: rgba(105, 117, 101, 0.5); }
+
+    /* Fixed layout styles */
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f0e9 0%, #e8e0d5 100%);
+    }
+
+    .sidebar-fixed {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 50;
+        width: 12rem; /* 192px - match w-48 */
+        overflow-y: auto;
+    }
+
+    .content-wrapper {
+        margin-left: 12rem; /* 192px - match sidebar width */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-fixed {
+        position: fixed;
+        top: 0;
+        left: 12rem; /* 192px - match sidebar width */
+        right: 0;
+        z-index: 30;
+        background: #f5f0e9;
+        border-bottom: 1px solid #5a6356;
+    }
+
+    .content-scrollable {
+        flex: 1;
+        padding: 1.5rem;
+        margin-top: 4rem; /* Account for fixed header */
+    }
+
+    .footer-sticky {
+        margin-top: auto; /* Push footer to bottom */
+        background: #181C14;
+        border-top: 1px solid #2d3748;
+        width: 100%;
+    }
+
+    /* Responsive design for mobile */
+    @media (max-width: 1024px) {
+        .sidebar-fixed {
+            display: none;
+        }
+        
+        .content-wrapper {
+            margin-left: 0;
+        }
+        
+        .header-fixed {
+            left: 0;
+        }
+        
+        .content-scrollable {
+            padding: 1rem;
+            margin-top: 4rem;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 640px) {
+        .content-scrollable {
+            padding: 0.5rem;
+            margin-top: 3.5rem;
+        }
+        
+        .header-fixed {
+            padding: 0.5rem;
+        }
+        
+        .footer-sticky {
+            padding: 0.5rem;
+        }
+    }
+
+    /* Ensure proper box-sizing */
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Improve performance */
+    .sidebar-fixed,
+    .header-fixed {
+        will-change: transform;
+        transform: translateZ(0);
+    }
   </style>
 </head>
-<body class="flex min-h-screen bg-[#f5f0e9]">
-<%- include('../partials/sidebar') %>
-<div class="flex-1 flex flex-col">
-  <%- include('../partials/header') %>
-  <main class="flex-1 px-10 py-8 overflow-auto">
-    <h2 class="text-2xl font-bold mb-6 text-[#7f7a75]">Katalog Alat</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <% if (items && items.length > 0) { %>
-        <% items.forEach(item => { %>
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
-            <div>
-              <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= item.name %></h5>
-              <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= item.category %></span></p>
-              <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
-              <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
-            </div>
-            <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <div class="col-span-full"><p class="text-gray-500">Tidak ada alat tersedia.</p></div>
-      <% } %>
+<body>
+
+  <!-- Fixed Sidebar -->
+  <div class="sidebar-fixed">
+    <%- include('../partials/sidebar') %>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="content-wrapper">
+    <!-- Fixed Header -->
+    <div class="header-fixed">
+      <%- include('../partials/header') %>
     </div>
-    <h2 class="text-2xl font-bold mb-6 mt-12 text-[#7f7a75]">Katalog Jasa</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <% if (services && services.length > 0) { %>
-        <% services.forEach(service => { %>
-          <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
-            <div>
-              <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= service.name %></h5>
-              <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= service.category %></span></p>
-              <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
-              <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
+
+    <!-- Scrollable Content -->
+    <div class="content-scrollable">
+      <h2 class="text-2xl font-bold mb-6 text-[#7f7a75]">Katalog Alat</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% if (items && items.length > 0) { %>
+          <% items.forEach(item => { %>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
+              <div>
+                <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= item.name %></h5>
+                <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= item.category %></span></p>
+                <p class="text-gray-600 mb-1">Status: <span class="<%= item.status === 'available' ? 'text-green-600' : 'text-red-600' %>"><%= item.status === 'available' ? 'Tersedia' : 'Tidak Tersedia' %></span></p>
+                <p class="text-gray-600 mb-3">Jumlah: <%= item.quantity %></p>
+              </div>
+              <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
             </div>
-            <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <div class="col-span-full"><p class="text-gray-500">Tidak ada jasa tersedia.</p></div>
-      <% } %>
+          <% }) %>
+        <% } else { %>
+          <div class="col-span-full"><p class="text-gray-500">Tidak ada alat tersedia.</p></div>
+        <% } %>
+      </div>
+      <h2 class="text-2xl font-bold mb-6 mt-12 text-[#7f7a75]">Katalog Jasa</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% if (services && services.length > 0) { %>
+          <% services.forEach(service => { %>
+            <div class="bg-white rounded-lg shadow p-6 flex flex-col justify-between h-full">
+              <div>
+                <h5 class="text-lg font-semibold mb-2 text-[#697565]"><%= service.name %></h5>
+                <p class="text-gray-600 mb-1">Kategori: <span class="font-medium"><%= service.category %></span></p>
+                <p class="text-gray-600 mb-1">Harga: <span class="text-blue-700 font-semibold"><%= service.price ? 'Rp ' + service.price.toLocaleString('id-ID') : 'N/A' %></span></p>
+                <p class="text-gray-600 mb-3"><%= service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description %></p>
+              </div>
+              <a href="/user/pemesanan" class="mt-4 inline-block bg-[#7f8a7d] hover:bg-[#697565] text-white font-semibold py-2 px-4 rounded text-center">Pesan</a>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-span-full"><p class="text-gray-500">Tidak ada jasa tersedia.</p></div>
+        <% } %>
+      </div>
     </div>
-  </main>
-  <%- include('../partials/footer') %>
-</div>
+    
+    <!-- Sticky Footer -->
+    <div class="footer-sticky">
+      <%- include('../partials/footer') %>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Home page loaded successfully');
+        console.log('Layout: Fixed sidebar with sticky footer');
+        console.log('Screen size:', window.innerWidth, 'x', window.innerHeight);
+        
+        // Check if all elements are properly loaded
+        const sidebar = document.querySelector('.sidebar-fixed');
+        const header = document.querySelector('.header-fixed');
+        const footer = document.querySelector('.footer-sticky');
+        const content = document.querySelector('.content-scrollable');
+        
+        console.log('Sidebar found:', !!sidebar);
+        console.log('Header found:', !!header);
+        console.log('Footer found:', !!footer);
+        console.log('Content found:', !!content);
+        
+        // Handle window resize for responsive design
+        window.addEventListener('resize', function() {
+            console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+            // Force reflow to ensure layout updates
+            document.body.offsetHeight;
+        });
+    });
+  </script>
 </body>
 </html> 
