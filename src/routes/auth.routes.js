@@ -6,7 +6,8 @@ const authController = require('../controllers/auth.controller');
 
 
 router.get('/login', (req, res) => {
-    res.render('auth/login', { errorMessage: null });
+    const successMessage = req.query.success === 'logout' ? 'Berhasil logout!' : null;
+    res.render('auth/login', { errorMessage: null, successMessage: successMessage });
 });
 
 // Route untuk login
@@ -29,8 +30,10 @@ router.post('/register', authController.register);
 
 // Route untuk logout
 router.post('/logout', authController.logout);
+router.get('/logout', authController.logout);
 
 router.get('/', (req, res) => {
-    res.render('auth/login', { errorMessage: null });
+    const successMessage = req.query.success === 'logout' ? 'Berhasil logout!' : null;
+    res.render('auth/login', { errorMessage: null, successMessage: successMessage });
 });
 module.exports = router;

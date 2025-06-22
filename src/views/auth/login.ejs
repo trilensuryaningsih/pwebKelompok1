@@ -32,6 +32,22 @@
                 <p class="text-gray-500 text-sm mt-2">Welcome User</p>
             </div>
 
+            <!-- Success Message Popup -->
+            <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                <div id="successPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg p-6 mx-4 max-w-sm w-full text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Berhasil!</h3>
+                        <p class="text-gray-600 mb-6"><%= successMessage %></p>
+                        <button onclick="closeSuccessPopup()" class="bg-custom-green text-white px-6 py-2 rounded-lg hover:bg-custom-green-dark transition-colors">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            <% } %>
+
             <!-- Form Login -->
             <form action="/api/auth/login" method="POST" class="space-y-6">
                 
@@ -147,6 +163,13 @@
             }
         }
 
+        function closeSuccessPopup() {
+            const popup = document.getElementById('successPopup');
+            if (popup) {
+                popup.style.display = 'none';
+            }
+        }
+
         function continueWithGoogle() {
             window.location.href = '/auth/google';
         }
@@ -158,6 +181,14 @@
                 button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Logging in...';
                 button.disabled = true;
             });
+
+            // Auto-close success popup after 3 seconds
+            const successPopup = document.getElementById('successPopup');
+            if (successPopup) {
+                setTimeout(() => {
+                    closeSuccessPopup();
+                }, 3000);
+            }
         });
     </script>
 </body>

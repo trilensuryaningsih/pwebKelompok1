@@ -78,7 +78,7 @@ const logout = (req, res) => {
   try {
     // res.status(200).json({ message: "Logout berhasil" });
     req.session.destroy(() => {
-      res.redirect("/user");
+      res.redirect("/auth/login?success=logout");
     });
   } catch (error) {
     console.error(error);
